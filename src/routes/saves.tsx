@@ -49,8 +49,14 @@ const SavesRoute = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-black to-background py-12">
-      <div className="mx-auto flex max-w-4xl flex-col gap-6 rounded-3xl bg-black/75 p-8 text-white">
+    <div className="relative min-h-screen overflow-hidden text-white">
+      {/* SFONDO CON IMMAGINE + BLUR + OVERLAY */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur" />
+        <div className="absolute inset-0 bg-black/70" />
+      </div>
+
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-6 py-12">
         <header className="flex items-center justify-between gap-4">
           <div>
             <h2 className="text-3xl font-display uppercase tracking-[0.4em]">
@@ -62,7 +68,7 @@ const SavesRoute = () => {
           </div>
           <Link
             to="/"
-            className="rounded-full border border-white/30 px-4 py-2 text-sm uppercase tracking-widest hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/30 px-4 py-2 text-sm uppercase tracking-widest transition hover:border-[#a67c52] hover:text-[#a67c52]"
           >
             {t("settings.back")}
           </Link>
@@ -72,7 +78,7 @@ const SavesRoute = () => {
           <button
             type="button"
             onClick={() => void createSlot()}
-            className="rounded-full border border-accent bg-transparent px-4 py-2 text-sm uppercase tracking-widest text-accent hover:bg-accent/10"
+            className="rounded-full border border-[#a67c52] bg-transparent px-4 py-2 text-sm uppercase tracking-widest text-[#a67c52] transition hover:bg-[#a67c52]/10"
           >
             {t("saves.new", "Nuovo slot")}
           </button>
@@ -82,8 +88,8 @@ const SavesRoute = () => {
           {slots.map((slot) => (
             <li
               key={slot.id}
-              className={`flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 ${
-                activeSlotId === slot.id ? "border-accent" : ""
+              className={`flex items-center justify-between rounded-2xl border border-white/10 bg-white/10 px-4 py-3 backdrop-blur-sm transition hover:bg-white/20 ${
+                activeSlotId === slot.id ? "border-[#a67c52]" : ""
               }`}
               onDoubleClick={() => startEditing(slot.id, slot.name)}
             >
@@ -101,34 +107,37 @@ const SavesRoute = () => {
                         setEditingId(null);
                       }
                     }}
-                    className="w-56 rounded border border-white/30 bg-black/70 px-3 py-1 text-white focus:border-accent focus:outline-none"
+                    className="w-56 rounded border border-white/30 bg-black/70 px-3 py-1 text-white focus:border-[#a67c52] focus:outline-none"
                   />
                 ) : (
                   <span className="text-base font-semibold text-white">{slot.name}</span>
                 )}
-                <span className="text-xs uppercase text-white/50">
+                <span className="text-xs uppercase text-white/60">
                   {formatDate(slot.updatedAt, language)}
                 </span>
               </div>
+
               <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => duplicateSlot(slot.id)}
-                  className="rounded-full border border-white/25 px-3 py-1 text-xs uppercase tracking-widest text-white/70 transition hover:border-emerald-300 hover:text-emerald-200"
+                  className="rounded-full border border-white/25 px-3 py-1 text-xs uppercase tracking-widest text-white/80 transition hover:border-[#a67c52] hover:text-[#a67c52]"
                 >
                   {t("saves.duplicate", "Duplica")}
                 </button>
+
                 <button
                   type="button"
                   onClick={() => void loadSlot(slot.id)}
-                  className="rounded-full border border-accent px-4 py-1 text-xs uppercase tracking-widest text-accent hover:bg-accent/10"
+                  className="rounded-full border border-[#a67c52] px-4 py-1 text-xs uppercase tracking-widest text-[#a67c52] transition hover:bg-[#a67c52]/10"
                 >
                   {t("saves.load", "Carica")}
                 </button>
+
                 <button
                   type="button"
                   onClick={() => deleteSlot(slot.id)}
-                  className="rounded-full border border-red-500 px-3 py-1 text-xs uppercase tracking-widest text-red-400 hover:bg-red-500/10"
+                  className="rounded-full border border-red-500 px-3 py-1 text-xs uppercase tracking-widest text-red-400 transition hover:bg-red-500/10"
                   aria-label={t("saves.delete", "Elimina")}
                 >
                   &#128465;

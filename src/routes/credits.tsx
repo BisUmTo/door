@@ -19,13 +19,12 @@ const CreditsRoute = () => {
 
       {/* CONTENITORE PRINCIPALE */}
       <div className="mx-auto flex min-h-screen w-full max-w-[960px] flex-col items-center gap-10 px-6 py-12 text-center">
-
         {/* HEADER */}
         <header className="flex w-full items-center justify-between text-xs uppercase tracking-[0.35em] text-white/60">
           <span>Crediti</span>
           <Link
             to="/"
-            className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition-colors hover:border-[#a67c52] hover:text-[#a67c52]"
           >
             Torna al menu
           </Link>
@@ -46,20 +45,25 @@ const CreditsRoute = () => {
           {contributors.map((entry) => (
             <li
               key={entry.name}
-              className="rounded-3xl border border-white/15 bg-white/10 py-4 px-4 backdrop-blur transition hover:bg-white/20"
+              className="group rounded-3xl border border-white/15 bg-white/10 py-4 px-4 backdrop-blur transition-all hover:bg-white/20 hover:border-[#a67c52]"
             >
-              <span className="block text-xs uppercase tracking-[0.3em] text-white/60 mb-1">
+              <span className="block text-xs uppercase tracking-[0.3em] text-white/60 mb-1 transition-colors group-hover:text-[#a67c52]">
                 {entry.role}
               </span>
-              <span className="block text-lg font-semibold tracking-[0.25em] text-white">
+              <span className="block text-lg font-semibold tracking-[0.25em] text-white transition-colors group-hover:text-[#a67c52]">
                 {entry.name}
               </span>
             </li>
           ))}
         </ul>
 
-        {/* BOTTONE FINALE */}
-        
+        {/* BOTTONE FINALE (facoltativo) */}
+        {/* <Link
+          to="/"
+          className="mt-auto rounded-full border border-white/30 px-6 py-2 text-xs uppercase tracking-[0.35em] text-white/80 transition hover:border-[#a67c52] hover:text-[#a67c52]"
+        >
+          Torna al menu principale
+        </Link> */}
       </div>
     </div>
   );
