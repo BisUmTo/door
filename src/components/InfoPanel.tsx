@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import type { BlockedDoor, DoorType } from "@/game/types";
 
 const doorShortLabel: Record<DoorType, string> = {
@@ -52,6 +53,12 @@ export const InfoPanel = ({ doorsOpened, turn, blockedDoors }: InfoPanelProps) =
           )}
         </div>
       </dl>
+      <Link
+        to="/door-types"
+        className="mt-4 inline-flex items-center justify-center rounded-full border border-white/20 px-3 py-1 text-[11px] uppercase tracking-[0.35em] text-white/60 transition hover:border-accent hover:text-accent"
+      >
+        Tipologia porte
+      </Link>
     </aside>
   );
 };

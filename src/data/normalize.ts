@@ -85,7 +85,22 @@ const lootAliasPairs: Array<[string, Resource]> = [
   ["special item", "specialItem"],
   ["nessuno", "none"],
   ["null", "none"],
-  ["nessuna ricompensa", "none"]
+  ["nessuna ricompensa", "none"],
+  ["medaglietta bianca", "medal_white"],
+  ["medaglia bianca", "medal_white"],
+  ["badge bianca", "medal_white"],
+  ["medaglietta nera", "medal_black"],
+  ["medaglietta rossa", "medal_red"],
+  ["medaglietta arancione", "medal_orange"],
+  ["medaglietta gialla", "medal_yellow"],
+  ["medaglietta viola", "medal_purple"],
+  ["medaglietta blu", "medal_blue"],
+  ["medaglietta azzurra", "medal_lightBlue"],
+  ["medaglietta marrone", "medal_brown"],
+  ["medaglietta lime", "medal_lime"],
+  ["medaglietta verde", "medal_green"],
+  ["medaglietta verde scuro", "medal_green"],
+  ["medaglietta neutra", "medal_neutral"]
 ];
 
 const lootAliasMap = new Map<string, Resource>(

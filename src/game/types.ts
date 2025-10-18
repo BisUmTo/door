@@ -14,13 +14,24 @@ export type DoorType =
 
 export type AmmoKind = "bullets" | "shells" | "arrows" | "darts" | "grenades";
 
+export type MedalResource = `medal_${DoorType}`;
+
 export type Resource =
   | "coins"
   | "food"
   | "armor"
   | AmmoKind
   | "specialItem"
+  | MedalResource
   | "none";
+
+export type ChestRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";
+
+export interface MedalStatus {
+  unlocked: boolean;
+  unlockedAt: string | null;
+  highlightUntil?: string | null;
+}
 
 export type WeaponName =
   | "shotgun"
@@ -130,6 +141,7 @@ export interface SaveGame {
       time: string;
       loot: LootEntry | null;
     }[];
+    inventory: Record<ChestRarity, number>;
   };
   doorHistory: {
     type: DoorType;
@@ -147,6 +159,11 @@ export interface SaveGame {
     usedWeapons: { name: WeaponName; shots: number }[];
     fallenAnimals: { configId: number }[];
     weaponsLocked: boolean;
+  };
+  medals: {
+    entries: Record<DoorType, MedalStatus>;
+    dropRate: number;
+    highlighted: DoorType | null;
   };
 }
 

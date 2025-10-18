@@ -2,47 +2,58 @@ import { Link } from "react-router-dom";
 
 const CreditsRoute = () => {
   const contributors = [
-    { role: "Graphics & Project Manager", name: "Luca Bertotto" },
-    { role: "Game Design & Rules", name: "Matteo Bertotto" },
-    { role: "Graphics & Prototype Development", name: "Kevin Delugan" },
-    { role: "Database Design & Game Logic", name: "Philip Fleckinger" },
-    { role: "Development Support", name: "Marco Bertotto" }
+    "Luca Bertotto",
+    "Marco Bertotto",
+    "Matteo Bertotto",
+    "Kevin Delugan",
+    "Philip Fleckinger"
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-900 via-background to-black px-6 py-10 text-white relative">
+    <div className="relative min-h-screen overflow-hidden text-white">
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur" />
+        <div className="absolute inset-0 bg-black/70" />
+      </div>
 
-      {/* HEADER */}
-      <header className="absolute top-6 left-6 right-6 flex items-center justify-between">
-        {/* Crediti in alto a sinistra */}
-        <span className="uppercase tracking-[0.4em] text-white/60 text-xs">Crediti</span>
+      <div className="mx-auto flex min-h-screen w-full max-w-[960px] flex-col items-center gap-10 px-6 py-12 text-center">
+        <header className="flex w-full items-center justify-between text-xs uppercase tracking-[0.35em] text-white/60">
+          <span>Crediti</span>
+          <Link
+            to="/"
+            className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-accent hover:text-accent"
+          >
+            Torna al menu
+          </Link>
+        </header>
 
-        {/* Bottone Menu in alto a destra */}
+        <div className="mt-8 flex flex-col items-center gap-4">
+          <h1 className="text-5xl font-display uppercase tracking-[0.5em] text-white drop-shadow">
+            B8 Studios
+          </h1>
+          <p className="max-w-lg text-sm text-white/60">
+            Un progetto creato con passione dal team B8 Studios. Grazie per aver aperto le nostre porte.
+          </p>
+        </div>
+
+        <ul className="w-full space-y-4 text-center text-lg font-semibold text-white/80">
+          {contributors.map((name) => (
+            <li
+              key={name}
+              className="rounded-3xl border border-white/15 bg-white/10 py-4 uppercase tracking-[0.3em] text-white/70 backdrop-blur"
+            >
+              {name}
+            </li>
+          ))}
+        </ul>
+
         <Link
           to="/"
-          className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest hover:border-accent hover:text-accent"
+          className="mt-auto rounded-full border border-white/30 px-6 py-2 text-xs uppercase tracking-[0.35em] text-white/80 transition hover:border-accent hover:text-accent"
         >
-          Menu
+          Torna al menu principale
         </Link>
-      </header>
-
-      {/* Titolo centrale */}
-      <h1 className="absolute top-20 text-[5rem] sm:text-[6rem] font-extrabold tracking-[0.15em] text-center bg-gradient-to-r from-purple-300 via-pink-400 to-purple-600 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
-        B8 STUDIOS
-      </h1>
-
-      {/* Lista crediti */}
-      <ul className="w-full max-w-md mt-32 space-y-4 text-center text-sm">
-        {contributors.map((entry) => (
-          <li
-            key={entry.role}
-            className="rounded-3xl border border-white/10 bg-white/5 p-6"
-          >
-            <span className="block text-xs uppercase text-white/50">{entry.role}</span>
-            <span className="text-lg font-semibold text-white">{entry.name}</span>
-          </li>
-        ))}
-      </ul>
+      </div>
     </div>
   );
 };

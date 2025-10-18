@@ -9,7 +9,11 @@ import type {
   AmmoKind,
   WeaponConfig,
   WeaponName,
-  WeaponState
+  WeaponState,
+  ChestRarity,
+  MedalResource,
+  MedalStatus,
+  Resource
 } from "@/game/types";
 import {
   loadAnimalsConfig,
@@ -22,12 +26,25 @@ import {
 } from "@/data/loaders";
 import {
   normalizeBonusType,
-  getWeaponAmmoKind
+  getWeaponAmmoKind,
+  normalizeLootKey
 } from "@/data/normalize";
 import { normalizeDoorLootTableRecords, rollLoot } from "@/game/loot";
 import { ALL_DOOR_TYPES, applyConflicts, computeAvailable, decrementBlocks } from "@/game/pool";
 import { RNG, createTurnSeed } from "@/game/rng";
 import { tickHouseBonuses } from "@/game/house";
+import {
+  MEDAL_DEFINITIONS,
+  isMedalResource,
+  medalResourceToDoorType
+} from "@/game/medals";
+import { getChestDefinition } from "@/game/chests";
+import {
+  applyGrowthToInstance,
+  computeBattleStats,
+  getLifeCap,
+  getStaminaCap
+} from "@/game/animals";
 import {
   createSaveTemplate,
   deleteSlot,
@@ -65,6 +82,7 @@ interface GameConfigs {
   lootTables: DoorLootTablesRegistry;
   chests: ChestsConfig;
   house: HouseBlueprint[];
+  medals: typeof MEDAL_DEFINITIONS;
 }
 
 interface DoorEncounter {
@@ -77,6 +95,12 @@ interface PendingReward {
   loot: LootEntry | null;
   weaponsUsed: { name: WeaponName; shots: number }[];
   fallenAnimals: { configId: number }[];
+  medalUnlocked?: DoorType | null;
+}
+
+interface ChestOpenResult {
+  loot: LootEntry | null;
+  medalUnlocked: DoorType | null;
 }
 
 interface GameStoreState {
@@ -100,9 +124,13 @@ interface GameStoreState {
   openDoor: (doorType: DoorType) => DoorEncounter | null;
   resolveWeaponAttack: (weapon: WeaponName, ammoToSpend: number) => void;
   resolveAnimalDuel: (animalIndex: number) => void;
+  feedAnimal: (animalIndex: number) => void;
+  growAnimal: (animalIndex: number) => void;
+  openChest: (rarity: ChestRarity) => ChestOpenResult | null;
   collectReward: () => void;
   setOnlineStatus: (status: OnlineStatus) => void;
   resetBattleResult: () => void;
+  acknowledgeMedalHighlight: () => void;
 }
 
 const defaultBattleState: SaveGame["battleState"] = {
@@ -114,6 +142,96 @@ const defaultBattleState: SaveGame["battleState"] = {
 };
 
 const ammoOrder: AmmoKind[] = ["bullets", "shells", "arrows", "darts", "grenades"];
+
+const CHEST_RARITIES: ChestRarity[] = ["common", "uncommon", "rare", "epic", "legendary"];
+
+const ensureChestInventory = (
+  inventory?: Partial<Record<ChestRarity, number>>
+): Record<ChestRarity, number> => {
+  return CHEST_RARITIES.reduce<Record<ChestRarity, number>>((acc, rarity) => {
+    const value = inventory?.[rarity];
+    acc[rarity] = typeof value === "number" && Number.isFinite(value) ? Math.max(0, value) : 0;
+    return acc;
+  }, {} as Record<ChestRarity, number>);
+};
+
+const ensureMedalEntries = (
+  entries?: Partial<Record<DoorType, MedalStatus>>
+): Record<DoorType, MedalStatus> => {
+  return ALL_DOOR_TYPES.reduce<Record<DoorType, MedalStatus>>((acc, doorType) => {
+    const current = entries?.[doorType];
+    acc[doorType] = {
+      unlocked: current?.unlocked ?? false,
+      unlockedAt: current?.unlockedAt ?? null,
+      highlightUntil: current?.highlightUntil ?? null
+    };
+    return acc;
+  }, {} as Record<DoorType, MedalStatus>);
+};
+
+const chestIdMap: Record<ChestRarity, string> = {
+  common: "common",
+  uncommon: "common",
+  rare: "rare",
+  epic: "epic",
+  legendary: "epic"
+};
+
+const parseChestQuantity = (raw: string | undefined, rng: RNG): number => {
+  if (!raw) return 1;
+  const trimmed = raw.trim();
+  if (trimmed.includes("-")) {
+    const [low, high] = trimmed.split("-").map((value) => Number(value));
+    if (!Number.isFinite(low) || !Number.isFinite(high)) {
+      return 1;
+    }
+    const min = Math.min(low, high);
+    const max = Math.max(low, high);
+    return rng.nextInt(min, max);
+  }
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : 1;
+};
+
+const selectChestReward = (
+  entries: ChestsConfig["bauli"][number]["loot"],
+  rng: RNG
+) => {
+  const total = entries.reduce((sum, entry) => sum + (entry.peso ?? 0), 0);
+  if (total <= 0) return null;
+  const roll = rng.nextFloat() * total;
+  let cumulative = 0;
+  for (const entry of entries) {
+    cumulative += entry.peso ?? 0;
+    if (roll <= cumulative) {
+      return entry;
+    }
+  }
+  return entries.at(-1) ?? null;
+};
+
+const rollChestLoot = (
+  configs: ChestsConfig,
+  rarity: ChestRarity,
+  rng: RNG
+): LootEntry | null => {
+  const targetId = chestIdMap[rarity] ?? rarity;
+  const chest = configs.bauli.find((entry) => entry.id === targetId);
+  if (!chest) return null;
+  const selected = selectChestReward(chest.loot, rng);
+  if (!selected || !selected.loot) {
+    return null;
+  }
+  const resource = normalizeLootKey(selected.loot);
+  if (resource === "none") {
+    return null;
+  }
+  const quantity = parseChestQuantity(selected.quantita, rng);
+  return {
+    type: resource,
+    qty: quantity
+  };
+};
 
 const ensureInventoryAmmo = (ammo: Partial<Record<AmmoKind, number>>): Record<AmmoKind, number> => {
   const next: Record<AmmoKind, number> = {
@@ -196,6 +314,14 @@ const syncSaveWithConfigs = (save: SaveGame, configs: GameConfigs): SaveGame => 
       ...save.inventory,
       ammo: ensureInventoryAmmo(save.inventory.ammo)
     },
+    animals: {
+      owned: normalizeOwnedAnimals(save.animals.owned, configs.animals),
+      bestiarySeen: save.animals.bestiarySeen
+    },
+    chests: {
+      unlockedHistory: save.chests?.unlockedHistory ?? [],
+      inventory: ensureChestInventory(save.chests?.inventory)
+    },
     progress: {
       ...save.progress,
       availablePool: computeAvailable(
@@ -203,8 +329,51 @@ const syncSaveWithConfigs = (save: SaveGame, configs: GameConfigs): SaveGame => 
         save.progress.blockedDoors
       )
     },
-    battleState: save.battleState ?? defaultBattleState
+    battleState: save.battleState ?? defaultBattleState,
+    medals: {
+      entries: ensureMedalEntries(save.medals?.entries),
+      dropRate: save.medals?.dropRate ?? MEDAL_DEFINITIONS[0]?.dropRate ?? 0.002,
+      highlighted: save.medals?.highlighted ?? null
+    }
   };
+};
+
+const regenerateAnimalStamina = (
+  animals: SaveGame["animals"]["owned"],
+  configs: AnimalConfig[],
+  amount: number
+): SaveGame["animals"]["owned"] => {
+  if (amount <= 0) return animals;
+  return animals.map((animal) => {
+    const config = configs.find((entry) => entry.id === animal.configId);
+    if (!config) return animal;
+    if (!animal.alive) return animal;
+    const staminaCap = getStaminaCap(config, animal.size);
+    const nextStamina = Math.min(staminaCap, animal.stamina + amount);
+    return {
+      ...animal,
+      stamina: nextStamina
+    };
+  });
+};
+
+const normalizeOwnedAnimals = (
+  animals: SaveGame["animals"]["owned"],
+  configs: AnimalConfig[]
+): SaveGame["animals"]["owned"] => {
+  return animals.map((animal) => {
+    const config = configs.find((entry) => entry.id === animal.configId);
+    if (!config) return animal;
+    const lifeCap = getLifeCap(config, animal.size);
+    const staminaCap = getStaminaCap(config, animal.size);
+    const nextLife = Math.min(Math.max(0, animal.life), lifeCap);
+    const nextStamina = Math.min(Math.max(0, animal.stamina), staminaCap);
+    return {
+      ...animal,
+      life: nextLife,
+      stamina: nextStamina
+    };
+  });
 };
 
 const applyHouseRewards = (
@@ -368,7 +537,8 @@ export const useGameStore = create<GameStoreState>()(
           weapons: weaponsConfig,
           lootTables: normalizeDoorLootTableRecords(doorTablesRaw),
           chests,
-          house: buildHouseBlueprints(houseConfig)
+          house: buildHouseBlueprints(houseConfig),
+          medals: MEDAL_DEFINITIONS
         };
 
         let slots = listSlots();
@@ -796,12 +966,18 @@ export const useGameStore = create<GameStoreState>()(
       const animalConfig = configs.animals.find((entry) => entry.id === instance.configId);
       if (!animalConfig) return;
 
+      const staminaCap = getStaminaCap(animalConfig, instance.size);
+      if (instance.stamina < staminaCap) {
+        return;
+      }
+
       const enemy = save.battleState.door.enemies[save.battleState.door.index];
+      const stats = computeBattleStats(animalConfig, instance);
       const duel = simulateAnimalDuel(
         {
-          life: instance.life,
-          damage: animalConfig.damage,
-          attackSpeed: animalConfig.attackSpeed,
+          life: stats.life,
+          damage: stats.damage,
+          attackSpeed: stats.attackSpeed,
           armor: instance.armor
         },
         enemy
@@ -810,8 +986,9 @@ export const useGameStore = create<GameStoreState>()(
       const updatedAnimals = [...save.animals.owned];
       updatedAnimals[animalIndex] = {
         ...instance,
-        life: duel.playerLifeLeft,
-        alive: duel.playerLifeLeft > 0
+        life: Math.min(stats.lifeCap, duel.playerLifeLeft),
+        alive: duel.playerLifeLeft > 0,
+        stamina: 0
       };
 
       const updatedEnemies = [...save.battleState.door.enemies];
@@ -835,16 +1012,44 @@ export const useGameStore = create<GameStoreState>()(
         if (nextIndex >= updatedEnemies.length) {
           const doorType = save.battleState.door.type;
           const lootRng = randomForDoor(save, doorType, 29);
-          const loot = rollLoot(doorType, configs.lootTables, lootRng);
+          const rawLoot = rollLoot(doorType, configs.lootTables, lootRng);
           const inventory = { ...save.inventory, ammo: { ...save.inventory.ammo } };
-          if (loot) {
-            if (loot.type in inventory.ammo) {
-              const ammoKind = loot.type as AmmoKind;
-              inventory.ammo[ammoKind] += loot.qty;
-            } else if (loot.type === "coins") {
-              inventory.coins += loot.qty;
-            } else if (loot.type === "food") {
-              inventory.food += loot.qty;
+          let effectiveLoot = rawLoot;
+          let medalUnlocked: DoorType | null = null;
+          let medalsState = {
+            ...save.medals,
+            entries: { ...save.medals.entries }
+          };
+
+          if (rawLoot && isMedalResource(rawLoot.type)) {
+            const medalDoor = medalResourceToDoorType(rawLoot.type as MedalResource);
+            const currentMedal = medalsState.entries[medalDoor];
+            if (!currentMedal.unlocked) {
+              const unlockedAt = new Date().toISOString();
+              medalsState = {
+                ...medalsState,
+                entries: {
+                  ...medalsState.entries,
+                  [medalDoor]: {
+                    unlocked: true,
+                    unlockedAt,
+                    highlightUntil: unlockedAt
+                  }
+                },
+                highlighted: medalDoor
+              };
+              medalUnlocked = medalDoor;
+            } else {
+              effectiveLoot = null;
+            }
+          } else if (rawLoot) {
+            if (rawLoot.type in inventory.ammo) {
+              const ammoKind = rawLoot.type as AmmoKind;
+              inventory.ammo[ammoKind] += rawLoot.qty;
+            } else if (rawLoot.type === "coins") {
+              inventory.coins += rawLoot.qty;
+            } else if (rawLoot.type === "food") {
+              inventory.food += rawLoot.qty;
             }
           }
 
@@ -854,43 +1059,45 @@ export const useGameStore = create<GameStoreState>()(
           const available = computeAvailable(ALL_DOOR_TYPES, blocked);
           const { objects, triggers } = tickHouseBonuses(save.house.objects);
 
-          nextSave = applyHouseRewards(
-            {
-              ...save,
-              inventory,
-              animals: {
-                ...save.animals,
-                owned: updatedAnimals
-              },
-              progress: {
-                doorsOpened: save.progress.doorsOpened + 1,
-                turn: save.progress.turn + 1,
-                blockedDoors: blocked,
-                availablePool: available,
-                lastLobbyDraw: []
-              },
-              house: {
-                objects
-              },
-              battleState: defaultBattleState,
-              doorHistory: ensureDoorHistoryLimit([
-                ...save.doorHistory,
-                {
-                  type: doorType,
-                  result: "victory",
-                  loot,
-                  timestamp: new Date().toISOString()
-                }
-              ])
+          const regeneratedAnimals = regenerateAnimalStamina(updatedAnimals, configs.animals, 5);
+          const baseSave: SaveGame = {
+            ...save,
+            inventory,
+            animals: {
+              ...save.animals,
+              owned: regeneratedAnimals
             },
-            triggers
-          );
+            progress: {
+              doorsOpened: save.progress.doorsOpened + 1,
+              turn: save.progress.turn + 1,
+              blockedDoors: blocked,
+              availablePool: available,
+              lastLobbyDraw: []
+            },
+            house: {
+              objects
+            },
+            battleState: defaultBattleState,
+            doorHistory: ensureDoorHistoryLimit([
+              ...save.doorHistory,
+              {
+                type: doorType,
+                result: "victory",
+                loot: effectiveLoot,
+                timestamp: new Date().toISOString()
+              }
+            ]),
+            medals: medalsState
+          };
+
+          nextSave = applyHouseRewards(baseSave, triggers);
 
           pendingReward = {
             doorType,
-            loot,
+            loot: effectiveLoot,
             weaponsUsed: save.battleState.usedWeapons,
-            fallenAnimals
+            fallenAnimals,
+            medalUnlocked
           };
           battleResult = "victory";
         } else {
@@ -918,11 +1125,12 @@ export const useGameStore = create<GameStoreState>()(
         const ammoAvailable = Object.values(save.inventory.ammo).some((qty) => qty > 0);
 
         if (!aliveAnimals.length && !ammoAvailable) {
+          const regeneratedAnimals = regenerateAnimalStamina(updatedAnimals, configs.animals, 5);
           nextSave = {
             ...save,
             animals: {
               ...save.animals,
-              owned: updatedAnimals
+              owned: regeneratedAnimals
             },
             battleState: defaultBattleState,
             doorHistory: ensureDoorHistoryLimit([
@@ -962,6 +1170,187 @@ export const useGameStore = create<GameStoreState>()(
         battleResult,
         pendingReward: pendingReward ?? get().pendingReward
       });
+    },
+
+    feedAnimal: (animalIndex) => {
+      const { save, configs } = get();
+      if (!save || !configs) return;
+      const instance = save.animals.owned[animalIndex];
+      if (!instance || !instance.alive) return;
+
+      const config = configs.animals.find((entry) => entry.id === instance.configId);
+      if (!config) return;
+
+      const staminaCap = getStaminaCap(config, instance.size);
+      const missing = Math.max(0, staminaCap - instance.stamina);
+      if (missing <= 0) return;
+
+      const availableFood = save.inventory.food;
+      if (availableFood <= 0) return;
+
+      const toSpend = Math.min(missing, availableFood);
+      if (toSpend <= 0) return;
+
+      const animals = [...save.animals.owned];
+      animals[animalIndex] = {
+        ...instance,
+        stamina: Math.min(staminaCap, instance.stamina + toSpend)
+      };
+
+      const nextSave: SaveGame = {
+        ...save,
+        inventory: {
+          ...save.inventory,
+          food: availableFood - toSpend
+        },
+        animals: {
+          ...save.animals,
+          owned: animals
+        }
+      };
+
+      persistSave(nextSave);
+      set({ save: nextSave });
+    },
+
+    growAnimal: (animalIndex) => {
+      const { save, configs } = get();
+      if (!save || !configs) return;
+      const instance = save.animals.owned[animalIndex];
+      if (!instance || !instance.alive) return;
+      if (instance.size === "Large") return;
+
+      const config = configs.animals.find((entry) => entry.id === instance.configId);
+      if (!config) return;
+
+      const cost = Math.max(0, Math.round(config.growthFoodCost));
+      if (save.inventory.food < cost) return;
+
+      const grown = applyGrowthToInstance(instance, config);
+
+      const animals = [...save.animals.owned];
+      animals[animalIndex] = grown;
+
+      const nextSave: SaveGame = {
+        ...save,
+        inventory: {
+          ...save.inventory,
+          food: save.inventory.food - cost
+        },
+        animals: {
+          ...save.animals,
+          owned: animals
+        }
+      };
+
+      persistSave(nextSave);
+      set({ save: nextSave });
+    },
+
+    openChest: (rarity) => {
+      const { save, configs } = get();
+      if (!save || !configs) return null;
+
+      const owned = save.chests.inventory[rarity] ?? 0;
+      if (owned <= 0) return null;
+
+      const rngSeed = createTurnSeed(save.meta.rngSeed, Date.now());
+      const rng = new RNG(rngSeed);
+      let loot = rollChestLoot(configs.chests, rarity, rng);
+
+      let medalsState = {
+        ...save.medals,
+        entries: { ...save.medals.entries }
+      };
+      let medalUnlocked: DoorType | null = null;
+
+      const inventory = {
+        ...save.inventory,
+        ammo: { ...save.inventory.ammo },
+        armors: [...save.inventory.armors],
+        specialItems: [...save.inventory.specialItems]
+      };
+
+      if (loot && isMedalResource(loot.type)) {
+        const medalDoor = medalResourceToDoorType(loot.type as MedalResource);
+        const currentMedal = medalsState.entries[medalDoor];
+        if (!currentMedal.unlocked) {
+          const unlockedAt = new Date().toISOString();
+          medalsState = {
+            ...medalsState,
+            entries: {
+              ...medalsState.entries,
+              [medalDoor]: {
+                unlocked: true,
+                unlockedAt,
+                highlightUntil: unlockedAt
+              }
+            },
+            highlighted: medalDoor
+          };
+          medalUnlocked = medalDoor;
+        } else {
+          loot = null;
+        }
+      }
+
+      if (loot) {
+        if (loot.type in inventory.ammo) {
+          const ammoKind = loot.type as AmmoKind;
+          inventory.ammo[ammoKind] += loot.qty;
+        } else if (loot.type === "coins") {
+          inventory.coins += loot.qty;
+        } else if (loot.type === "food") {
+          inventory.food += loot.qty;
+        } else if (loot.type === "armor") {
+          inventory.armors = [
+            ...inventory.armors,
+            { id: `armor-${Date.now()}`, tier: 1, durability: 100 }
+          ];
+        } else if (loot.type === "specialItem") {
+          inventory.specialItems = [...inventory.specialItems, "Ricompensa Baule"];
+        }
+      }
+
+      const historyEntry = {
+        rarity: getChestDefinition(rarity).name,
+        time: new Date().toISOString(),
+        loot
+      };
+
+      const nextSave: SaveGame = {
+        ...save,
+        inventory,
+        chests: {
+          unlockedHistory: [...save.chests.unlockedHistory, historyEntry],
+          inventory: {
+            ...save.chests.inventory,
+            [rarity]: Math.max(owned - 1, 0)
+          }
+        },
+        medals: medalsState
+      };
+
+      persistSave(nextSave);
+      set({ save: nextSave });
+      return { loot, medalUnlocked };
+    },
+
+    acknowledgeMedalHighlight: () => {
+      const { save } = get();
+      if (!save) return;
+      if (!save.medals.highlighted) return;
+
+      const nextSave: SaveGame = {
+        ...save,
+        medals: {
+          ...save.medals,
+          highlighted: null
+        }
+      };
+
+      persistSave(nextSave);
+      set({ save: nextSave });
     },
 
     collectReward: () => {

@@ -136,8 +136,8 @@ const staticAreas: StaticAreaConfig[] = [
     route: "/house",
     label: "Casa",
     labelOffset: {
-      x: 150,
-      y: -40
+      x: 60,
+      y: 160
     }
   },
   {
@@ -146,8 +146,8 @@ const staticAreas: StaticAreaConfig[] = [
     image: "/assets/lobby/pulsanti/baule.png",
     selectedImage: "/assets/lobby/pulsanti/baule_selected.png",
     layout: {
-      x: 0,
-      y: 0,
+      x: 100,
+      y: 100,
       width: LOBBY_IMAGE_WIDTH,
       height: LOBBY_IMAGE_HEIGHT
     },
@@ -169,8 +169,8 @@ const staticAreas: StaticAreaConfig[] = [
       width: LOBBY_IMAGE_WIDTH,
       height: LOBBY_IMAGE_HEIGHT
     },
-    route: "/chest",
-    label: "Baule",
+    route: "/inventory",
+    label: "Inventario",
     labelOffset: {
       x: 120,
       y: 60
@@ -216,12 +216,16 @@ const doorColorAssets: Record<DoorType, { folder: string; file: string } | null>
 };
 
 const getDoorTexturePath = (type: DoorType, variant?: string) => {
+  // Return null for neutral (no overlay)
   if (type === "neutral") return null;
   const asset = doorColorAssets[type];
+  console.log(`Getting texture path for door type: ${type}, variant: ${variant}`);
   if (!asset) return null;
   const sanitized = sanitizeVariant(variant);
-  const suffix = sanitized ? `_${sanitized}` : "_base";
-  return `/assets/porte/${asset.folder}/porta_${asset.file}${suffix}.png`;
+  // requested path format: /assets/porte/porta_<colore>_<tipo>.png
+  // where <tipo> is 'base' if not specified
+  const typeSuffix = sanitized || "base";
+  return `/assets/porte/porta_${asset.file}_${typeSuffix}.png`;
 };
 
 const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;
@@ -297,15 +301,7 @@ const LobbyRoute = () => {
     lobbyDoorEntries.forEach(({ door, area }, index) => {
       const texturePath = getDoorTexturePath(door.type, door.variant);
 
-      if (texturePath) {
-        elements.push({
-          id: `${area.id}-texture`,
-          image: texturePath,
-          layout: area.texture.layout,
-          zIndex: 10 + index
-        });
-      }
-
+      // Draw the base button (this contains the hitbox and interaction handlers)
       elements.push({
         id: area.id,
         image: area.image,
@@ -316,6 +312,19 @@ const LobbyRoute = () => {
         onClick: () => handleDoorClick(door.type),
         onHoverChange: (hovered) => handleHoverChange(area.id, hovered)
       });
+
+      // If a texture overlay exists, draw it above the button using the texture layout.
+      // The overlay is purely visual so it should not capture clicks/hover; interactions
+      // remain bound to the button element. We set a slightly higher zIndex so it sits on top.
+      if (texturePath) {
+        elements.push({
+          id: `${area.id}-texture`,
+          image: texturePath,
+          layout: area.texture.layout,
+          zIndex: 40 + index
+        });
+        console.log(`Added texture overlay for door ${area.id}: ${texturePath}`);
+      }
     });
 
     staticAreas.forEach((area, index) => {

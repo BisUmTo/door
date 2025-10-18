@@ -43,7 +43,7 @@ const houseAreas: HouseAreaConfig[] = [
     },
     labelPosition: {
       x: 342,
-      y: 520
+      y: 135
     },
     zIndex: 10
   },
@@ -67,7 +67,7 @@ const houseAreas: HouseAreaConfig[] = [
   },
   {
     id: "porta",
-    label: "Porta",
+    label: "lobby",
     hitboxPath: "/assets/casa/pulsanti/porta.json",
     image: "/assets/casa/pulsanti/porta.png",
     selectedImage: "/assets/casa/pulsanti/porta_selected.png",
@@ -79,11 +79,18 @@ const houseAreas: HouseAreaConfig[] = [
     },
     labelPosition: {
       x: 925,
-      y: 820
+      y: 802
     },
     zIndex: 8
   }
 ];
+
+const objectLayouts: Record<number, { x: number; y: number; width: number; height: number }> = {
+  1: { x: 520, y: 700, width: 260, height: 220 },
+  2: { x: 330, y: 520, width: 220, height: 240 },
+  3: { x: 960, y: 630, width: 340, height: 220 },
+  4: { x: 1240, y: 560, width: 220, height: 210 }
+};
 
 const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;
 
@@ -97,6 +104,7 @@ const HouseRoute = () => {
     incubatrice: false,
     porta: false
   });
+  const [hoveredObjectId, setHoveredObjectId] = useState<number | null>(null);
 
   const visibleObjects = useMemo(() => {
     if (!save) return [];
@@ -129,7 +137,7 @@ const HouseRoute = () => {
         return;
       }
       if (areaId === "bacheca") {
-        setActivePanel("bacheca");
+        navigate("/medals");
         return;
       }
       if (areaId === "incubatrice") {
@@ -186,9 +194,87 @@ const HouseRoute = () => {
           <div className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-[32px] shadow-lg">
             <P5Scene config={sceneConfig} className="w-full" />
 
+            <div className="absolute inset-0">
+              {visibleObjects.map((object) => {
+                const layout = objectLayouts[object.id];
+                if (!layout) return null;
+                const left = toPercent(layout.x, HOUSE_IMAGE_WIDTH);
+                const top = toPercent(layout.y, HOUSE_IMAGE_HEIGHT);
+                const width = toPercent(layout.width, HOUSE_IMAGE_WIDTH);
+                const height = toPercent(layout.height, HOUSE_IMAGE_HEIGHT);
+                const progress = object.piecesNeeded
+                  ? Math.round((object.piecesOwned / object.piecesNeeded) * 100)
+                  : 0;
+                const unlocked = object.unlocked;
+                const isHovered = hoveredObjectId === object.id;
+                const isSelected = selectedId === object.id;
+
+                return (
+                  <div
+                    key={object.id}
+                    className="absolute"
+                    style={{
+                      left,
+                      top,
+                      width,
+                      height,
+                      transform: "translate(-50%, -50%)"
+                    }}
+                  >
+                    <button
+                      type="button"
+                      disabled={activePanel !== "none"}
+                      onClick={() => setSelectedId(object.id)}
+                      onMouseEnter={() => setHoveredObjectId(object.id)}
+                      onMouseLeave={() =>
+                        setHoveredObjectId((current) => (current === object.id ? null : current))
+                      }
+                      className={`relative flex h-full w-full flex-col justify-end rounded-3xl border px-4 py-3 text-left transition ${
+                        unlocked
+                          ? "border-emerald-400/60 bg-emerald-500/10"
+                          : "border-dashed border-white/15 bg-white/5"
+                      } ${
+                        isSelected ? "ring-2 ring-emerald-300" : ""
+                      } disabled:cursor-not-allowed disabled:opacity-60`}
+                    >
+                      <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white/80">
+                        {object.name}
+                      </span>
+                      <span className="mt-1 text-xs uppercase text-white/50">
+                        {object.piecesOwned}/{object.piecesNeeded} pezzi
+                      </span>
+                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded bg-white/10">
+                        <div
+                          className={`h-full ${unlocked ? "bg-emerald-400" : "bg-white/40"}`}
+                          style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+                        />
+                      </div>
+                    </button>
+                    {isHovered ? (
+                      <div className="pointer-events-none absolute left-1/2 top-0 flex w-[220px] -translate-x-1/2 -translate-y-full flex-col gap-1 rounded-2xl border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 shadow-xl">
+                        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+                          {object.name}
+                        </span>
+                        <span>
+                          Pezzi posseduti: {object.piecesOwned}
+                        </span>
+                        <span>
+                          Pezzi mancanti: {Math.max(0, object.piecesNeeded - object.piecesOwned)}
+                        </span>
+                        {object.unlocked && object.turnsToNextBonus !== null ? (
+                          <span>Bonus ogni {object.bonus.turnsCooldown} turni</span>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+
             <div className="pointer-events-none absolute inset-0">
               {houseAreas.map((area) => {
                 const hovered = hoveredAreas[area.id];
+                const highlight = area.id === "bacheca" && save?.medals.highlighted;
                 return (
                   <div
                     key={`label-${area.id}`}
@@ -198,19 +284,86 @@ const HouseRoute = () => {
                       top: toPercent(area.labelPosition.y, HOUSE_IMAGE_HEIGHT)
                     }}
                   >
-                    <span
-                      className={`rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.35em] ${
-                        hovered
-                          ? "border-accent bg-black/70 text-accent"
-                          : "border-white/30 bg-black/60 text-white"
-                      }`}
-                    >
-                      {area.label}
-                    </span>
-                  </div>
-                );
+                      <span
+                        className={`rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.35em] ${
+                          highlight
+                            ? "border-yellow-300 bg-yellow-400/20 text-yellow-200"
+                            : hovered
+                              ? "border-accent bg-black/70 text-accent"
+                              : "border-white/30 bg-black/60 text-white"
+                        }`}
+                      >
+                        {area.label}
+                      </span>
+                    </div>
+                  );
               })}
             </div>
+          </div>
+
+          <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start">
+            {selectedObject && activePanel === "none" ? (
+              <section className="flex-1 rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-white/80 shadow-lg">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-lg font-semibold text-white">{selectedObject.name}</h3>
+                    <p className="text-xs uppercase text-white/50">
+                      {selectedObject.unlocked ? "Completato" : "Incompleto"}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedId(null)}
+                    className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.35em] text-white/60 transition hover:border-white/40 hover:text-white"
+                  >
+                    Chiudi
+                  </button>
+                </div>
+
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
+                    <p className="text-xs uppercase text-white/50">Pezzi raccolti</p>
+                    <p className="mt-1 text-2xl font-semibold text-white">
+                      {selectedObject.piecesOwned}/{selectedObject.piecesNeeded}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
+                    <p className="text-xs uppercase text-white/50">Bonus</p>
+                    {selectedObject.unlocked ? (
+                      <p className="mt-1 text-white/80">
+                        {Array.isArray(selectedObject.bonus.amount)
+                          ? selectedObject.bonus.amount.join(", ")
+                          : selectedObject.bonus.amount}
+                      </p>
+                    ) : (
+                      <p className="mt-1 text-white/60">
+                        Mancano {Math.max(0, selectedObject.piecesNeeded - selectedObject.piecesOwned)} pezzi da trovare.
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {selectedObject.unlocked ? (
+                  <p className="mt-3 text-xs uppercase text-white/60">
+                    Turni al prossimo bonus: {selectedObject.turnsToNextBonus ?? "-"}
+                  </p>
+                ) : (
+                  <p className="mt-3 text-xs uppercase text-white/60">
+                    Completa l&apos;arredo per sbloccare i bonus periodici.
+                  </p>
+                )}
+              </section>
+            ) : null}
+
+            <aside className="w-full lg:max-w-sm">
+              {save ? (
+                <InfoPanel
+                  doorsOpened={save.progress.doorsOpened}
+                  turn={save.progress.turn}
+                  blockedDoors={save.progress.blockedDoors}
+                />
+              ) : null}
+            </aside>
           </div>
         </main>
       </div>

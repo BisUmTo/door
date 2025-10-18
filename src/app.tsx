@@ -9,6 +9,9 @@ import DoorRoute from "./routes/door";
 import HouseRoute from "./routes/house";
 import ChestRoute from "./routes/chest";
 import CreditsRoute from "./routes/credits";
+import InventoryRoute from "./routes/inventory";
+import MedalsRoute from "./routes/medals";
+import DoorTypesRoute from "./routes/doorTypes";
 
 const App = () => {
   const { status, bootstrap, onlineStatus, setOnlineStatus } = useGameStore((state) => ({
@@ -89,6 +92,9 @@ const App = () => {
           <Route path="/house" element={<HouseRoute />} />
           <Route path="/chest" element={<ChestRoute />} />
           <Route path="/credits" element={<CreditsRoute />} />
+          <Route path="/inventory" element={<InventoryRoute />} />
+          <Route path="/medals" element={<MedalsRoute />} />
+          <Route path="/door-types" element={<DoorTypesRoute />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

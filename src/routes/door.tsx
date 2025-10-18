@@ -93,6 +93,7 @@ const DoorRoute = () => {
           fallenAnimals={pendingReward.fallenAnimals}
           animalConfigs={animalConfigs}
           weaponConfigs={weaponConfigs}
+          medalUnlocked={pendingReward.medalUnlocked ?? null}
           onContinue={handleVictoryContinue}
         />
       ) : null}

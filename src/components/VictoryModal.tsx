@@ -1,4 +1,6 @@
-import type { AnimalConfig, LootEntry, WeaponConfig, WeaponName } from "@/game/types";
+import type { AnimalConfig, DoorType, LootEntry, WeaponConfig, WeaponName } from "@/game/types";
+import { doorLabels } from "@/components/Door";
+import { isMedalResource, medalResourceToDoorType } from "@/game/medals";
 
 interface VictoryModalProps {
   open: boolean;
@@ -7,6 +9,7 @@ interface VictoryModalProps {
   fallenAnimals: { configId: number }[];
   animalConfigs: AnimalConfig[];
   weaponConfigs: WeaponConfig[];
+  medalUnlocked?: DoorType | null;
   onContinue: () => void;
 }
 
@@ -23,9 +26,31 @@ export const VictoryModal = ({
   fallenAnimals,
   animalConfigs,
   weaponConfigs,
+  medalUnlocked,
   onContinue
 }: VictoryModalProps) => {
   if (!open) return null;
+
+  const renderLoot = () => {
+    if (!loot) {
+      return <p className="mt-2 text-sm text-white/70">Nessun bottino.</p>;
+    }
+
+    if (isMedalResource(loot.type)) {
+      const doorType = medalResourceToDoorType(loot.type);
+      return (
+        <p className="mt-2 text-lg font-semibold text-emerald-200">
+          {`Medaglietta ${doorLabels[doorType]}`}
+        </p>
+      );
+    }
+
+    return (
+      <p className="mt-2 text-lg font-semibold text-emerald-200">
+        +{loot.qty} {loot.type}
+      </p>
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
@@ -68,14 +93,19 @@ export const VictoryModal = ({
 
         <section className="mt-4 rounded-xl border border-emerald-400/30 bg-emerald-900/40 p-4 text-center">
           <h3 className="text-sm uppercase text-emerald-200/70">Ricompensa</h3>
-          {loot ? (
-            <p className="mt-2 text-lg font-semibold text-emerald-200">
-              +{loot.qty} {loot.type}
-            </p>
-          ) : (
-            <p className="mt-2 text-sm text-white/70">Nessun bottino.</p>
-          )}
+          {renderLoot()}
         </section>
+
+        {medalUnlocked ? (
+          <section className="mt-3 rounded-xl border border-yellow-400/40 bg-yellow-500/10 p-4 text-center text-yellow-200">
+            <h4 className="text-xs uppercase tracking-[0.35em] text-yellow-200/80">
+              Nuova medaglietta sbloccata!
+            </h4>
+            <p className="mt-2 text-lg font-semibold">
+              {doorLabels[medalUnlocked]}
+            </p>
+          </section>
+        ) : null}
 
         <button
           type="button"

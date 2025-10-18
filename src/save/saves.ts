@@ -1,5 +1,12 @@
 import { ALL_DOOR_TYPES } from "@/game/pool";
-import { AmmoKind, SaveGame, WeaponState } from "@/game/types";
+import {
+  AmmoKind,
+  ChestRarity,
+  DoorType,
+  MedalStatus,
+  SaveGame,
+  WeaponState
+} from "@/game/types";
 import { CURRENT_VERSION, STORAGE_KEYS, buildSaveKey } from "./keys";
 
 export interface SaveSlotMeta {
@@ -52,6 +59,26 @@ const defaultAmmoState = (): Record<AmmoKind, number> => ({
   grenades: 0
 });
 
+const CHEST_RARITIES: ChestRarity[] = ["common", "uncommon", "rare", "epic", "legendary"];
+
+const defaultChestInventory = (): Record<ChestRarity, number> => {
+  return CHEST_RARITIES.reduce<Record<ChestRarity, number>>((acc, rarity) => {
+    acc[rarity] = 0;
+    return acc;
+  }, {} as Record<ChestRarity, number>);
+};
+
+const defaultMedalEntries = (): Record<DoorType, MedalStatus> => {
+  return ALL_DOOR_TYPES.reduce<Record<DoorType, MedalStatus>>((acc, type) => {
+    acc[type] = {
+      unlocked: false,
+      unlockedAt: null,
+      highlightUntil: null
+    };
+    return acc;
+  }, {} as Record<DoorType, MedalStatus>);
+};
+
 const nowIso = () => new Date().toISOString();
 
 export const createSaveTemplate = (
@@ -91,7 +118,8 @@ export const createSaveTemplate = (
       objects: houseObjects
     },
     chests: {
-      unlockedHistory: []
+      unlockedHistory: [],
+      inventory: defaultChestInventory()
     },
     doorHistory: [],
     battleState: {
@@ -100,6 +128,11 @@ export const createSaveTemplate = (
       usedWeapons: [],
       fallenAnimals: [],
       weaponsLocked: false
+    },
+    medals: {
+      entries: defaultMedalEntries(),
+      dropRate: 0.002,
+      highlighted: null
     }
   };
 };
