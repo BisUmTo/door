@@ -1,81 +1,102 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import DoorHitbox from "@/components/DoorHitbox";
+import P5Scene, { type SceneConfig, type SceneElementConfig } from "@/components/P5Scene";
 import Tooltip from "@/components/Tooltip";
-import { loadHitbox, type HitboxDefinition } from "@/data/loaders";
 import { useGameStore } from "@/state/store";
 
 const HOUSE_IMAGE_WIDTH = 1785;
 const HOUSE_IMAGE_HEIGHT = 1004;
 
-const houseAreas = [
+type HouseAreaId = "bacheca" | "incubatrice" | "porta";
+
+interface HouseAreaConfig {
+  id: HouseAreaId;
+  label: string;
+  hitboxPath: string;
+  image: string;
+  selectedImage: string;
+  layout: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+  labelPosition: {
+    x: number;
+    y: number;
+  };
+  zIndex: number;
+}
+
+const houseAreas: HouseAreaConfig[] = [
   {
     id: "bacheca",
-    label: "",
+    label: "Bacheca",
     hitboxPath: "/assets/casa/pulsanti/bacheca.json",
-    imageSrc: "/assets/casa/pulsanti/bacheca.png",
-    selectedImageSrc: "/assets/casa/pulsanti/bacheca_selected.png",
-    x: 0,
-    y: 0,
-    width: HOUSE_IMAGE_WIDTH,
-    height: HOUSE_IMAGE_WIDTH,
+    image: "/assets/casa/pulsanti/bacheca.png",
+    selectedImage: "/assets/casa/pulsanti/bacheca_selected.png",
+    layout: {
+      x: 0,
+      y: 0,
+      width: HOUSE_IMAGE_WIDTH,
+      height: HOUSE_IMAGE_HEIGHT
+    },
+    labelPosition: {
+      x: 342,
+      y: 520
+    },
+    zIndex: 10
   },
   {
     id: "incubatrice",
-    label: "",
+    label: "Incubatrice",
     hitboxPath: "/assets/casa/pulsanti/incubatrice.json",
-    imageSrc: "/assets/casa/pulsanti/incubatrice.png",
-    selectedImageSrc: "/assets/casa/pulsanti/incubatrice_selected.png",
-    x: 0,
-    y: 0,
-    width: HOUSE_IMAGE_WIDTH,
-    height: HOUSE_IMAGE_WIDTH
+    image: "/assets/casa/pulsanti/incubatrice.png",
+    selectedImage: "/assets/casa/pulsanti/incubatrice_selected.png",
+    layout: {
+      x: 0,
+      y: 0,
+      width: HOUSE_IMAGE_WIDTH,
+      height: HOUSE_IMAGE_HEIGHT
+    },
+    labelPosition: {
+      x: 389,
+      y: 650
+    },
+    zIndex: 12
   },
   {
     id: "porta",
-    label: "",
+    label: "Porta",
     hitboxPath: "/assets/casa/pulsanti/porta.json",
-    imageSrc: "/assets/casa/pulsanti/porta.png",
-    selectedImageSrc: "/assets/casa/pulsanti/porta_selected.png",
-    x: 0,
-    y: 0,
-    width: HOUSE_IMAGE_WIDTH,
-    height: HOUSE_IMAGE_WIDTH
+    image: "/assets/casa/pulsanti/porta.png",
+    selectedImage: "/assets/casa/pulsanti/porta_selected.png",
+    layout: {
+      x: 0,
+      y: 0,
+      width: HOUSE_IMAGE_WIDTH,
+      height: HOUSE_IMAGE_HEIGHT
+    },
+    labelPosition: {
+      x: 925,
+      y: 820
+    },
+    zIndex: 8
   }
-] as const;
+];
 
-const isPointInPolygon = (points: [number, number][], x: number, y: number) => {
-  let inside = false;
-  for (let i = 0, j = points.length - 1; i < points.length; j = i, i += 1) {
-    const xi = points[i][0];
-    const yi = points[i][1];
-    const xj = points[j][0];
-    const yj = points[j][1];
-    const intersect =
-      yi > y !== yj > y &&
-      x < ((xj - xi) * (y - yi)) / (yj - yi + Number.EPSILON) + xi;
-    if (intersect) inside = !inside;
-  }
-  return inside;
-};
-
-const isPointWithinHitbox = (
-  definition: HitboxDefinition | null | undefined,
-  x: number,
-  y: number
-) => {
-  if (!definition || !definition.polygons?.length) return false;
-  return definition.polygons.some((polygon) => isPointInPolygon(polygon.points, x, y));
-};
+const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;
 
 const HouseRoute = () => {
   const navigate = useNavigate();
   const save = useGameStore((state) => state.save);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [activePanel, setActivePanel] = useState<"none" | "bacheca" | "incubatrice">("none");
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const [hoverPoint, setHoverPoint] = useState<{ x: number; y: number } | null>(null);
-  const [areaHitboxes, setAreaHitboxes] = useState<Record<string, HitboxDefinition | null>>({});
+  const [hoveredAreas, setHoveredAreas] = useState<Record<HouseAreaId, boolean>>({
+    bacheca: false,
+    incubatrice: false,
+    porta: false
+  });
 
   const visibleObjects = useMemo(() => {
     if (!save) return [];
@@ -84,97 +105,69 @@ const HouseRoute = () => {
 
   const selectedObject = visibleObjects.find((object) => object.id === selectedId) ?? null;
 
-  useEffect(() => {
-    let active = true;
-    const loadHitboxes = async () => {
-      const entries = await Promise.all(
-        houseAreas.map(async (area) => ({
-          id: area.id,
-          definition: await loadHitbox(area.hitboxPath)
-        }))
-      );
-      if (!active) return;
-      setAreaHitboxes(
-        entries.reduce<Record<string, HitboxDefinition | null>>((acc, entry) => {
-          acc[entry.id] = entry.definition;
-          return acc;
-        }, {})
-      );
-    };
-    void loadHitboxes();
-    return () => {
-      active = false;
-    };
+  const handleHoverChange = useCallback((areaId: HouseAreaId, hovered: boolean) => {
+    setHoveredAreas((previous) => {
+      if ((previous[areaId] ?? false) === hovered) {
+        return previous;
+      }
+      return {
+        ...previous,
+        [areaId]: hovered
+      };
+    });
   }, []);
 
-  const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;
-
-  const closePanel = () => {
+  const closePanel = useCallback(() => {
     setActivePanel("none");
     setSelectedId(null);
-  };
+  }, []);
 
-  const handleAreaClick = (areaId: (typeof houseAreas)[number]["id"]) => {
-    if (areaId === "porta") {
-      navigate("/lobby");
-      return;
-    }
-    if (areaId === "bacheca") {
-      setActivePanel("bacheca");
-      return;
-    }
-    if (areaId === "incubatrice") {
-      setActivePanel("incubatrice");
-    }
-  };
+  const handleAreaClick = useCallback(
+    (areaId: HouseAreaId) => {
+      if (areaId === "porta") {
+        navigate("/lobby");
+        return;
+      }
+      if (areaId === "bacheca") {
+        setActivePanel("bacheca");
+        return;
+      }
+      if (areaId === "incubatrice") {
+        setActivePanel("incubatrice");
+      }
+    },
+    [navigate]
+  );
 
   useEffect(() => {
     if (activePanel !== "none") {
-      setHoverPoint(null);
+      setHoveredAreas({
+        bacheca: false,
+        incubatrice: false,
+        porta: false
+      });
     }
   }, [activePanel]);
 
-  const hoverStates = useMemo(() => {
-    if (!hoverPoint) return {};
-    return houseAreas.reduce<Record<string, boolean>>((acc, area) => {
-      const definition = areaHitboxes[area.id];
-      if (isPointWithinHitbox(definition, hoverPoint.x, hoverPoint.y)) {
-        acc[area.id] = true;
-        return acc;
-      }
-      const withinBounds =
-        hoverPoint.x >= area.x &&
-        hoverPoint.x <= area.x + area.width &&
-        hoverPoint.y >= area.y &&
-        hoverPoint.y <= area.y + area.height;
-      if (withinBounds) {
-        acc[area.id] = true;
-      }
-      return acc;
-    }, {});
-  }, [hoverPoint, areaHitboxes]);
+  const sceneConfig = useMemo<SceneConfig>(() => {
+    const elements: SceneElementConfig[] = houseAreas.map((area) => ({
+      id: area.id,
+      image: area.image,
+      selectedImage: area.selectedImage,
+      hitboxPath: area.hitboxPath,
+      layout: area.layout,
+      zIndex: area.zIndex,
+      onClick: () => handleAreaClick(area.id),
+      onHoverChange: (hovered) => handleHoverChange(area.id, hovered)
+    }));
 
-  const handleSceneMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    const bounds = canvasRef.current?.getBoundingClientRect();
-    if (!bounds || !bounds.width || !bounds.height) {
-      setHoverPoint(null);
-      return;
-    }
-    const ratioX = (event.clientX - bounds.left) / bounds.width;
-    const ratioY = (event.clientY - bounds.top) / bounds.height;
-    if (ratioX < 0 || ratioX > 1 || ratioY < 0 || ratioY > 1) {
-      setHoverPoint(null);
-      return;
-    }
-    setHoverPoint({
-      x: ratioX * HOUSE_IMAGE_WIDTH,
-      y: ratioY * HOUSE_IMAGE_HEIGHT
-    });
-  };
-
-  const handleSceneMouseLeave = () => {
-    setHoverPoint(null);
-  };
+    return {
+      baseWidth: HOUSE_IMAGE_WIDTH,
+      baseHeight: HOUSE_IMAGE_HEIGHT,
+      backgroundImage: "/assets/casa/sfondo_casa.png",
+      elements
+    };
+  }, [handleAreaClick, handleHoverChange]);
 
   return (
     <div className="relative min-h-screen bg-[#080910] text-white">
@@ -183,61 +176,41 @@ const HouseRoute = () => {
           <span>Casa</span>
           <Link
             to="/lobby"
-            className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-accent hover:text-accent"
           >
             Lobby
           </Link>
         </header>
 
         <main className="mt-8 flex-1">
-          <div
-            ref={canvasRef}
-            className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-[32px] shadow-lg"
-            style={{ aspectRatio: `${HOUSE_IMAGE_WIDTH} / ${HOUSE_IMAGE_HEIGHT}` }}
-            onMouseMove={handleSceneMouseMove}
-            onMouseLeave={handleSceneMouseLeave}
-          >
-            <img
-              src="/assets/casa/sfondo_casa.png"
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+          <div className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-[32px] shadow-lg">
+            <P5Scene config={sceneConfig} className="w-full" />
 
-            {houseAreas.map((area) => {
-              const hoverOverride =
-                hoverPoint !== null ? hoverStates[area.id] ?? false : undefined;
-              return (
-                <div
-                  key={area.id}
-                  className="absolute"
-                  style={{
-                    left: toPercent(area.x, HOUSE_IMAGE_WIDTH),
-                    top: toPercent(area.y-389, HOUSE_IMAGE_HEIGHT),
-                    width: toPercent(area.width, HOUSE_IMAGE_WIDTH),
-                    height: toPercent(area.height, HOUSE_IMAGE_HEIGHT)
-                  }}
-                >
-                  <DoorHitbox
-                    hitboxPath={area.hitboxPath}
-                    width="100%"
-                    height="100%"
-                    referenceWidth={area.width}
-                    referenceHeight={area.height}
-                    referenceOffsetX={area.x}
-                    referenceOffsetY={area.y}
-                    imageSrc={area.imageSrc}
-                    selectedImageSrc={area.selectedImageSrc}
-                    hoverOverride={hoverOverride}
-                    onClick={() => handleAreaClick(area.id)}
-                    childrenWrapperClassName="flex items-end justify-center pb-4"
+            <div className="pointer-events-none absolute inset-0">
+              {houseAreas.map((area) => {
+                const hovered = hoveredAreas[area.id];
+                return (
+                  <div
+                    key={`label-${area.id}`}
+                    className="absolute -translate-x-1/2 -translate-y-1/2"
+                    style={{
+                      left: toPercent(area.labelPosition.x, HOUSE_IMAGE_WIDTH),
+                      top: toPercent(area.labelPosition.y, HOUSE_IMAGE_HEIGHT)
+                    }}
                   >
-                    <span className="rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] uppercase tracking-[0.35em]">
+                    <span
+                      className={`rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.35em] ${
+                        hovered
+                          ? "border-accent bg-black/70 text-accent"
+                          : "border-white/30 bg-black/60 text-white"
+                      }`}
+                    >
                       {area.label}
                     </span>
-                  </DoorHitbox>
-                </div>
-              );
-            })}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </main>
       </div>
@@ -266,28 +239,22 @@ const HouseRoute = () => {
             ) : (
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {visibleObjects.map((object) => (
-                  <DoorHitbox
+                  <button
                     key={object.id}
-                    hitboxPath="/assets/house/object.json"
-                    width={200}
-                    height={120}
-                    referenceWidth={200}
-                    referenceHeight={120}
+                    type="button"
                     onClick={() => setSelectedId(object.id)}
-                    className="rounded-3xl border border-white/10 bg-white/5 transition hover:border-accent hover:text-accent"
+                    className="rounded-3xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-accent hover:text-accent"
                   >
-                    <div className="flex h-full w-full flex-col justify-between gap-2 p-4 text-left">
-                      <span className="text-lg font-semibold text-white">{object.name}</span>
-                      <div className="text-xs uppercase text-white/60">
-                        <span className="block">
-                          {object.piecesOwned}/{object.piecesNeeded} pezzi
-                        </span>
-                        <span className="block">
-                          {object.unlocked ? "Completato" : "Incompleto"}
-                        </span>
-                      </div>
+                    <span className="text-lg font-semibold text-white">{object.name}</span>
+                    <div className="mt-2 text-xs uppercase text-white/60">
+                      <span className="block">
+                        {object.piecesOwned}/{object.piecesNeeded} pezzi
+                      </span>
+                      <span className="block">
+                        {object.unlocked ? "Completato" : "Incompleto"}
+                      </span>
                     </div>
-                  </DoorHitbox>
+                  </button>
                 ))}
               </div>
             )}

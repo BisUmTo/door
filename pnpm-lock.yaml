@@ -20,6 +20,9 @@ importers:
       immer:
         specifier: ^10.1.1
         version: 10.1.3
+      p5:
+        specifier: ^1.11.10
+        version: 1.11.10
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -1074,6 +1077,9 @@ packages:
   p-limit@5.0.0:
     resolution: {integrity: sha512-/Eaoq+QyLSiXQ4lyYV23f14mZRQcXnxfHrN0vCai+ak9G0pp9iEQukIIZq5NccEvwRB8PUnZT0KsOoDCINS1qQ==}
     engines: {node: '>=18'}
+
+  p5@1.11.10:
+    resolution: {integrity: sha512-lFe18Af+SUxyZyPkgza0DYhIV+Ymr1oD4w6Y0Bjhbi5TCaIktRys8xu847eH7epL/GZ1jATFekqW71/v4PvNGA==}
 
   package-json-from-dist@1.0.1:
     resolution: {integrity: sha512-UEZIS3/by4OC8vL3P2dTXRETpebLI2NiI5vIrjaD/5UtrkFX/tNbwjTSRAGC/+7CAo2pIcBaRgWmcBBHcsaCIw==}
@@ -2440,6 +2446,8 @@ snapshots:
   p-limit@5.0.0:
     dependencies:
       yocto-queue: 1.2.1
+
+  p5@1.11.10: {}
 
   package-json-from-dist@1.0.1: {}
 

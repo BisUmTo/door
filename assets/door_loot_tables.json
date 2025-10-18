@@ -1,111 +1,111 @@
 {
   "loottables": [
     {
-      "porta": "\u26aa Bianca",
+      "porta": "Bianca",
       "ricompense": [
-        { "loot": "monete", "peso": 40, "quantita": "4-8" },
-        { "loot": "cibo", "peso": 35, "quantita": "1-3" },
-        { "loot": "medaglietta bianca", "peso": 0.009, "quantita": "1" },
-        { "loot": null, "peso": 25 }
+        { "loot": "monete", "peso": 3, "quantita": "3-7" },
+        { "loot": "cibo", "peso": 1, "quantita": "1-3" },
+        { "loot": null, "peso": 2 },
+        { "loot": "medaglietta bianca", "peso": 0.009, "quantita": "1" }
       ]
     },
     {
-      "porta": "\u26ab Nera",
+      "porta": "Nera",
       "ricompense": [
-        { "loot": "monete", "peso": 30, "quantita": "6-12" },
-        { "loot": "armatura", "peso": 20, "quantita": "1" },
-        { "loot": "medaglietta nera", "peso": 0.0015, "quantita": "1" },
-        { "loot": "proiettili", "peso": 50, "quantita": "4-8" }
+        { "loot": null, "peso": 1 },
+        { "loot": "medaglietta nera", "peso": 0.0015, "quantita": "1" }
       ]
     },
     {
-      "porta": "\ud83d\udd34 Rossa",
+      "porta": "Rossa",
       "ricompense": [
-        { "loot": "granate", "peso": 25, "quantita": "1-2" },
-        { "loot": "monete", "peso": 45, "quantita": "8-16" },
-        { "loot": "medaglietta rossa", "peso": 0.039, "quantita": "1" },
-        { "loot": "cibo", "peso": 30, "quantita": "2-4" }
+        { "loot": "proiettili", "peso": 10, "quantita": "1-2" },
+        { "loot": "granata", "peso": 1, "quantita": "1" },
+        { "loot": null, "peso": 15 },
+        { "loot": "medaglietta rossa", "peso": 0.039, "quantita": "1" }
       ]
     },
     {
-      "porta": "\ud83d\udfe0 Arancione",
+      "porta": "Arancione",
       "ricompense": [
-        { "loot": "cibo", "peso": 45, "quantita": "2-5" },
-        { "loot": "monete", "peso": 35, "quantita": "4-10" },
-        { "loot": "medaglietta arancione", "peso": 0.0105, "quantita": "1" },
-        { "loot": "granata", "peso": 20, "quantita": "1" }
+        { "loot": "armatura", "peso": 1, "quantita": "1" },
+        { "loot": "granata", "peso": 1, "quantita": "1" },
+        { "loot": null, "peso": 5 },
+        { "loot": "medaglietta arancione", "peso": 0.0105, "quantita": "1" }
       ]
     },
     {
-      "porta": "\ud83d\udfe1 Gialla",
+      "porta": "Gialla",
       "ricompense": [
-        { "loot": "monete", "peso": 55, "quantita": "6-14" },
-        { "loot": "proiettili", "peso": 25, "quantita": "6-10" },
-        { "loot": "medaglietta gialla", "peso": 0.075, "quantita": "1" },
-        { "loot": null, "peso": 20 }
+        { "loot": "monete", "peso": 2, "quantita": "5-25" },
+        { "loot": null, "peso": 3 },
+        { "loot": "medaglietta gialla", "peso": 0.075 }
       ]
     },
     {
-      "porta": "\ud83d\udc9c Rosa/Viola",
+      "porta": "Rosa",
       "ricompense": [
-        { "loot": "monete", "peso": 35, "quantita": "4-10" },
-        { "loot": "frecce", "peso": 35, "quantita": "4-8" },
-        { "loot": "medaglietta rosa", "peso": 0.045, "quantita": "1" },
-        { "loot": "speciale", "peso": 30, "quantita": "1" }
+        { "loot": "cibo", "peso": 1, "quantita": "3-7" },
+        { "loot": "monete", "peso": 1, "quantita": "3-7" },
+        { "loot": null, "peso": 1 },
+        { "loot": "medaglietta rosa", "peso": 0.045, "quantita": "1" }
       ]
     },
     {
-      "porta": "\ud83d\udd35 Blu",
+      "porta": "Blu",
       "ricompense": [
-        { "loot": "proiettili", "peso": 45, "quantita": "6-12" },
-        { "loot": "monete", "peso": 30, "quantita": "6-12" },
-        { "loot": "medaglietta blu", "peso": 0.0135, "quantita": "1" },
-        { "loot": "granata", "peso": 25, "quantita": "1" }
+        { "loot": "cartucce", "peso": 5, "quantita": "1-3" },
+        { "loot": "granata", "peso": 1, "quantita": "1" },
+        { "loot": null, "peso": 3 },
+        { "loot": "medaglietta blu", "peso": 0.0135, "quantita": "1" }
       ]
     },
     {
-      "porta": "\ud83d\udfe6 Azzurra",
+      "porta": "Azzurra",
       "ricompense": [
-        { "loot": "cibo", "peso": 40, "quantita": "2-5" },
-        { "loot": "dardi", "peso": 35, "quantita": "3-6" },
-        { "loot": "medaglietta azzurra", "peso": 0.0045, "quantita": "1" },
-        { "loot": "monete", "peso": 25, "quantita": "4-8" }
+        { "loot": "frecce", "peso": 1, "quantita": "1-4" },
+        { "loot": "dardi", "peso": 1, "quantita": "1-4" },
+        { "loot": null, "peso": 1 },
+        { "loot": "medaglietta azzurra", "peso": 0.0045, "quantita": "1" }
       ]
     },
     {
-      "porta": "\ud83d\udfe4 Marrone",
+      "porta": "Marrone",
       "ricompense": [
-        { "loot": "cibo", "peso": 45, "quantita": "3-6" },
-        { "loot": "armatura", "peso": 25, "quantita": "1" },
-        { "loot": "medaglietta marrone", "peso": 0.006, "quantita": "1" },
-        { "loot": "monete", "peso": 30, "quantita": "5-11" }
+        { "loot": "armatura", "peso": 1, "quantita": "1" },
+        { "loot": null, "peso": 3 },
+        { "loot": "medaglietta marrone", "peso": 0.006, "quantita": "1" }
       ]
     },
     {
-      "porta": "\ud83d\udf49 Lime",
+      "porta": "Lime",
       "ricompense": [
-        { "loot": "frecce", "peso": 45, "quantita": "4-8" },
-        { "loot": "monete", "peso": 35, "quantita": "5-12" },
-        { "loot": "medaglietta lime", "peso": 0.0045, "quantita": "1" },
-        { "loot": "cibo", "peso": 20, "quantita": "2-4" }
+        { "loot": "cibo", "peso": 1, "quantita": "20" },
+        { "loot": null, "peso": 2 },
+        { "loot": "medaglietta lime", "peso": 0.0045, "quantita": "1" }
       ]
     },
     {
-      "porta": "\ud83d\udfe9 Verde Scuro",
+      "porta": "Verde Scuro",
       "ricompense": [
-        { "loot": "monete", "peso": 40, "quantita": "5-12" },
-        { "loot": "dardi", "peso": 30, "quantita": "4-7" },
-        { "loot": "medaglietta verde scuro", "peso": 0.015, "quantita": "1" },
-        { "loot": "cibo", "peso": 30, "quantita": "3-6" }
+        { "loot": "dardi", "peso": 4, "quantita": "1-3" },
+        { "loot": "cibo", "peso": 1, "quantita": "3-7" },
+        { "loot": null, "peso": 5 },
+        { "loot": "medaglietta verde scuro", "peso": 0.015, "quantita": "1" }
       ]
     },
     {
-      "porta": "\u2699\ufe0f Neutra",
+      "porta": "Neutra",
       "ricompense": [
-        { "loot": "monete", "peso": 40, "quantita": "4-10" },
-        { "loot": "cibo", "peso": 30, "quantita": "2-5" },
-        { "loot": "medaglietta neutra", "peso": 0.067, "quantita": "1" },
-        { "loot": "speciale", "peso": 30, "quantita": "1" }
+        { "loot": "monete", "peso": 1, "quantita": "1-3" },
+        { "loot": "cibo", "peso": 5, "quantita": "1-3" },
+        { "loot": "dardi", "peso": 5, "quantita": "1-3" },
+        { "loot": "frecce", "peso": 4, "quantita": "1-3" },
+        { "loot": "proiettili", "peso": 3, "quantita": "1-2" },
+        { "loot": "cartucce", "peso": 1, "quantita": "1" },
+        { "loot": "granate", "peso": 1, "quantita": "1" },
+        { "loot": null, "peso": 25 },
+        { "loot": "medaglietta neutra", "peso": 0.067, "quantita": "1" }
       ]
     }
   ]
