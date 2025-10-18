@@ -57,7 +57,12 @@ class Polygon:
 def load_mask(image_path: Path, alpha_threshold: int) -> np.ndarray:
     image = Image.open(image_path).convert("RGBA")
     alpha = np.array(image, dtype=np.uint8)[..., 3]
-    return alpha > alpha_threshold
+    mask = alpha > alpha_threshold
+
+    # Add 1-pixel transparent border around the image so that figures
+    # touching the edge are properly enclosed
+    padded_mask = np.pad(mask, pad_width=1, mode='constant', constant_values=False)
+    return padded_mask
 
 
 def iter_edges(mask: np.ndarray) -> Iterator[Edge]:
@@ -149,22 +154,28 @@ def find_png_files(paths: Sequence[str]) -> List[Path]:
     return sorted(files)
 
 
-def polygon_to_json(polygon: Polygon) -> dict:
+def polygon_to_json(polygon: Polygon, offset: int = 0) -> dict:
     return {
         "type": polygon.kind,
-        "points": [[int(x), int(y)] for x, y in polygon.points],
+        "points": [[int(x) - offset, int(y) - offset] for x, y in polygon.points],
     }
 
 
 def process_image(image_path: Path, alpha_threshold: int) -> dict:
     mask = load_mask(image_path, alpha_threshold)
     polygons = edges_to_polygons(iter_edges(mask))
+
+    # Mask has 1-pixel padding, so actual image dimensions are reduced by 2
+    # and polygon coordinates need to be offset by -1
+    actual_width = int(mask.shape[1]) - 2
+    actual_height = int(mask.shape[0]) - 2
+
     return {
         "image": image_path.name,
-        "width": int(mask.shape[1]),
-        "height": int(mask.shape[0]),
+        "width": actual_width,
+        "height": actual_height,
         "alpha_threshold": alpha_threshold,
-        "polygons": [polygon_to_json(p) for p in polygons],
+        "polygons": [polygon_to_json(p, offset=1) for p in polygons],
     }
 
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import P5Scene, { type SceneConfig, type SceneElementConfig } from "@/components/P5Scene";
 import InfoPanel from "@/components/InfoPanel";
@@ -202,6 +202,10 @@ const LobbyRoute = () => {
     }
   }, [save, drawLobbyDoors]);
 
+  const doorsRef = useRef(doors);
+  doorsRef.current = doors;
+
+  // Use refs to avoid recreating these callbacks
   const handleHoverChange = useCallback((areaId: LobbyAreaId, hovered: boolean) => {
     setHoveredAreas((previous) => {
       if ((previous[areaId] ?? false) === hovered) {
@@ -214,22 +218,27 @@ const LobbyRoute = () => {
     });
   }, []);
 
-  const handleAreaClick = useCallback(
-    (area: LobbyAreaConfig, doorIndex?: number) => {
+  const handleAreaClickRef = useRef<(area: LobbyAreaConfig, doorIndex?: number) => void>();
+
+  useEffect(() => {
+    handleAreaClickRef.current = (area: LobbyAreaConfig, doorIndex?: number) => {
       if (area.route) {
         navigate(area.route);
         return;
       }
-      if (area.isDoor && typeof doorIndex === "number" && doors[doorIndex]) {
-        const doorType = typeof doors[doorIndex] === "string"
-          ? doors[doorIndex] as DoorType
-          : (doors[doorIndex] as { type: DoorType }).type;
+      if (area.isDoor && typeof doorIndex === "number" && doorsRef.current[doorIndex]) {
+        const doorType = typeof doorsRef.current[doorIndex] === "string"
+          ? doorsRef.current[doorIndex] as DoorType
+          : (doorsRef.current[doorIndex] as { type: DoorType }).type;
         openDoor(doorType);
         navigate("/door");
       }
-    },
-    [navigate, doors, openDoor]
-  );
+    };
+  }, [navigate, openDoor]);
+
+  const handleAreaClick = useCallback((area: LobbyAreaConfig, doorIndex?: number) => {
+    handleAreaClickRef.current?.(area, doorIndex);
+  }, []);
 
   const blockedDoors = useMemo(() => {
     const blockedMap = new Map<DoorType, number>();
@@ -284,7 +293,7 @@ const LobbyRoute = () => {
       backgroundImage: "/assets/lobby/sfondo_lobby.png",
       elements
     };
-  }, [handleAreaClick, handleHoverChange, doors]);
+  }, [doors]);
 
   return (
     <div className="relative min-h-screen bg-[#0b0c0f] text-white">

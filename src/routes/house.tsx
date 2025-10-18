@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import P5Scene, { type SceneConfig, type SceneElementConfig } from "@/components/P5Scene";
 import Tooltip from "@/components/Tooltip";
 import { useGameStore } from "@/state/store";
-
+import InfoPanel from '../components/InfoPanel';
 
 const HOUSE_IMAGE_WIDTH = 1785;
 const HOUSE_IMAGE_HEIGHT = 1004;

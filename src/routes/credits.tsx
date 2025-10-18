@@ -59,12 +59,7 @@ const CreditsRoute = () => {
         </ul>
 
         {/* BOTTONE FINALE */}
-        <Link
-          to="/"
-          className="mt-auto rounded-full border border-white/30 px-6 py-2 text-xs uppercase tracking-[0.35em] text-white/80 transition hover:border-accent hover:text-accent"
-        >
-          Torna al menu principale
-        </Link>
+        
       </div>
     </div>
   );
