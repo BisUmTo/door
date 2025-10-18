@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 
 const CreditsRoute = () => {
   const contributors = [
-    { role: "Design & Gameplay", name: "Juvenes" },
+    { role: "Design & Gameplay", name: "" },
     { role: "Development", name: "GPT-5 Codex" },
     { role: "Assets", name: "Mock JSON placeholders" }
+
   ];
 
   return (

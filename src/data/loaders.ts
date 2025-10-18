@@ -42,6 +42,8 @@ export interface HitboxPolygon {
 }
 
 export interface HitboxDefinition {
+  width?: number;
+  height?: number;
   polygons: HitboxPolygon[];
 }
 

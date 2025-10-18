@@ -16,7 +16,7 @@ const doorColors: Record<DoorType, string> = {
   neutral: "from-slate-500 to-slate-600 text-white"
 };
 
-const doorLabels: Record<DoorType, string> = {
+export const doorLabels: Record<DoorType, string> = {
   white: "Porta Bianca",
   black: "Porta Nera",
   red: "Porta Rossa",
