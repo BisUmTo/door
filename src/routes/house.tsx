@@ -4,6 +4,7 @@ import P5Scene, { type SceneConfig, type SceneElementConfig } from "@/components
 import Tooltip from "@/components/Tooltip";
 import { useGameStore } from "@/state/store";
 
+
 const HOUSE_IMAGE_WIDTH = 1785;
 const HOUSE_IMAGE_HEIGHT = 1004;
 
