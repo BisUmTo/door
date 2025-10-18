@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => {
         "@": resolve(__dirname, "src")
       }
     },
+    assetsInclude: ["**/*.psd", "**/*.psb"],
     build: {
       sourcemap: mode === "development",
       rollupOptions: {
