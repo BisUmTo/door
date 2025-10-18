@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import DoorHitbox from "@/components/DoorHitbox";
+import Tooltip from "@/components/Tooltip";
 import { useGameStore } from "@/state/store";
 
 const HouseRoute = () => {
@@ -15,7 +16,12 @@ const HouseRoute = () => {
   const selectedObject = visibleObjects.find((object) => object.id === selectedId) ?? null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-900 via-background to-black px-6 py-10 text-white">
+    <div className="relative min-h-screen px-6 py-10 text-white">
+      <div
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(/assets/casa/sfondo_casa.png)' }}
+      />
+      <div className="relative z-10">
       <header className="flex items-center justify-between uppercase tracking-[0.4em] text-white/60">
         <span>Casa</span>
         <Link
@@ -81,6 +87,7 @@ const HouseRoute = () => {
           </div>
         </div>
       ) : null}
+      </div>
     </div>
   );
 };

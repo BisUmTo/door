@@ -217,11 +217,11 @@ export interface AnimalConfigRaw {
   animale: string;
   vita: number | string;
   danno: number | string;
-  "velocità di attacco": number | string;
+  velocita_di_attacco: number | string;
   taglia: string;
-  "stamina (max)": number | string;
-  "upgradable (armature)": boolean | string | number;
-  "costo crescita (cibo)": number | string;
+  stamina_max: number | string;
+  upgradable_armature: boolean | string | number;
+  costo_crescita_cibo: number | string;
 }
 
 export const normalizeAnimalConfig = (raw: Record<string, unknown>): AnimalConfig => {
@@ -233,17 +233,17 @@ export const normalizeAnimalConfig = (raw: Record<string, unknown>): AnimalConfi
     life: normalizeNumber(source.vita ?? (source as Record<string, unknown>)["life"] ?? 0),
     damage: normalizeNumber(source.danno ?? (source as Record<string, unknown>)["damage"] ?? 0),
     attackSpeed: normalizeNumber(
-      (source["velocità di attacco"] ?? (source as Record<string, unknown>)["attackSpeed"]) ?? 1
+      (source.velocita_di_attacco ?? (source as Record<string, unknown>)["attackSpeed"]) ?? 1
     ),
     size: normalizeSize(source.taglia ?? "Small"),
     staminaMax: normalizeNumber(
-      (source["stamina (max)"] ?? (source as Record<string, unknown>)["staminaMax"]) ?? 0
+      (source.stamina_max ?? (source as Record<string, unknown>)["staminaMax"]) ?? 0
     ),
     upgradableArmor: normalizeBoolean(
-      (source["upgradable (armature)"] ?? (source as Record<string, unknown>)["upgradableArmor"]) ?? false
+      (source.upgradable_armature ?? (source as Record<string, unknown>)["upgradableArmor"]) ?? false
     ),
     growthFoodCost: normalizeNumber(
-      (source["costo crescita (cibo)"] ?? (source as Record<string, unknown>)["growthFoodCost"]) ?? 0
+      (source.costo_crescita_cibo ?? (source as Record<string, unknown>)["growthFoodCost"]) ?? 0
     )
   };
 };
@@ -251,12 +251,6 @@ export const normalizeAnimalConfig = (raw: Record<string, unknown>): AnimalConfi
 export const normalizeDoorLootTables = (raw: DoorLootTableRaw[]): DoorLootTable[] => {
   return raw.map(({ porta, ricompense }) => ({
     type: normalizeDoorKey(porta),
-    rewards: ricompense.map((entry) => ({
-      loot: entry.loot,
-      peso: entry.peso,
-      quantita:
-        ((entry as Record<string, unknown>)["quantita"] as string | undefined) ??
-        ((entry as Record<string, unknown>)["quantità"] as string | undefined)
-    }))
+    rewards: ricompense
   }));
 };

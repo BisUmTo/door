@@ -98,7 +98,8 @@ export const createSaveTemplate = (
       active: false,
       door: null,
       usedWeapons: [],
-      fallenAnimals: []
+      fallenAnimals: [],
+      weaponsLocked: false
     }
   };
 };

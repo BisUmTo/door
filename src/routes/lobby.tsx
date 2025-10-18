@@ -37,8 +37,11 @@ const LobbyRoute = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-background to-black text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(79,70,229,0.35),_transparent_55%)]" />
+    <div className="relative min-h-screen overflow-hidden text-white">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(/assets/lobby/sfondo_lobby.png)' }}
+      />
       <div className="relative z-10 flex min-h-screen flex-col justify-between px-8 py-10">
         <header className="flex items-center justify-between text-sm uppercase tracking-[0.5em] text-white/60">
           <span>Lobby</span>

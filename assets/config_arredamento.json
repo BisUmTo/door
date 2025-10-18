@@ -6,7 +6,7 @@
       "pezzi": 3,
       "bonus": {
         "tipo": "Mixed",
-        "quantità": [3, 1, 1],
+        "quantita": [3, 1, 1],
         "cooldown": 5
       }
     },
@@ -16,7 +16,7 @@
       "pezzi": 4,
       "bonus": {
         "tipo": "Cibo",
-        "quantità": 4,
+        "quantita": 4,
         "cooldown": 4
       }
     },
@@ -26,7 +26,7 @@
       "pezzi": 5,
       "bonus": {
         "tipo": "Munizioni",
-        "quantità": [2, 1, 1, 0, 0],
+        "quantita": [2, 1, 1, 0, 0],
         "cooldown": 6
       }
     },
@@ -36,7 +36,7 @@
       "pezzi": 2,
       "bonus": {
         "tipo": "Monete",
-        "quantità": 6,
+        "quantita": 6,
         "cooldown": 3
       }
     }

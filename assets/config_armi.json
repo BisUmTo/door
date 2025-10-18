@@ -3,32 +3,32 @@
     {
       "nome": "Fucile a Pompa",
       "munizioni": "Cartucce",
-      "danno per colpo": 12,
-      "capacità massima": 6
+      "danno_per_colpo": 12,
+      "capacita_massima": 6
     },
     {
       "nome": "Cerbottana",
       "munizioni": "Dardi",
-      "danno per colpo": 4,
-      "capacità massima": 8
+      "danno_per_colpo": 4,
+      "capacita_massima": 8
     },
     {
       "nome": "Lanciagranate",
       "munizioni": "Granate",
-      "danno per colpo": 18,
-      "capacità massima": 3
+      "danno_per_colpo": 18,
+      "capacita_massima": 3
     },
     {
       "nome": "Arco semplice",
       "munizioni": "Frecce",
-      "danno per colpo": 7,
-      "capacità massima": 12
+      "danno_per_colpo": 7,
+      "capacita_massima": 12
     },
     {
       "nome": "Pistola",
       "munizioni": "Proiettili",
-      "danno per colpo": 6,
-      "capacità massima": 10
+      "danno_per_colpo": 6,
+      "capacita_massima": 10
     }
   ]
 }

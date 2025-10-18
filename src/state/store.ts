@@ -157,7 +157,7 @@ const buildHouseBlueprints = (config: HouseConfig): HouseBlueprint[] => {
     piecesNeeded: item.pezzi,
     bonus: {
       type: normalizeBonusType(item.bonus.tipo),
-      amount: item.bonus["quantità"],
+      amount: item.bonus.quantita,
       turnsCooldown: item.bonus.cooldown
     }
   }));
@@ -670,7 +670,7 @@ export const useGameStore = create<GameStoreState>()(
         }
       };
 
-      let weaponsLocked = save.battleState.weaponsLocked;
+      let weaponsLocked: boolean = save.battleState.weaponsLocked;
       let battleResult: GameStoreState["battleResult"] = null;
       let newBattleState = save.battleState;
       let nextSave = save;
