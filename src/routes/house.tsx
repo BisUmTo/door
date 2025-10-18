@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DoorHitbox from "@/components/DoorHitbox";
 import Tooltip from "@/components/Tooltip";
+import { loadHitbox, type HitboxDefinition } from "@/data/loaders";
 import { useGameStore } from "@/state/store";
 
 const HOUSE_IMAGE_WIDTH = 1785;
@@ -10,44 +11,71 @@ const HOUSE_IMAGE_HEIGHT = 1004;
 const houseAreas = [
   {
     id: "bacheca",
-    label: "Bacheca",
+    label: "",
     hitboxPath: "/assets/casa/pulsanti/bacheca.json",
     imageSrc: "/assets/casa/pulsanti/bacheca.png",
     selectedImageSrc: "/assets/casa/pulsanti/bacheca_selected.png",
-    x: 106,
-    y: 175,
-    width: 472,
-    height: 300
+    x: 0,
+    y: 0,
+    width: HOUSE_IMAGE_WIDTH,
+    height: HOUSE_IMAGE_WIDTH,
   },
   {
     id: "incubatrice",
-    label: "Incubatrice",
+    label: "",
     hitboxPath: "/assets/casa/pulsanti/incubatrice.json",
     imageSrc: "/assets/casa/pulsanti/incubatrice.png",
     selectedImageSrc: "/assets/casa/pulsanti/incubatrice_selected.png",
-    x: 320,
-    y: 426,
-    width: 138,
-    height: 194
+    x: 0,
+    y: 0,
+    width: HOUSE_IMAGE_WIDTH,
+    height: HOUSE_IMAGE_WIDTH
   },
   {
     id: "porta",
-    label: "Porta",
+    label: "",
     hitboxPath: "/assets/casa/pulsanti/porta.json",
     imageSrc: "/assets/casa/pulsanti/porta.png",
     selectedImageSrc: "/assets/casa/pulsanti/porta_selected.png",
-    x: 790,
-    y: 277,
-    width: 271,
-    height: 494
+    x: 0,
+    y: 0,
+    width: HOUSE_IMAGE_WIDTH,
+    height: HOUSE_IMAGE_WIDTH
   }
 ] as const;
+
+const isPointInPolygon = (points: [number, number][], x: number, y: number) => {
+  let inside = false;
+  for (let i = 0, j = points.length - 1; i < points.length; j = i, i += 1) {
+    const xi = points[i][0];
+    const yi = points[i][1];
+    const xj = points[j][0];
+    const yj = points[j][1];
+    const intersect =
+      yi > y !== yj > y &&
+      x < ((xj - xi) * (y - yi)) / (yj - yi + Number.EPSILON) + xi;
+    if (intersect) inside = !inside;
+  }
+  return inside;
+};
+
+const isPointWithinHitbox = (
+  definition: HitboxDefinition | null | undefined,
+  x: number,
+  y: number
+) => {
+  if (!definition || !definition.polygons?.length) return false;
+  return definition.polygons.some((polygon) => isPointInPolygon(polygon.points, x, y));
+};
 
 const HouseRoute = () => {
   const navigate = useNavigate();
   const save = useGameStore((state) => state.save);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [activePanel, setActivePanel] = useState<"none" | "bacheca" | "incubatrice">("none");
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const [hoverPoint, setHoverPoint] = useState<{ x: number; y: number } | null>(null);
+  const [areaHitboxes, setAreaHitboxes] = useState<Record<string, HitboxDefinition | null>>({});
 
   const visibleObjects = useMemo(() => {
     if (!save) return [];
@@ -55,6 +83,29 @@ const HouseRoute = () => {
   }, [save]);
 
   const selectedObject = visibleObjects.find((object) => object.id === selectedId) ?? null;
+
+  useEffect(() => {
+    let active = true;
+    const loadHitboxes = async () => {
+      const entries = await Promise.all(
+        houseAreas.map(async (area) => ({
+          id: area.id,
+          definition: await loadHitbox(area.hitboxPath)
+        }))
+      );
+      if (!active) return;
+      setAreaHitboxes(
+        entries.reduce<Record<string, HitboxDefinition | null>>((acc, entry) => {
+          acc[entry.id] = entry.definition;
+          return acc;
+        }, {})
+      );
+    };
+    void loadHitboxes();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;
 
@@ -77,6 +128,54 @@ const HouseRoute = () => {
     }
   };
 
+  useEffect(() => {
+    if (activePanel !== "none") {
+      setHoverPoint(null);
+    }
+  }, [activePanel]);
+
+  const hoverStates = useMemo(() => {
+    if (!hoverPoint) return {};
+    return houseAreas.reduce<Record<string, boolean>>((acc, area) => {
+      const definition = areaHitboxes[area.id];
+      if (isPointWithinHitbox(definition, hoverPoint.x, hoverPoint.y)) {
+        acc[area.id] = true;
+        return acc;
+      }
+      const withinBounds =
+        hoverPoint.x >= area.x &&
+        hoverPoint.x <= area.x + area.width &&
+        hoverPoint.y >= area.y &&
+        hoverPoint.y <= area.y + area.height;
+      if (withinBounds) {
+        acc[area.id] = true;
+      }
+      return acc;
+    }, {});
+  }, [hoverPoint, areaHitboxes]);
+
+  const handleSceneMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    const bounds = canvasRef.current?.getBoundingClientRect();
+    if (!bounds || !bounds.width || !bounds.height) {
+      setHoverPoint(null);
+      return;
+    }
+    const ratioX = (event.clientX - bounds.left) / bounds.width;
+    const ratioY = (event.clientY - bounds.top) / bounds.height;
+    if (ratioX < 0 || ratioX > 1 || ratioY < 0 || ratioY > 1) {
+      setHoverPoint(null);
+      return;
+    }
+    setHoverPoint({
+      x: ratioX * HOUSE_IMAGE_WIDTH,
+      y: ratioY * HOUSE_IMAGE_HEIGHT
+    });
+  };
+
+  const handleSceneMouseLeave = () => {
+    setHoverPoint(null);
+  };
+
   return (
     <div className="relative min-h-screen bg-[#080910] text-white">
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1920px] flex-col px-6 py-8">
@@ -92,8 +191,11 @@ const HouseRoute = () => {
 
         <main className="mt-8 flex-1">
           <div
+            ref={canvasRef}
             className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-[32px] shadow-lg"
             style={{ aspectRatio: `${HOUSE_IMAGE_WIDTH} / ${HOUSE_IMAGE_HEIGHT}` }}
+            onMouseMove={handleSceneMouseMove}
+            onMouseLeave={handleSceneMouseLeave}
           >
             <img
               src="/assets/casa/sfondo_casa.png"
@@ -101,36 +203,41 @@ const HouseRoute = () => {
               className="absolute inset-0 h-full w-full object-cover"
             />
 
-            {houseAreas.map((area) => (
-              <div
-                key={area.id}
-                className="absolute"
-                style={{
-                  left: toPercent(area.x, HOUSE_IMAGE_WIDTH),
-                  top: toPercent(area.y, HOUSE_IMAGE_HEIGHT),
-                  width: toPercent(area.width, HOUSE_IMAGE_WIDTH),
-                  height: toPercent(area.height, HOUSE_IMAGE_HEIGHT)
-                }}
-              >
-                <DoorHitbox
-                  hitboxPath={area.hitboxPath}
-                  width="100%"
-                  height="100%"
-                  referenceWidth={area.width}
-                  referenceHeight={area.height}
-                  referenceOffsetX={area.x}
-                  referenceOffsetY={area.y}
-                  imageSrc={area.imageSrc}
-                  selectedImageSrc={area.selectedImageSrc}
-                  onClick={() => handleAreaClick(area.id)}
-                  childrenWrapperClassName="flex items-end justify-center pb-4"
+            {houseAreas.map((area) => {
+              const hoverOverride =
+                hoverPoint !== null ? hoverStates[area.id] ?? false : undefined;
+              return (
+                <div
+                  key={area.id}
+                  className="absolute"
+                  style={{
+                    left: toPercent(area.x, HOUSE_IMAGE_WIDTH),
+                    top: toPercent(area.y-389, HOUSE_IMAGE_HEIGHT),
+                    width: toPercent(area.width, HOUSE_IMAGE_WIDTH),
+                    height: toPercent(area.height, HOUSE_IMAGE_HEIGHT)
+                  }}
                 >
-                  <span className="rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] uppercase tracking-[0.35em]">
-                    {area.label}
-                  </span>
-                </DoorHitbox>
-              </div>
-            ))}
+                  <DoorHitbox
+                    hitboxPath={area.hitboxPath}
+                    width="100%"
+                    height="100%"
+                    referenceWidth={area.width}
+                    referenceHeight={area.height}
+                    referenceOffsetX={area.x}
+                    referenceOffsetY={area.y}
+                    imageSrc={area.imageSrc}
+                    selectedImageSrc={area.selectedImageSrc}
+                    hoverOverride={hoverOverride}
+                    onClick={() => handleAreaClick(area.id)}
+                    childrenWrapperClassName="flex items-end justify-center pb-4"
+                  >
+                    <span className="rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] uppercase tracking-[0.35em]">
+                      {area.label}
+                    </span>
+                  </DoorHitbox>
+                </div>
+              );
+            })}
           </div>
         </main>
       </div>

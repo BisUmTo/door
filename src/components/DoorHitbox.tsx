@@ -15,6 +15,7 @@ interface DoorHitboxProps {
   referenceOffsetY?: number;
   className?: string;
   childrenWrapperClassName?: string;
+  hoverOverride?: boolean;
   onClick?: () => void;
   children?: React.ReactNode;
 }
@@ -52,12 +53,14 @@ export const DoorHitbox = ({
   referenceOffsetY = 0,
   className,
   childrenWrapperClassName,
+  hoverOverride,
   onClick,
   children
 }: DoorHitboxProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hitbox, setHitbox] = useState<HitboxDefinition | null>(null);
   const [isHoveredWithin, setIsHoveredWithin] = useState(false);
+  const hovered = hoverOverride ?? isHoveredWithin;
 
   useEffect(() => {
     let active = true;
@@ -136,7 +139,7 @@ export const DoorHitbox = ({
           <img
             src={imageSrc}
             alt=""
-            className="pointer-events-none h-full w-full object-contain"
+            className="pointer-events-none h-full w-full object-contain transition duration-150 ease-out group-hover:brightness-110"
           />
           {selectedImageSrc ? (
             <img
@@ -144,7 +147,7 @@ export const DoorHitbox = ({
               alt=""
               className={clsx(
                 "pointer-events-none absolute inset-0 h-full w-full object-contain transition-opacity duration-150",
-                isHoveredWithin ? "opacity-100" : "opacity-0"
+                hovered ? "opacity-100" : "opacity-0"
               )}
             />
           ) : null}
@@ -155,7 +158,7 @@ export const DoorHitbox = ({
             <div
               className={clsx(
                 "pointer-events-none absolute inset-0 rounded-lg border border-white/40 transition-opacity duration-150",
-                isHoveredWithin ? "opacity-100" : "opacity-0"
+                hovered ? "opacity-100" : "opacity-0"
               )}
             />
           ) : null}

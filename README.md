@@ -1,4 +1,4 @@
-# Giochetto Carino
+# D∞R
 
 Progressive Web App built with Vite, React, and TypeScript for the door-based lobby game described in the brief.
 
