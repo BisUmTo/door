@@ -134,6 +134,48 @@ interface GameStoreState {
   acknowledgeMedalHighlight: () => void;
 }
 
+const sleep = (ms: number) =>
+  new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+const debugLog = (...messages: unknown[]) => {
+  if (import.meta.env.DEV) {
+    console.debug("[GameStore]", ...messages);
+  }
+};
+
+const ensureConfigsReady = async (
+  getState: () => GameStoreState,
+  attempts = 120,
+  delayMs = 100
+): Promise<GameConfigs | null> => {
+  let configs = getState().configs;
+  if (configs) {
+    debugLog("Configs already available");
+    return configs;
+  }
+
+  debugLog("Configs not ready yet, polling…", { attempts, delayMs });
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    await sleep(delayMs);
+    configs = getState().configs;
+    if (configs) {
+      debugLog("Configs resolved after wait", { attempt: attempt + 1 });
+      return configs;
+    }
+    const status = getState().status;
+    debugLog("Configs still pending", { attempt: attempt + 1, status });
+    if (status === "error") {
+      debugLog("Aborting config wait due to error state");
+      break;
+    }
+  }
+
+  debugLog("Failed to resolve configs in time");
+  return null;
+};
+
 const defaultBattleState: SaveGame["battleState"] = {
   active: false,
   door: null,
@@ -591,33 +633,58 @@ export const useGameStore = create<GameStoreState>()(
     },
 
     createSlot: async (name) => {
-      const { configs } = get();
-      if (!configs) return;
+      debugLog("createSlot called", { name });
+      const existingConfigs = get().configs;
+      const configs = existingConfigs ?? (await ensureConfigsReady(get));
+      if (!configs) {
+        console.warn("Cannot create save slot: configs not ready");
+        return;
+      }
 
-      const slotId = `slot-${Date.now()}`;
-      const weapons = buildWeaponsState(configs.weapons);
-      const houseObjects = buildHouseState(configs.house);
-      let save = createSaveTemplate(slotId, weapons, houseObjects);
-      save = syncSaveWithConfigs(save, configs);
-      persistSave(save);
+      try {
+        if (!existingConfigs) {
+          debugLog("createSlot waited for configs");
+        }
 
-      const slots = [...listSlots(), {
-        id: slotId,
-        name: name ?? "Salvataggio",
-        createdAt: save.meta.createdAt,
-        updatedAt: save.meta.updatedAt
-      }];
-      saveSlots(slots);
-      setActiveSlot(slotId);
+        const slotId = `slot-${Date.now()}`;
+        const slotName = name?.trim() ? name.trim() : "Salvataggio";
+        debugLog("createSlot generating template", { slotId, slotName });
+        const weapons = buildWeaponsState(configs.weapons);
+        const houseObjects = buildHouseState(configs.house);
+        let save = createSaveTemplate(slotId, weapons, houseObjects);
+        save = syncSaveWithConfigs(save, configs);
+        persistSave(save);
 
-      set({
-        slots,
-        activeSlotId: slotId,
-        save
-      });
+        const slots = [
+          ...listSlots(),
+          {
+            id: slotId,
+            name: slotName,
+            createdAt: save.meta.createdAt,
+            updatedAt: save.meta.updatedAt
+          }
+        ];
+        saveSlots(slots);
+        setActiveSlot(slotId);
+
+        set({
+          slots,
+          activeSlotId: slotId,
+          save,
+          error: null
+        });
+        debugLog("createSlot completed", { slotId, slotName });
+      } catch (error) {
+        console.error("Failed to create save slot", error);
+        set((state) => {
+          state.error = error instanceof Error ? error.message : String(error);
+        });
+        debugLog("createSlot failed", { error });
+      }
     },
 
     duplicateSlot: (slotId) => {
+      debugLog("duplicateSlot called", { slotId });
       const { configs } = get();
       if (!configs) return;
 
@@ -660,13 +727,18 @@ export const useGameStore = create<GameStoreState>()(
       ];
       saveSlots(nextSlots);
       persistSave(duplicatedSave);
+      setActiveSlot(newSlotId);
 
       set({
-        slots: listSlots()
+        slots: nextSlots,
+        activeSlotId: newSlotId,
+        save: duplicatedSave
       });
+      debugLog("duplicateSlot completed", { sourceSlot: slotId, newSlotId, slotName: candidateName });
     },
 
     loadSlot: async (slotId: string) => {
+      debugLog("loadSlot called", { slotId });
       const { configs } = get();
       if (!configs) return;
 
@@ -684,23 +756,40 @@ export const useGameStore = create<GameStoreState>()(
         weaponsPhaseLocked: false,
         battleResult: null
       });
+      debugLog("loadSlot completed", { slotId });
     },
 
     renameSlot: (slotId, name) => {
+      debugLog("renameSlot called", { slotId, name });
       renameSlot(slotId, name);
       set({
         slots: listSlots()
       });
+      debugLog("renameSlot completed", { slotId });
     },
 
     deleteSlot: (slotId) => {
+      debugLog("deleteSlot called", { slotId });
+      const { configs } = get();
       deleteSlot(slotId);
       const activeSlotId = getActiveSlot();
+      const slots = listSlots();
+
+      let nextSave: SaveGame | null = null;
+      if (activeSlotId && configs) {
+        const loaded = loadSave(activeSlotId);
+        if (loaded) {
+          const migrated = runMigrations(loaded);
+          nextSave = syncSaveWithConfigs(migrated, configs);
+        }
+      }
+
       set({
-        slots: listSlots(),
+        slots,
         activeSlotId,
-        save: activeSlotId ? loadSave(activeSlotId) : null
+        save: nextSave
       });
+      debugLog("deleteSlot completed", { slotId, nextActive: activeSlotId });
     },
 
     drawLobbyDoors: () => {

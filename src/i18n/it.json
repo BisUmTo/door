@@ -14,8 +14,10 @@
     "title": "Salvataggi",
     "subtitle": "Gestisci gli slot locali",
     "new": "Nuovo slot",
+    "duplicate": "Duplica",
     "load": "Carica",
     "delete": "Elimina",
+    "active": "Attivo",
     "empty": "Nessun salvataggio disponibile. Creane uno nuovo!"
   },
   "common": {

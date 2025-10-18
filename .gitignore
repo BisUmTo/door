@@ -1,5 +1,7 @@
 /node_modules
 node_modules
+*.psd
+*.psb
 *.tsbuildinfo
 *.d.ts
 .DS_Store

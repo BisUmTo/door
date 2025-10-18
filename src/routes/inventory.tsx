@@ -61,7 +61,13 @@ const InventoryRoute = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-black text-white">
+    <div className="relative min-h-screen overflow-hidden text-white">
+      {/* SFONDO: stessa immagine + blur + overlay scuro */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur" />
+        <div className="absolute inset-0 bg-black/70" />
+      </div>
+
       <div className="mx-auto flex min-h-screen w-full max-w-[1400px] flex-col gap-8 px-6 py-10">
         <header className="flex items-center justify-between border-b border-white/10 pb-4">
           <div>
@@ -74,13 +80,13 @@ const InventoryRoute = () => {
           </div>
           <Link
             to="/lobby"
-            className="rounded-full border border-white/30 px-5 py-2 text-xs uppercase tracking-[0.35em] text-white/70 transition hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/30 px-5 py-2 text-xs uppercase tracking-[0.35em] text-white/70 transition hover:border-[#a67c52] hover:text-[#a67c52]"
           >
             Torna alla lobby
           </Link>
         </header>
 
-        <section className="flex flex-col gap-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+        <section className="flex flex-col gap-6 rounded-3xl border border-white/10 bg-white/10 p-6 shadow-xl backdrop-blur">
           <div className="flex flex-wrap items-center gap-4 text-sm uppercase text-white/70">
             <div className="rounded-full border border-white/15 bg-black/40 px-4 py-2">
               <span className="text-white/50">Monete</span>
@@ -92,6 +98,7 @@ const InventoryRoute = () => {
             </div>
           </div>
 
+          {/* TAB: sostituito accent viola con marrone */}
           <div className="flex flex-wrap items-center gap-4">
             <button
               type="button"
@@ -101,8 +108,8 @@ const InventoryRoute = () => {
               }}
               className={`rounded-full px-6 py-2 text-sm uppercase tracking-[0.3em] transition ${
                 activeTab === "weapons"
-                  ? "border border-accent bg-accent/20 text-accent"
-                  : "border border-white/20 bg-black/40 text-white/60 hover:border-accent hover:text-accent"
+                  ? "border border-[#a67c52] bg-[#a67c52]/20 text-[#a67c52]"
+                  : "border border-white/20 bg-black/40 text-white/60 hover:border-[#a67c52] hover:text-[#a67c52]"
               }`}
             >
               Armi
@@ -310,8 +317,8 @@ const InventoryRoute = () => {
                         onClick={() => setSelectedWeapon(index)}
                         className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
                           selected
-                            ? "border-accent bg-accent/10"
-                            : "border-white/10 bg-white/5 hover:border-accent/60"
+                            ? "border-[#a67c52] bg-[#a67c52]/10"
+                            : "border-white/10 bg-white/5 hover:border-[#a67c52]/60"
                         }`}
                       >
                         <div className="flex items-center justify-between text-sm text-white/80">
@@ -320,8 +327,8 @@ const InventoryRoute = () => {
                         </div>
                         <div className="mt-3 h-2 w-full overflow-hidden rounded bg-white/10">
                           <div
-                            className="h-full bg-accent"
-                            style={{ width: `${Math.min(100, Math.max(0, ammoPercent))}%` }}
+                            className="h-full"
+                            style={{ backgroundColor: "#a67c52", width: `${Math.min(100, Math.max(0, ammoPercent))}%` }}
                           />
                         </div>
                       </button>

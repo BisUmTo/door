@@ -14,8 +14,10 @@
     "title": "Saves",
     "subtitle": "Manage local slots",
     "new": "New slot",
+    "duplicate": "Duplicate",
     "load": "Load",
     "delete": "Delete",
+    "active": "Active",
     "empty": "No saves yet. Create a new slot!"
   },
   "common": {

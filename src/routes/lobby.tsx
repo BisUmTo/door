@@ -204,8 +204,12 @@ const LobbyRoute = () => {
 
   const doorsRef = useRef(doors);
   doorsRef.current = doors;
+  const openDoorRef = useRef(openDoor);
+  openDoorRef.current = openDoor;
+  const navigateRef = useRef(navigate);
+  navigateRef.current = navigate;
 
-  // Use refs to avoid recreating these callbacks
+  // Memoize callbacks to prevent sceneConfig recreation
   const handleHoverChange = useCallback((areaId: LobbyAreaId, hovered: boolean) => {
     setHoveredAreas((previous) => {
       if ((previous[areaId] ?? false) === hovered) {
@@ -218,27 +222,38 @@ const LobbyRoute = () => {
     });
   }, []);
 
-  const handleAreaClickRef = useRef<(area: LobbyAreaConfig, doorIndex?: number) => void>();
+  // Create stable callbacks for each area using refs
+  const areaCallbacks = useMemo(() => {
+    const callbacks: Record<LobbyAreaId, {
+      onClick: () => void;
+      onHoverChange: (hovered: boolean) => void;
+    }> = {} as any;
 
-  useEffect(() => {
-    handleAreaClickRef.current = (area: LobbyAreaConfig, doorIndex?: number) => {
-      if (area.route) {
-        navigate(area.route);
-        return;
-      }
-      if (area.isDoor && typeof doorIndex === "number" && doorsRef.current[doorIndex]) {
-        const doorType = typeof doorsRef.current[doorIndex] === "string"
-          ? doorsRef.current[doorIndex] as DoorType
-          : (doorsRef.current[doorIndex] as { type: DoorType }).type;
-        openDoor(doorType);
-        navigate("/door");
-      }
-    };
-  }, [navigate, openDoor]);
+    lobbyAreas.forEach((area, index) => {
+      callbacks[area.id] = {
+        onClick: () => {
+          if (area.route) {
+            navigateRef.current(area.route);
+            return;
+          }
+          if (area.isDoor) {
+            const doorIndex = index - 3;
+            const doorData = doorsRef.current[doorIndex];
+            if (doorData) {
+              const doorType = typeof doorData === "string"
+                ? doorData as DoorType
+                : (doorData as { type: DoorType }).type;
+              openDoorRef.current(doorType);
+              navigateRef.current("/door");
+            }
+          }
+        },
+        onHoverChange: (hovered: boolean) => handleHoverChange(area.id, hovered)
+      };
+    });
 
-  const handleAreaClick = useCallback((area: LobbyAreaConfig, doorIndex?: number) => {
-    handleAreaClickRef.current?.(area, doorIndex);
-  }, []);
+    return callbacks;
+  }, [handleHoverChange]);
 
   const blockedDoors = useMemo(() => {
     const blockedMap = new Map<DoorType, number>();
@@ -259,8 +274,8 @@ const LobbyRoute = () => {
         hitboxPath: area.hitboxPath,
         layout: area.layout,
         zIndex: area.zIndex,
-        onClick: () => handleAreaClick(area, area.isDoor ? index - 3 : undefined),
-        onHoverChange: (hovered) => handleHoverChange(area.id, hovered)
+        onClick: areaCallbacks[area.id].onClick,
+        onHoverChange: areaCallbacks[area.id].onHoverChange
       });
 
       // Add door overlay if this is a door
@@ -293,7 +308,7 @@ const LobbyRoute = () => {
       backgroundImage: "/assets/lobby/sfondo_lobby.png",
       elements
     };
-  }, [doors]);
+  }, [doors, areaCallbacks]);
 
   return (
     <div className="relative min-h-screen bg-[#0b0c0f] text-white">
@@ -303,7 +318,7 @@ const LobbyRoute = () => {
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="rotate-6 rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest text-white transition hover:border-accent hover:text-accent"
+            className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest text-white transition hover:border-[#a67c52] hover:text-[#a67c52]"
           >
             Exit
           </button>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 import p5 from "p5";
 
 type Point = [number, number];
@@ -67,7 +67,7 @@ interface ElementState {
   hovered: boolean;
 }
 
-export const P5Scene = ({ config, className }: P5SceneProps) => {
+const P5SceneComponent = ({ config, className }: P5SceneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5 | null>(null);
 
@@ -229,5 +229,8 @@ export const P5Scene = ({ config, className }: P5SceneProps) => {
 
   return <div ref={containerRef} className={className} />;
 };
+
+// Memoize the component to prevent unnecessary re-renders
+export const P5Scene = memo(P5SceneComponent);
 
 export default P5Scene;

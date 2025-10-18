@@ -53,24 +53,20 @@ const SavesRoute = () => {
     setEditingId(null);
   };
 
-  // === FIX "Nuovo slot": passa un nome, e se non torna un id, prendi l'ultimo aggiunto
+  // ===== FIX: handler robusto per "Nuovo slot"
   const handleCreateSlot = async () => {
     try {
       setCreating(true);
 
-      const before = useGameStore.getState().slots ?? [];
-      const defaultName = `${t("saves.defaultName", "Nuovo slot")} ${new Date().toLocaleString()}`;
+      // 1) Prova senza argomenti
+      let result: unknown = await Promise.resolve(createSlot());
 
-      // 1) Prova a creare con un nome SEMPRE
-      let result: unknown;
-      try {
-        result = await Promise.resolve((createSlot as any)(defaultName));
-      } catch {
-        // In caso la firma non accetti parametri, riprova senza
-        result = await Promise.resolve((createSlot as any)());
+      // 2) Se non ha creato nulla (o ritorna falsy), prova a passare un nome di default
+      if (!result && (createSlot as any).length >= 1) {
+        result = await Promise.resolve(createSlot(t("saves.defaultName", "Nuovo slot")));
       }
 
-      // 2) Se ho un id, carico quello
+      // 3) Se la funzione ritorna un id o un oggetto con id, carica subito lo slot
       let newId: string | undefined;
       if (typeof result === "string") {
         newId = result;
@@ -78,21 +74,13 @@ const SavesRoute = () => {
         newId = (result as any).id as string;
       }
 
-      // 3) Se lo store non ritorna niente, controllo la lista nello store
-      if (!newId) {
-        const after = useGameStore.getState().slots ?? [];
-        if (after.length > before.length) {
-          const newSlot = after[after.length - 1]; // assume push in coda
-          if (newSlot?.id) newId = newSlot.id as string;
-        }
-      }
-
       if (newId) {
         await Promise.resolve(loadSlot(newId));
       }
     } catch (err) {
       console.error("Errore durante la creazione dello slot:", err);
-      // opzionale: alert o toast
+      // opzionale: feedback all’utente
+      // alert(t("saves.createError","Non è stato possibile creare un nuovo slot."));
     } finally {
       setCreating(false);
     }
