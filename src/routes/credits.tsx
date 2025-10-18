@@ -2,16 +2,22 @@ import { Link } from "react-router-dom";
 
 const CreditsRoute = () => {
   const contributors = [
-    { role: "Design & Gameplay", name: "" },
-    { role: "Development", name: "GPT-5 Codex" },
-    { role: "Assets", name: "Mock JSON placeholders" }
-
+    { role: "Graphics & Project Manager", name: "Luca Bertotto" },
+    { role: "Game Design & Rules", name: "Matteo Bertotto" },
+    { role: "Graphics & Prototype Development", name: "Kevin Delugan" },
+    { role: "Database Design & Game Logic", name: "Philip Fleckinger" },
+    { role: "Development Support", name: "Marco Bertotto" }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-background to-black px-6 py-10 text-white">
-      <header className="flex items-center justify-between uppercase tracking-[0.4em] text-white/60">
-        <span>Crediti</span>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-purple-900 via-background to-black px-6 py-10 text-white relative">
+
+      {/* HEADER */}
+      <header className="absolute top-6 left-6 right-6 flex items-center justify-between">
+        {/* Crediti in alto a sinistra */}
+        <span className="uppercase tracking-[0.4em] text-white/60 text-xs">Crediti</span>
+
+        {/* Bottone Menu in alto a destra */}
         <Link
           to="/"
           className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest hover:border-accent hover:text-accent"
@@ -20,9 +26,18 @@ const CreditsRoute = () => {
         </Link>
       </header>
 
-      <ul className="mt-10 space-y-4 text-sm">
+      {/* Titolo centrale */}
+      <h1 className="absolute top-20 text-4xl font-bold tracking-widest text-center text-white">
+        B8 STUDIOS
+      </h1>
+
+      {/* Lista crediti */}
+      <ul className="w-full max-w-md mt-32 space-y-4 text-center text-sm">
         {contributors.map((entry) => (
-          <li key={entry.role} className="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <li
+            key={entry.role}
+            className="rounded-3xl border border-white/10 bg-white/5 p-6"
+          >
             <span className="block text-xs uppercase text-white/50">{entry.role}</span>
             <span className="text-lg font-semibold text-white">{entry.name}</span>
           </li>

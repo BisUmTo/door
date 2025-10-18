@@ -15,30 +15,30 @@ const doorAreas = [
     hitboxPath: "/assets/lobby/pulsanti/porta1.json",
     imageSrc: "/assets/lobby/pulsanti/porta1.png",
     selectedImageSrc: "/assets/lobby/pulsanti/porta1_selected.png",
-    x: 392,
-    y: 275,
-    width: 285,
-    height: 520
+    x: 0,
+    y: 0,
+    width: LOBBY_IMAGE_WIDTH,
+    height: LOBBY_IMAGE_HEIGHT,
   },
   {
     id: "porta2",
     hitboxPath: "/assets/lobby/pulsanti/porta2.json",
     imageSrc: "/assets/lobby/pulsanti/porta2.png",
     selectedImageSrc: "/assets/lobby/pulsanti/porta2_selected.png",
-    x: 844,
-    y: 275,
-    width: 285,
-    height: 520
+    x: 0,
+    y: 0,
+    width: LOBBY_IMAGE_WIDTH,
+    height: LOBBY_IMAGE_HEIGHT,
   },
   {
     id: "porta3",
     hitboxPath: "/assets/lobby/pulsanti/porta3.json",
     imageSrc: "/assets/lobby/pulsanti/porta3.png",
     selectedImageSrc: "/assets/lobby/pulsanti/porta3_selected.png",
-    x: 1286,
-    y: 275,
-    width: 285,
-    height: 520
+    x: 0,
+    y: 0,
+    width: LOBBY_IMAGE_WIDTH,
+    height: LOBBY_IMAGE_HEIGHT,
   }
 ] as const;
 
@@ -48,24 +48,24 @@ const staticAreas = [
     hitboxPath: "/assets/lobby/pulsanti/casa.json",
     imageSrc: "/assets/lobby/pulsanti/casa.png",
     selectedImageSrc: "/assets/lobby/pulsanti/casa_selected.png",
-    x: 81,
-    y: 240,
-    width: 138,
-    height: 678,
+    x: 0,
+    y: 0,
+    width: LOBBY_IMAGE_WIDTH,
+    height: LOBBY_IMAGE_HEIGHT,
     route: "/house",
-    label: "Casa"
+    // label: "Casa"
   },
   {
     id: "baule",
     hitboxPath: "/assets/lobby/pulsanti/baule.json",
     imageSrc: "/assets/lobby/pulsanti/baule.png",
     selectedImageSrc: "/assets/lobby/pulsanti/baule_selected.png",
-    x: 12,
-    y: 12,
-    width: 184,
-    height: 52,
+    x: 0,
+    y: 0,
+    width: LOBBY_IMAGE_WIDTH,
+    height: LOBBY_IMAGE_HEIGHT,
     route: "/chest",
-    label: "Baule"
+    // label: "Baule"
   }
 ] as const;
 
@@ -199,9 +199,11 @@ const LobbyRoute = () => {
                     onClick={() => navigate(area.route)}
                     childrenWrapperClassName="flex items-end justify-center pb-4"
                   >
+                    {area.label ? (
                     <span className="rounded-full border border-white/20 bg-black/60 px-3 py-1 text-[11px] uppercase tracking-[0.35em]">
                       {area.label}
                     </span>
+                    ) : null}
                   </DoorHitbox>
                 </div>
               ))}
