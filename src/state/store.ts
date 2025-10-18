@@ -117,6 +117,7 @@ interface GameStoreState {
   bootstrap: () => Promise<void>;
   refreshSlots: () => void;
   createSlot: (name?: string) => Promise<void>;
+  duplicateSlot: (slotId: string) => void;
   loadSlot: (slotId: string) => Promise<void>;
   renameSlot: (slotId: string, name: string) => void;
   deleteSlot: (slotId: string) => void;
@@ -613,6 +614,55 @@ export const useGameStore = create<GameStoreState>()(
         slots,
         activeSlotId: slotId,
         save
+      });
+    },
+
+    duplicateSlot: (slotId) => {
+      const { configs } = get();
+      if (!configs) return;
+
+      const source = loadSave(slotId);
+      if (!source) return;
+
+      const migrated = runMigrations(source);
+      const synced = syncSaveWithConfigs(migrated, configs);
+      const newSlotId = `slot-${Date.now()}`;
+      const baseTimestamp = new Date().toISOString();
+      const slots = listSlots();
+      const originalMeta = slots.find((slot) => slot.id === slotId);
+      const baseName = originalMeta ? `${originalMeta.name} (Copia)` : "Salvataggio (Copia)";
+      let candidateName = baseName;
+      let suffix = 2;
+      while (slots.some((slot) => slot.name.toLowerCase() === candidateName.toLowerCase())) {
+        candidateName = `${baseName} ${suffix}`;
+        suffix += 1;
+      }
+
+      const duplicatedSave: SaveGame = {
+        ...synced,
+        meta: {
+          ...synced.meta,
+          slotId: newSlotId,
+          createdAt: baseTimestamp,
+          updatedAt: baseTimestamp,
+          rngSeed: Math.floor(Math.random() * 0xffffffff)
+        }
+      };
+
+      const nextSlots = [
+        ...slots,
+        {
+          id: newSlotId,
+          name: candidateName,
+          createdAt: baseTimestamp,
+          updatedAt: baseTimestamp
+        }
+      ];
+      saveSlots(nextSlots);
+      persistSave(duplicatedSave);
+
+      set({
+        slots: listSlots()
       });
     },
 

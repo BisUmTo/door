@@ -20,16 +20,16 @@ const formatDate = (dateIso: string, language: string) => {
 const SavesRoute = () => {
   const { t } = useTranslation();
   const language = useSettingsStore((state) => state.language);
-  const { slots, activeSlotId, createSlot, loadSlot, renameSlot, deleteSlot } = useGameStore(
-    (state) => ({
+  const { slots, activeSlotId, createSlot, duplicateSlot, loadSlot, renameSlot, deleteSlot } =
+    useGameStore((state) => ({
       slots: state.slots,
       activeSlotId: state.activeSlotId,
       createSlot: state.createSlot,
+      duplicateSlot: state.duplicateSlot,
       loadSlot: state.loadSlot,
       renameSlot: state.renameSlot,
       deleteSlot: state.deleteSlot
-    })
-  );
+    }));
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState("");
@@ -111,6 +111,13 @@ const SavesRoute = () => {
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => duplicateSlot(slot.id)}
+                  className="rounded-full border border-white/25 px-3 py-1 text-xs uppercase tracking-widest text-white/70 transition hover:border-emerald-300 hover:text-emerald-200"
+                >
+                  {t("saves.duplicate", "Duplica")}
+                </button>
                 <button
                   type="button"
                   onClick={() => void loadSlot(slot.id)}
