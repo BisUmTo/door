@@ -27,7 +27,7 @@ const CreditsRoute = () => {
       </header>
 
       {/* Titolo centrale */}
-      <h1 className="absolute top-20 text-4xl font-bold tracking-widest text-center text-white">
+      <h1 className="absolute top-20 text-[5rem] sm:text-[6rem] font-extrabold tracking-[0.15em] text-center bg-gradient-to-r from-purple-300 via-pink-400 to-purple-600 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
         B8 STUDIOS
       </h1>
 
