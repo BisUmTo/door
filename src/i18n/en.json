@@ -1,0 +1,24 @@
+{
+  "menu": {
+    "title": "Cute Little Game",
+    "play": "Play",
+    "settings": "Settings",
+    "saves": "Saves",
+    "credits": "Credits"
+  },
+  "settings": {
+    "title": "Settings",
+    "back": "Back to menu"
+  },
+  "saves": {
+    "title": "Saves",
+    "subtitle": "Manage local slots",
+    "new": "New slot",
+    "load": "Load",
+    "delete": "Delete",
+    "empty": "No saves yet. Create a new slot!"
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}

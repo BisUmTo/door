@@ -1,0 +1,48 @@
+{
+  "animali": [
+    {
+      "id": 1,
+      "animale": "Lupo",
+      "vita": 30,
+      "danno": 8,
+      "velocit\u00e0 di attacco": 12,
+      "taglia": "Piccola",
+      "stamina (max)": 24,
+      "upgradable (armature)": "S\u00ec",
+      "costo crescita (cibo)": 5
+    },
+    {
+      "id": 2,
+      "animale": "Tigre",
+      "vita": 45,
+      "danno": 12,
+      "velocit\u00e0 di attacco": 10,
+      "taglia": "Grande",
+      "stamina (max)": 30,
+      "upgradable (armature)": "No",
+      "costo crescita (cibo)": 9
+    },
+    {
+      "id": 3,
+      "animale": "Falco",
+      "vita": 18,
+      "danno": 6,
+      "velocit\u00e0 di attacco": 16,
+      "taglia": "Piccola",
+      "stamina (max)": 20,
+      "upgradable (armature)": "No",
+      "costo crescita (cibo)": 3
+    },
+    {
+      "id": 4,
+      "animale": "Orso",
+      "vita": 60,
+      "danno": 15,
+      "velocit\u00e0 di attacco": 8,
+      "taglia": "Grande",
+      "stamina (max)": 40,
+      "upgradable (armature)": "S\u00ec",
+      "costo crescita (cibo)": 12
+    }
+  ]
+}

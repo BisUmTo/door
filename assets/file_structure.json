@@ -1,0 +1,12 @@
+{
+    "version":  "1.0.0",
+    "files":  [
+                  "config_animali.json",
+                  "config_armi.json",
+                  "config_bauli.json",
+                  "config_arredamento.json",
+                  "door_loot_tables.json",
+                  "lobby/pulsanti/baule.json",
+                  "house/object.json"
+              ]
+}

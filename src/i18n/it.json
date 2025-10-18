@@ -1,0 +1,24 @@
+{
+  "menu": {
+    "title": "Giochetto Carino",
+    "play": "Gioca",
+    "settings": "Impostazioni",
+    "saves": "Salvataggi",
+    "credits": "Crediti"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "back": "Torna al menu"
+  },
+  "saves": {
+    "title": "Salvataggi",
+    "subtitle": "Gestisci gli slot locali",
+    "new": "Nuovo slot",
+    "load": "Carica",
+    "delete": "Elimina",
+    "empty": "Nessun salvataggio disponibile. Creane uno nuovo!"
+  },
+  "common": {
+    "loading": "Caricamento..."
+  }
+}

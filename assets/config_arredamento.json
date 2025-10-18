@@ -1,0 +1,44 @@
+{
+  "arredamento": [
+    {
+      "id": 1,
+      "nome": "Poltrona",
+      "pezzi": 3,
+      "bonus": {
+        "tipo": "Mixed",
+        "quantit\u00e0": [3, 1, 1],
+        "cooldown": 5
+      }
+    },
+    {
+      "id": 2,
+      "nome": "Dispensa",
+      "pezzi": 4,
+      "bonus": {
+        "tipo": "Cibo",
+        "quantit\u00e0": 4,
+        "cooldown": 4
+      }
+    },
+    {
+      "id": 3,
+      "nome": "Tavolo da Lavoro",
+      "pezzi": 5,
+      "bonus": {
+        "tipo": "Munizioni",
+        "quantit\u00e0": [2, 1, 1, 0, 0],
+        "cooldown": 6
+      }
+    },
+    {
+      "id": 4,
+      "nome": "Scrivania",
+      "pezzi": 2,
+      "bonus": {
+        "tipo": "Monete",
+        "quantit\u00e0": 6,
+        "cooldown": 3
+      }
+    }
+  ]
+}
