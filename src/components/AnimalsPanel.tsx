@@ -61,7 +61,7 @@ export const AnimalsPanel = ({
                     <dd>{config.damage}</dd>
                   </div>
                   <div className="flex justify-between">
-                    <dt>Velocit\u00e0</dt>
+                    <dt>Velocità</dt>
                     <dd>{config.attackSpeed}</dd>
                   </div>
                   <div className="flex justify-between">

@@ -1,11 +1,12 @@
 import { create } from "zustand";
-);
-          pendingReward = {
-            doorType,
-            loot,
-            weaponsUsed: save.battleState.usedWeapons,
-            fallenAnimals
-          };
+import { immer } from "zustand/middleware/immer";
+import type {
+  SaveGame,
+  EnemyInstance,
+  DoorType,
+  LootEntry,
+  AnimalConfig,
+  AmmoKind,
   WeaponConfig,
   WeaponName,
   WeaponState
@@ -156,7 +157,7 @@ const buildHouseBlueprints = (config: HouseConfig): HouseBlueprint[] => {
     piecesNeeded: item.pezzi,
     bonus: {
       type: normalizeBonusType(item.bonus.tipo),
-      amount: item.bonus["quantit\u00e0"],
+      amount: item.bonus["quantità"],
       turnsCooldown: item.bonus.cooldown
     }
   }));

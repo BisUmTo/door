@@ -217,7 +217,7 @@ export interface AnimalConfigRaw {
   animale: string;
   vita: number | string;
   danno: number | string;
-  "velocit\u00e0 di attacco": number | string;
+  "velocità di attacco": number | string;
   taglia: string;
   "stamina (max)": number | string;
   "upgradable (armature)": boolean | string | number;
@@ -233,7 +233,7 @@ export const normalizeAnimalConfig = (raw: Record<string, unknown>): AnimalConfi
     life: normalizeNumber(source.vita ?? (source as Record<string, unknown>)["life"] ?? 0),
     damage: normalizeNumber(source.danno ?? (source as Record<string, unknown>)["damage"] ?? 0),
     attackSpeed: normalizeNumber(
-      (source["velocit\u00e0 di attacco"] ?? (source as Record<string, unknown>)["attackSpeed"]) ?? 1
+      (source["velocità di attacco"] ?? (source as Record<string, unknown>)["attackSpeed"]) ?? 1
     ),
     size: normalizeSize(source.taglia ?? "Small"),
     staminaMax: normalizeNumber(
@@ -256,7 +256,7 @@ export const normalizeDoorLootTables = (raw: DoorLootTableRaw[]): DoorLootTable[
       peso: entry.peso,
       quantita:
         ((entry as Record<string, unknown>)["quantita"] as string | undefined) ??
-        ((entry as Record<string, unknown>)["quantit\u00e0"] as string | undefined)
+        ((entry as Record<string, unknown>)["quantità"] as string | undefined)
     }))
   }));
 };

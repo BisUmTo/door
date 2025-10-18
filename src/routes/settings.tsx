@@ -77,7 +77,7 @@ const SettingsRoute = () => {
         </section>
 
         <section className="rounded-2xl border border-white/10 bg-white/5 p-5">
-          <h3 className="text-sm uppercase tracking-[0.4em] text-white/60">Accessibilit\u00e0</h3>
+          <h3 className="text-sm uppercase tracking-[0.4em] text-white/60">Accessibilità</h3>
           <label className="mt-3 flex items-center justify-between text-sm text-white/80">
             <span>Riduci animazioni</span>
             <input

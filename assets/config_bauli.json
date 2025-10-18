@@ -2,29 +2,29 @@
   "bauli": [
     {
       "id": "common",
-      "rarit\u00e0": "Comune",
+      "rarità": "Comune",
       "loot": [
-        { "loot": "monete", "peso": 60, "quantit\u00e0": "5-12" },
-        { "loot": "cibo", "peso": 25, "quantit\u00e0": "2-4" },
+        { "loot": "monete", "peso": 60, "quantità": "5-12" },
+        { "loot": "cibo", "peso": 25, "quantità": "2-4" },
         { "loot": null, "peso": 15 }
       ]
     },
     {
       "id": "rare",
-      "rarit\u00e0": "Raro",
+      "rarità": "Raro",
       "loot": [
-        { "loot": "armatura", "peso": 30, "quantit\u00e0": "1" },
-        { "loot": "monete", "peso": 50, "quantit\u00e0": "10-20" },
-        { "loot": "proiettili", "peso": 20, "quantit\u00e0": "4-8" }
+        { "loot": "armatura", "peso": 30, "quantità": "1" },
+        { "loot": "monete", "peso": 50, "quantità": "10-20" },
+        { "loot": "proiettili", "peso": 20, "quantità": "4-8" }
       ]
     },
     {
       "id": "epic",
-      "rarit\u00e0": "Epico",
+      "rarità": "Epico",
       "loot": [
-        { "loot": "granate", "peso": 25, "quantit\u00e0": "1-3" },
-        { "loot": "speciale", "peso": 25, "quantit\u00e0": "1" },
-        { "loot": "monete", "peso": 50, "quantit\u00e0": "20-40" }
+        { "loot": "granate", "peso": 25, "quantità": "1-3" },
+        { "loot": "speciale", "peso": 25, "quantità": "1" },
+        { "loot": "monete", "peso": 50, "quantità": "20-40" }
       ]
     }
   ]

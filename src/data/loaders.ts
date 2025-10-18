@@ -67,7 +67,7 @@ interface WeaponConfigRaw {
   nome: string;
   munizioni: string;
   "danno per colpo": number;
-  "capacit\u00e0 massima": number;
+  "capacità massima": number;
 }
 
 export const loadWeaponsConfig = async (): Promise<WeaponConfig[]> => {
@@ -79,7 +79,7 @@ export const loadWeaponsConfig = async (): Promise<WeaponConfig[]> => {
       displayName: weapon.nome,
       ammoType: normalizeAmmoKind(weapon.munizioni),
       damagePerShot: weapon["danno per colpo"],
-      maxAmmo: weapon["capacit\u00e0 massima"]
+      maxAmmo: weapon["capacità massima"]
     };
   });
 };
@@ -87,11 +87,11 @@ export const loadWeaponsConfig = async (): Promise<WeaponConfig[]> => {
 export interface ChestsConfig {
   bauli: Array<{
     id: string;
-    "rarit\u00e0": string;
+    "rarità": string;
     loot: Array<{
       loot: string | null;
       peso: number;
-      "quantit\u00e0"?: string;
+      "quantità"?: string;
     }>;
   }>;
 }
@@ -105,7 +105,7 @@ export interface HouseConfig {
     pezzi: number;
     bonus: {
       tipo: string;
-      "quantit\u00e0": number | number[];
+      "quantità": number | number[];
       cooldown: number;
     };
   }>;
