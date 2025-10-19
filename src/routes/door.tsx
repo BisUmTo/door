@@ -807,13 +807,24 @@ const DoorRoute = () => {
                   {upcomingEnemies.length ? (
                     upcomingEnemies.map((enemy, index) => {
                       const cfg = animalConfigs.find((item) => item.id === enemy.configId);
+                      const src = resolveEnemyImage(cfg) ?? FALLBACK_ANIMAL_IMG;
                       return (
-                        <span
+                        <div
                           key={`${enemy.configId}-${index}`}
-                          className="rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-xs text-white/70"
+                          className="flex items-center gap-2 rounded-xl border border-white/15 bg-black/30 px-3 py-2 text-xs text-white/70"
+                          style={{ opacity: Math.max(0.35, 1 - index * 0.12) }}
                         >
-                          {cfg?.kind ?? `#${enemy.configId}`}
-                        </span>
+                          <img
+                            src={src}
+                            alt={cfg?.kind ?? `#${enemy.configId}`}
+                            className="h-12 w-12 rounded-xl object-contain bg-black/20 p-1 shadow-inner"
+                            draggable={false}
+                            onError={(e) => {
+                              (e.currentTarget as HTMLImageElement).src = FALLBACK_ANIMAL_IMG;
+                            }}
+                          />
+                          <span>{cfg?.kind ?? `#${enemy.configId}`}</span>
+                        </div>
                       );
                     })
                   ) : (
