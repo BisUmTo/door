@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-10-18T21:06:39Z",
+  "generated_at": "2025-10-19T01:17:57Z",
   "entries": [
     {
       "root": "/Users/delugan/Library/CloudStorage/GoogleDrive-kevin.delugan@juvenes.it/.shortcut-targets-by-id/1BGP7ik13prJr-3oY_ClP2i8r5Z1m4pVP/Door/Demo - Door/assets",
@@ -460,11 +460,166 @@
             "type": "directory",
             "children": [
               {
-                "name": "arredamenti",
-                "path": "casa/arredamenti",
+                "name": "arredamento",
+                "path": "casa/arredamento",
                 "type": "directory",
-                "children": [],
-                "item_count": 0
+                "children": [
+                  {
+                    "name": "lampada_0.png",
+                    "path": "casa/arredamento/lampada_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 17179
+                  },
+                  {
+                    "name": "lampada_1.png",
+                    "path": "casa/arredamento/lampada_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "mensola_0.png",
+                    "path": "casa/arredamento/mensola_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 22068
+                  },
+                  {
+                    "name": "mensola_1.png",
+                    "path": "casa/arredamento/mensola_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 20956
+                  },
+                  {
+                    "name": "mensola_2.png",
+                    "path": "casa/arredamento/mensola_2.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 14250
+                  },
+                  {
+                    "name": "mensola_3.png",
+                    "path": "casa/arredamento/mensola_3.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 12382
+                  },
+                  {
+                    "name": "mensola_4.png",
+                    "path": "casa/arredamento/mensola_4.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "orologio_0.png",
+                    "path": "casa/arredamento/orologio_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 14241
+                  },
+                  {
+                    "name": "orologio_1.png",
+                    "path": "casa/arredamento/orologio_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "poltrona_0.png",
+                    "path": "casa/arredamento/poltrona_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 20274
+                  },
+                  {
+                    "name": "poltrona_1.png",
+                    "path": "casa/arredamento/poltrona_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "sedie_0.png",
+                    "path": "casa/arredamento/sedie_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 35393
+                  },
+                  {
+                    "name": "sedie_1.png",
+                    "path": "casa/arredamento/sedie_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 21248
+                  },
+                  {
+                    "name": "sedie_2.png",
+                    "path": "casa/arredamento/sedie_2.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "tappeto_0.png",
+                    "path": "casa/arredamento/tappeto_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 17010
+                  },
+                  {
+                    "name": "tappeto_1.png",
+                    "path": "casa/arredamento/tappeto_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "tavolino_0.png",
+                    "path": "casa/arredamento/tavolino_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 20071
+                  },
+                  {
+                    "name": "tavolino_1.png",
+                    "path": "casa/arredamento/tavolino_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 13588
+                  },
+                  {
+                    "name": "tavolino_2.png",
+                    "path": "casa/arredamento/tavolino_2.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 10487
+                  },
+                  {
+                    "name": "tavolino_3.png",
+                    "path": "casa/arredamento/tavolino_3.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "tavolo_0.png",
+                    "path": "casa/arredamento/tavolo_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 25746
+                  },
+                  {
+                    "name": "tavolo_1.png",
+                    "path": "casa/arredamento/tavolo_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 25746
+                  }
+                ],
+                "item_count": 22
               },
               {
                 "name": "pulsanti",
@@ -558,6 +713,28 @@
             "item_count": 4
           },
           {
+            "name": "font",
+            "path": "font",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Bigbesty.otf",
+                "path": "font/Bigbesty.otf",
+                "type": "file",
+                "extension": ".otf",
+                "size_bytes": 30832
+              },
+              {
+                "name": "Bigbesty.ttf",
+                "path": "font/Bigbesty.ttf",
+                "type": "file",
+                "extension": ".ttf",
+                "size_bytes": 46984
+              }
+            ],
+            "item_count": 2
+          },
+          {
             "name": "house",
             "path": "house",
             "type": "directory",
@@ -594,7 +771,7 @@
                     "path": "lobby/pulsanti/baule.json",
                     "type": "file",
                     "extension": ".json",
-                    "size_bytes": 293,
+                    "size_bytes": 48310,
                     "description": "Contiene il perimetro dell'immagine PNG corrispondente."
                   },
                   {
@@ -762,11 +939,11 @@
             "type": "directory",
             "children": [
               {
-                "name": "targhetta nera.jpg",
-                "path": "medagliette/targhetta nera.jpg",
+                "name": "targhetta_nera.png",
+                "path": "medagliette/targhetta_nera.png",
                 "type": "file",
-                "extension": ".jpg",
-                "size_bytes": 21437
+                "extension": ".png",
+                "size_bytes": 107598
               }
             ],
             "item_count": 1
@@ -966,6 +1143,91 @@
             "item_count": 13
           },
           {
+            "name": "Scenari",
+            "path": "Scenari",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Stanza_arancione.png",
+                "path": "Scenari/Stanza_arancione.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1031117
+              },
+              {
+                "name": "Stanza_azzurra.png",
+                "path": "Scenari/Stanza_azzurra.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1027765
+              },
+              {
+                "name": "Stanza_blu.png",
+                "path": "Scenari/Stanza_blu.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1065863
+              },
+              {
+                "name": "Stanza_gialla.png",
+                "path": "Scenari/Stanza_gialla.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 991254
+              },
+              {
+                "name": "Stanza_lime.png",
+                "path": "Scenari/Stanza_lime.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1128407
+              },
+              {
+                "name": "Stanza_marrone.png",
+                "path": "Scenari/Stanza_marrone.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1074551
+              },
+              {
+                "name": "Stanza_nera.png",
+                "path": "Scenari/Stanza_nera.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 965949
+              },
+              {
+                "name": "Stanza_neutrale.png",
+                "path": "Scenari/Stanza_neutrale.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 962721
+              },
+              {
+                "name": "Stanza_rosa.png",
+                "path": "Scenari/Stanza_rosa.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1009088
+              },
+              {
+                "name": "Stanza_rossa.png",
+                "path": "Scenari/Stanza_rossa.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 924566
+              },
+              {
+                "name": "Stanza_verde.png",
+                "path": "Scenari/Stanza_verde.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1021416
+              }
+            ],
+            "item_count": 11
+          },
+          {
             "name": "config_animali.json",
             "path": "config_animali.json",
             "type": "file",
@@ -977,14 +1239,14 @@
             "path": "config_armi.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 666
+            "size_bytes": 669
           },
           {
             "name": "config_arredamento.json",
             "path": "config_arredamento.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 729
+            "size_bytes": 716
           },
           {
             "name": "config_bauli.json",
@@ -1005,14 +1267,14 @@
             "path": "file_structure.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 364
+            "size_bytes": 34607
           },
           {
             "name": "generate_hitbox.py",
             "path": "generate_hitbox.py",
             "type": "file",
             "extension": ".py",
-            "size_bytes": 6434
+            "size_bytes": 6909
           },
           {
             "name": "generate_structure.py",
@@ -1022,7 +1284,7 @@
             "size_bytes": 4573
           }
         ],
-        "item_count": 18
+        "item_count": 20
       }
     }
   ]

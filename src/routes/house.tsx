@@ -89,8 +89,8 @@ const houseAreas: HouseAreaConfig[] = [
 const objectLayouts: Record<number, { x: number; y: number; width: number; height: number }> = {
   1: { x: 1300, y: 500, width: 260, height: 220 },
   2: { x: 1330, y: 120, width: 220, height: 240 },
-  3: { x: 1100, y: 630, width: 340, height: 220 },
-  4: { x: 200, y: 560, width: 220, height: 210 }
+  3: { x: 1180, y: 820, width: 340, height: 220 },
+  4: { x: 400, y: 800, width: 220, height: 210 }
 };
 
 const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;

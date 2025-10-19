@@ -199,39 +199,35 @@ const DoorRoute = () => {
 
             {/* Statistiche PIÙ PICCOLE sotto l'icona */}
             {/* Statistiche 2x2 centrate e più compatte */}
-<div className="mt-6 flex justify-center">
-  <dl className="grid grid-cols-2 gap-3 text-sm">
-    <div className="w-32 rounded-lg border border-white/10 bg-black/50 p-2 text-center">
-      <dt className="text-xs uppercase text-white/50">Vita</dt>
-      <dd className="text-lg font-semibold text-white leading-tight">
+{/* Statistiche 2x2 centrate e leggermente più grandi */}
+<div className="mt-8 flex justify-center">
+  <dl className="grid grid-cols-2 gap-4 text-sm">
+    <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
+      <dt className="text-sm uppercase text-white/60">Vita</dt>
+      <dd className="text-xl font-semibold text-white leading-tight">
         {activeEnemy.life}
       </dd>
     </div>
-    <div className="w-32 rounded-lg border border-white/10 bg-black/50 p-2 text-center">
-      <dt className="text-xs uppercase text-white/50">Danno</dt>
-      <dd className="text-lg font-semibold text-white leading-tight">
+    <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
+      <dt className="text-sm uppercase text-white/60">Danno</dt>
+      <dd className="text-xl font-semibold text-white leading-tight">
         {currentEnemyConfig.damage}
       </dd>
     </div>
-    <div className="w-32 rounded-lg border border-white/10 bg-black/50 p-2 text-center">
-      <dt className="text-xs uppercase text-white/50">Velocità</dt>
-      <dd className="text-lg font-semibold text-white leading-tight">
+    <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
+      <dt className="text-sm uppercase text-white/60">Velocità</dt>
+      <dd className="text-xl font-semibold text-white leading-tight">
         {currentEnemyConfig.attackSpeed}
       </dd>
     </div>
-    <div className="w-32 rounded-lg border border-white/10 bg-black/50 p-2 text-center">
-      <dt className="text-xs uppercase text-white/50">Taglia</dt>
-      <dd className="text-lg font-semibold text-white leading-tight">
+    <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
+      <dt className="text-sm uppercase text-white/60">Età</dt>
+      <dd className="text-xl font-semibold text-white leading-tight">
         {activeEnemy.size}
       </dd>
     </div>
   </dl>
 </div>
-
-
-
-
-
             {/* Pulsanti PIÙ IN BASSO */}
             <div className="mt-10 flex items-center justify-center gap-4">
               <button
