@@ -228,11 +228,11 @@ const normalizeNumber = (value: unknown): number => {
   throw new Error(`Unable to convert value "${value}" to number`);
 };
 
-const normalizeSize = (value: unknown): "Small" | "Large" => {
+const normalizeSize = (value: unknown): "Small" | "Adult" => {
   const v = sanitize(String(value ?? ""));
   if (v.includes("piccol")) return "Small";
   if (v.includes("small")) return "Small";
-  if (v.includes("grand") || v.includes("large")) return "Large";
+  if (v.includes("grand") || v.includes("large")) return "Adult";
   throw new Error(`Unknown size: ${value as string}`);
 };
 

@@ -135,7 +135,7 @@ const InventoryRoute = () => {
     if (!selectedAnimalData.config || selectedAnimalData.instance.size !== "Small") return null;
     const grownInstance: AnimalInstance = {
       ...selectedAnimalData.instance,
-      size: "Large",
+      size: "Adult",
       life: selectedAnimalData.config.life,
       stamina: selectedAnimalData.config.staminaMax
     };

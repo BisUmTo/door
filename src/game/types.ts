@@ -49,7 +49,7 @@ export interface AnimalConfig {
   life: number;
   damage: number;
   attackSpeed: number;
-  size: "Small" | "Large";
+  size: "Small" | "Adult";
   staminaMax: number;
   upgradableArmor: boolean;
   growthFoodCost: number;
@@ -59,7 +59,7 @@ export interface AnimalInstance {
   configId: number;
   life: number;
   stamina: number;
-  size: "Small" | "Large";
+  size: "Small" | "Adult";
   armor: number | null;
   alive: boolean;
 }
@@ -92,7 +92,7 @@ export interface EnemyInstance {
   life: number;
   damage: number;
   attackSpeed: number;
-  size: "Small" | "Large";
+  size: "Small" | "Adult";
 }
 
 export interface SaveGame {

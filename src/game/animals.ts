@@ -63,11 +63,11 @@ export const applyGrowthToInstance = (
   instance: AnimalInstance,
   config: AnimalConfig
 ): AnimalInstance => {
-  const grownLifeCap = getLifeCap(config, "Large");
-  const grownStaminaCap = getStaminaCap(config, "Large");
+  const grownLifeCap = getLifeCap(config, "Adult");
+  const grownStaminaCap = getStaminaCap(config, "Adult");
   return {
     ...instance,
-    size: "Large",
+    size: "Adult",
     life: grownLifeCap,
     stamina: grownStaminaCap
   };
