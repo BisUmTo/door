@@ -40,7 +40,7 @@ export type WeaponName =
   | "shotgun"
   | "blowgun"
   | "grenadeLauncher"
-  | "simpleBow"
+  | "Bow"
   | "pistol";
 
 export interface AnimalConfig {
