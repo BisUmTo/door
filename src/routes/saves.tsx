@@ -6,7 +6,10 @@ import { useTranslation } from "react-i18next";
 import { useGameStore } from "@/state/store";
 import { useSettingsStore } from "@/state/settings";
 
-const localeMap = { it, en: enUS };
+const localeMap = {
+  it,
+  en: enUS
+};
 
 const formatDate = (dateIso: string, language: string) => {
   const date = new Date(dateIso);
@@ -17,27 +20,19 @@ const formatDate = (dateIso: string, language: string) => {
 const SavesRoute = () => {
   const { t } = useTranslation();
   const language = useSettingsStore((state) => state.language);
-  const {
-    slots,
-    activeSlotId,
-    createSlot,
-    duplicateSlot,
-    loadSlot,
-    renameSlot,
-    deleteSlot
-  } = useGameStore((state) => ({
-    slots: state.slots,
-    activeSlotId: state.activeSlotId,
-    createSlot: state.createSlot,
-    duplicateSlot: state.duplicateSlot,
-    loadSlot: state.loadSlot,
-    renameSlot: state.renameSlot,
-    deleteSlot: state.deleteSlot
-  }));
+  const { slots, activeSlotId, createSlot, duplicateSlot, loadSlot, renameSlot, deleteSlot } =
+    useGameStore((state) => ({
+      slots: state.slots,
+      activeSlotId: state.activeSlotId,
+      createSlot: state.createSlot,
+      duplicateSlot: state.duplicateSlot,
+      loadSlot: state.loadSlot,
+      renameSlot: state.renameSlot,
+      deleteSlot: state.deleteSlot
+    }));
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState("");
-  const [creating, setCreating] = useState(false);
 
   const startEditing = (slotId: string, currentName: string) => {
     setEditingId(slotId);
@@ -51,51 +46,6 @@ const SavesRoute = () => {
     }
     renameSlot(slotId, editingValue.trim());
     setEditingId(null);
-  };
-
-  // === FIX "Nuovo slot": passa un nome, e se non torna un id, prendi l'ultimo aggiunto
-  const handleCreateSlot = async () => {
-    try {
-      setCreating(true);
-
-      const before = useGameStore.getState().slots ?? [];
-      const defaultName = `${t("saves.defaultName", "Nuovo slot")} ${new Date().toLocaleString()}`;
-
-      // 1) Prova a creare con un nome SEMPRE
-      let result: unknown;
-      try {
-        result = await Promise.resolve((createSlot as any)(defaultName));
-      } catch {
-        // In caso la firma non accetti parametri, riprova senza
-        result = await Promise.resolve((createSlot as any)());
-      }
-
-      // 2) Se ho un id, carico quello
-      let newId: string | undefined;
-      if (typeof result === "string") {
-        newId = result;
-      } else if (result && typeof result === "object" && "id" in (result as any)) {
-        newId = (result as any).id as string;
-      }
-
-      // 3) Se lo store non ritorna niente, controllo la lista nello store
-      if (!newId) {
-        const after = useGameStore.getState().slots ?? [];
-        if (after.length > before.length) {
-          const newSlot = after[after.length - 1]; // assume push in coda
-          if (newSlot?.id) newId = newSlot.id as string;
-        }
-      }
-
-      if (newId) {
-        await Promise.resolve(loadSlot(newId));
-      }
-    } catch (err) {
-      console.error("Errore durante la creazione dello slot:", err);
-      // opzionale: alert o toast
-    } finally {
-      setCreating(false);
-    }
   };
 
   return (
@@ -127,11 +77,12 @@ const SavesRoute = () => {
         <div className="flex justify-end">
           <button
             type="button"
-            onClick={handleCreateSlot}
-            disabled={creating}
-            className="rounded-full border border-[#a67c52] bg-transparent px-4 py-2 text-sm uppercase tracking-widest text-[#a67c52] transition hover:bg-[#a67c52]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => {
+              void createSlot();
+            }}
+            className="rounded-full border border-[#a67c52] bg-transparent px-4 py-2 text-sm uppercase tracking-widest text-[#a67c52] transition hover:bg-[#a67c52]/10"
           >
-            {creating ? t("saves.creating", "Creazione…") : t("saves.new", "Nuovo slot")}
+            {t("saves.new", "Nuovo slot")}
           </button>
         </div>
 

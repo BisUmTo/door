@@ -11,7 +11,9 @@ const config: Config = {
       },
       fontFamily: {
         display: ["'Lilita One'", "cursive"],
-        body: ["'Montserrat'", "sans-serif"]
+        body: ["'Montserrat'", "sans-serif"],
+        'Bigbesty': ["Bigbesty", "system-ui", "sans-serif"],
+        'sans': ["Bigbesty", "system-ui", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "sans-serif"]
       },
       boxShadow: {
         glow: "0 0 30px rgba(192, 132, 252, 0.45)"
