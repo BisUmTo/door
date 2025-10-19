@@ -6,7 +6,7 @@ import AnimalsPanel from "@/components/AnimalsPanel";
 import VictoryModal from "@/components/VictoryModal";
 import DefeatModal from "@/components/DefeatModal";
 import { useGameStore } from "@/state/store";
-import { computeBattleStats, getAnimalReadiness } from "@/game/animals";
+import { getAnimalReadiness, getDisplayBattleStats } from "@/game/animals";
 
 const EMPTY_AMMO: Record<AmmoKind, number> = {
   bullets: 0,
@@ -103,12 +103,11 @@ const DoorRoute = () => {
     }
     return save.animals.owned.reduce(
       (acc, instance) => {
-        const config = animalConfigMap.get(instance.configId);
-        if (!config) return acc;
+        const config = animalConfigMap.get(instance.configId) ?? null;
         const readiness = getAnimalReadiness(config, instance);
         if (readiness === "ready") {
           acc.ready += 1;
-          acc.totalDamage += computeBattleStats(config, instance).damage;
+          acc.totalDamage += getDisplayBattleStats(config, instance).damage;
         } else if (readiness === "recovering") {
           acc.recovering += 1;
         } else {

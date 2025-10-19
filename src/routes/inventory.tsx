@@ -4,8 +4,8 @@ import { useGameStore } from "@/state/store";
 import {
   AnimalBattleStats,
   AnimalReadiness,
-  computeBattleStats,
   getAnimalReadiness,
+  getDisplayBattleStats,
   getMissingStamina
 } from "@/game/animals";
 import type { AnimalConfig, AnimalInstance, WeaponConfig } from "@/game/types";
@@ -17,7 +17,8 @@ const formatSize = (size: AnimalInstance["size"]) => (size === "Small" ? "Piccol
 interface DecoratedAnimal {
   index: number;
   instance: AnimalInstance;
-  config: AnimalConfig;
+  config: AnimalConfig | null;
+  name: string;
   stats: AnimalBattleStats;
   readiness: AnimalReadiness;
   missingStamina: number;
@@ -57,10 +58,9 @@ const InventoryRoute = () => {
     const entries: DecoratedAnimal[] = [];
     animals.forEach((instance, index) => {
       const config = animalConfigs.find((entry) => entry.id === instance.configId);
-      if (!config) return;
-      const stats = computeBattleStats(config, instance);
-      const readiness = getAnimalReadiness(config, instance);
-      const missingStamina = getMissingStamina(config, instance);
+      const stats = getDisplayBattleStats(config ?? null, instance);
+      const readiness = getAnimalReadiness(config ?? null, instance);
+      const missingStamina = getMissingStamina(config ?? null, instance);
       const staminaPercent =
         stats.staminaCap > 0
           ? Math.round((Math.max(0, instance.stamina) / stats.staminaCap) * 100)
@@ -71,6 +71,7 @@ const InventoryRoute = () => {
         index,
         instance,
         config,
+        name: config?.kind ?? `#${instance.configId}`,
         stats,
         readiness,
         missingStamina,
@@ -102,14 +103,14 @@ const InventoryRoute = () => {
 
   const selectedGrowthPreview = useMemo(() => {
     if (!selectedAnimalData) return null;
-    if (selectedAnimalData.instance.size !== "Small") return null;
+    if (!selectedAnimalData.config || selectedAnimalData.instance.size !== "Small") return null;
     const grownInstance: AnimalInstance = {
       ...selectedAnimalData.instance,
       size: "Large",
       life: selectedAnimalData.config.life,
       stamina: selectedAnimalData.config.staminaMax
     };
-    return computeBattleStats(selectedAnimalData.config, grownInstance);
+    return getDisplayBattleStats(selectedAnimalData.config, grownInstance);
   }, [selectedAnimalData]);
 
   const selectedWeaponData = useMemo(() => {
@@ -251,11 +252,11 @@ const InventoryRoute = () => {
                                 entry.readiness === "ready"
                                   ? "Stamina al massimo."
                                   : entry.readiness === "recovering"
-                                    ? `Mancano ${entry.missingStamina} stamina • Costo cibo ${entry.missingStamina}`
+                                    ? `Mancano ${entry.missingStamina} stamina - costo cibo ${entry.missingStamina}`
                                     : "Rientrerà disponibile dopo il prossimo riposo.";
                               return (
                                 <button
-                                  key={`${entry.config.id}-${entry.index}`}
+                                  key={`${entry.config?.id ?? "cfg"}-${entry.index}`}
                                   type="button"
                                   onClick={() => setSelectedAnimal(entry.index)}
                                   className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
@@ -266,7 +267,7 @@ const InventoryRoute = () => {
                                 >
                                   <div className="flex items-start justify-between text-sm text-white/80">
                                     <div>
-                                      <span className="font-semibold text-white">{entry.config.kind}</span>
+                                      <span className="font-semibold text-white">{entry.name}</span>
                                       <span className="ml-3 text-xs uppercase text-white/50">
                                         {formatSize(entry.instance.size)}
                                       </span>
@@ -302,10 +303,10 @@ const InventoryRoute = () => {
                   <div className="space-y-4 text-sm text-white/80">
                     <div>
                       <h2 className="text-xl font-semibold text-white">
-                        {selectedAnimalData.config.kind}
+                        {selectedAnimalData.name}
                       </h2>
                       <p className="text-xs uppercase text-white/50">
-                        {formatSize(selectedAnimalData.instance.size)} ·{" "}
+                        {formatSize(selectedAnimalData.instance.size)} -{" "}
                         {selectedAnimalData.readiness === "ready"
                           ? "Pronto"
                           : selectedAnimalData.readiness === "recovering"
@@ -392,7 +393,7 @@ const InventoryRoute = () => {
                           <span className="font-semibold text-white">
                             {selectedAnimalData.missingStamina}
                           </span>{" "}
-                          stamina · costo cibo{" "}
+                          stamina - costo cibo{" "}
                           <span className="font-semibold text-white">
                             {selectedAnimalData.missingStamina}
                           </span>
@@ -409,7 +410,9 @@ const InventoryRoute = () => {
                       </p>
                     </div>
 
-                    {selectedAnimalData.instance.size === "Small" && selectedGrowthPreview ? (
+                    {selectedAnimalData.instance.size === "Small" &&
+                    selectedAnimalData.config &&
+                    selectedGrowthPreview ? (
                       <div className="space-y-2 text-xs text-white/70">
                         <h3 className="text-xs uppercase tracking-[0.3em] text-white/50">
                           Crescita a adulto
@@ -443,7 +446,7 @@ const InventoryRoute = () => {
                       </div>
                     ) : null}
 
-                    {selectedAnimalData.config.upgradableArmor ? (
+                    {selectedAnimalData.config?.upgradableArmor ? (
                       <p className="text-[11px] uppercase tracking-[0.25em] text-white/40">
                         Può equipaggiare armature quando disponibili.
                       </p>
@@ -461,7 +464,7 @@ const InventoryRoute = () => {
                       >
                         Nutri
                       </button>
-                      {selectedAnimalData.instance.size === "Small" ? (
+                      {selectedAnimalData.instance.size === "Small" && selectedAnimalData.config ? (
                         <button
                           type="button"
                           disabled={foodAvailable < selectedAnimalData.config.growthFoodCost}

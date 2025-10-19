@@ -3,8 +3,8 @@ import type { AnimalConfig, SaveGame } from "@/game/types";
 import {
   AnimalBattleStats,
   AnimalReadiness,
-  computeBattleStats,
   getAnimalReadiness,
+  getDisplayBattleStats,
   getMissingStamina
 } from "@/game/animals";
 
@@ -21,7 +21,8 @@ const findAnimalConfig = (configs: AnimalConfig[], id: number) =>
 
 interface DecoratedAnimal {
   index: number;
-  config: AnimalConfig;
+  config: AnimalConfig | null;
+  name: string;
   instance: SaveGame["animals"]["owned"][number];
   stats: AnimalBattleStats;
   readiness: AnimalReadiness;
@@ -41,10 +42,9 @@ export const AnimalsPanel = ({
 
   const decoratedAnimals = animals.reduce<DecoratedAnimal[]>((acc, instance, index) => {
     const config = findAnimalConfig(configs, instance.configId);
-    if (!config) return acc;
-    const stats = computeBattleStats(config, instance);
-    const readiness = getAnimalReadiness(config, instance);
-    const missingStamina = getMissingStamina(config, instance);
+    const stats = getDisplayBattleStats(config ?? null, instance);
+    const readiness = getAnimalReadiness(config ?? null, instance);
+    const missingStamina = getMissingStamina(config ?? null, instance);
     const staminaPercent =
       stats.staminaCap > 0
         ? Math.round((Math.max(0, instance.stamina) / stats.staminaCap) * 100)
@@ -54,6 +54,7 @@ export const AnimalsPanel = ({
     acc.push({
       index,
       config,
+      name: config?.kind ?? `#${instance.configId}`,
       instance,
       stats,
       readiness,
@@ -91,7 +92,7 @@ export const AnimalsPanel = ({
       label: "In recupero",
       tone: "border-amber-300/40 bg-amber-400/10 text-amber-200",
       helper: (entry) =>
-        `Mancano ${entry.missingStamina} stamina · costo cibo ${entry.missingStamina}`,
+        `Mancano ${entry.missingStamina} stamina - costo cibo ${entry.missingStamina}`,
       action: "Non pronto",
       disabled: true
     },
@@ -144,7 +145,7 @@ export const AnimalsPanel = ({
                       const meta = readinessMeta[entry.readiness];
                       return (
                         <div
-                          key={`${entry.config.id}-${entry.index}`}
+                          key={`${entry.config?.id ?? "cfg"}-${entry.index}`}
                           className={clsx(
                             "rounded-xl border border-white/10 bg-white/5 p-4",
                             entry.readiness === "fallen" && "opacity-60"
@@ -153,7 +154,7 @@ export const AnimalsPanel = ({
                           <div className="flex items-start justify-between">
                             <div>
                               <span className="text-lg font-semibold text-white">
-                                {entry.config.kind}
+                                {entry.name}
                               </span>
                               <p className="text-xs uppercase text-white/50">{entry.instance.size}</p>
                             </div>

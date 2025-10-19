@@ -76,20 +76,47 @@ export const applyGrowthToInstance = (
 export type AnimalReadiness = "ready" | "recovering" | "fallen";
 
 export const getAnimalReadiness = (
-  config: AnimalConfig,
+  config: AnimalConfig | null,
   instance: AnimalInstance
 ): AnimalReadiness => {
   if (!instance.alive) {
     return "fallen";
   }
+  if (!config) {
+    return instance.stamina > 0 ? "ready" : "recovering";
+  }
   const { staminaCap } = computeBattleStats(config, instance);
   return instance.stamina >= staminaCap ? "ready" : "recovering";
 };
 
-export const getMissingStamina = (config: AnimalConfig, instance: AnimalInstance): number => {
+export const getMissingStamina = (
+  config: AnimalConfig | null,
+  instance: AnimalInstance
+): number => {
   if (!instance.alive) {
+    return 0;
+  }
+  if (!config) {
     return 0;
   }
   const { staminaCap } = computeBattleStats(config, instance);
   return Math.max(0, staminaCap - instance.stamina);
+};
+
+export const getDisplayBattleStats = (
+  config: AnimalConfig | null,
+  instance: AnimalInstance
+): AnimalBattleStats => {
+  if (config) {
+    return computeBattleStats(config, instance);
+  }
+  const life = Math.max(0, Math.round(instance.life));
+  const stamina = Math.max(0, Math.round(instance.stamina));
+  return {
+    life,
+    damage: 0,
+    attackSpeed: 0,
+    staminaCap: Math.max(1, stamina),
+    lifeCap: Math.max(1, life)
+  };
 };
