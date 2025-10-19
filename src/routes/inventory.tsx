@@ -236,7 +236,9 @@ const InventoryRoute = () => {
               type="button"
               onClick={() => {
                 setActiveTab("animals");
-                setSelectedAnimal(0);
+                // seleziona il primo animale che NON è KO (fallen), altrimenti null
+                const firstNonFallen = decoratedAnimals.find((e) => e.readiness !== "fallen")?.index ?? null;
+                setSelectedAnimal(firstNonFallen);
               }}
               className={`rounded-full px-6 py-2 text-sm uppercase tracking-[0.3em] transition ${
                 activeTab === "animals"
@@ -260,8 +262,7 @@ const InventoryRoute = () => {
                     {(
                       [
                         { key: "ready", title: "Pronti a combattere" },
-                        { key: "recovering", title: "In recupero" },
-                        { key: "fallen", title: "Ko" }
+                        { key: "recovering", title: "In recupero" }
                       ] as const
                     ).map(({ key, title }) => {
                       const list = groupedAnimals[key];
@@ -273,7 +274,7 @@ const InventoryRoute = () => {
                             <p className="mt-1 text-xs text-white/50">
                               {key === "recovering"
                                 ? "Nessun animale sta recuperando stamina."
-                                : "Nessun animale è caduto."}
+                                : null}
                             </p>
                           </div>
                         );
@@ -287,21 +288,15 @@ const InventoryRoute = () => {
                               const readinessLabel =
                                 entry.readiness === "ready"
                                   ? "Pronto"
-                                  : entry.readiness === "recovering"
-                                    ? "In recupero"
-                                    : "Ko";
+                                  : "In recupero";
                               const readinessTone =
                                 entry.readiness === "ready"
                                   ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-200"
-                                  : entry.readiness === "recovering"
-                                    ? "border-amber-300/40 bg-amber-400/10 text-amber-200"
-                                    : "border-rose-400/40 bg-rose-500/10 text-rose-200";
+                                  : "border-amber-300/40 bg-amber-400/10 text-amber-200";
                               const helperText =
                                 entry.readiness === "ready"
                                   ? "Stamina al massimo."
-                                  : entry.readiness === "recovering"
-                                    ? `Mancano ${entry.missingStamina} stamina - costo cibo ${entry.missingStamina}`
-                                    : "Rientrerà disponibile dopo il prossimo riposo.";
+                                  : `Mancano ${entry.missingStamina} stamina - costo cibo ${entry.missingStamina}`;
                               const iconSrc = resolveAnimalIconImage(entry.config);
                               return (
                                 <button
