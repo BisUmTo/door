@@ -1,10 +1,37 @@
+import { useCallback, useState, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGameStore } from "@/state/store";
 
 const MenuRoute = () => {
   const { t } = useTranslation();
-  const status = useGameStore((state) => state.status);
+  const navigate = useNavigate();
+  const [isStartingDemo, setIsStartingDemo] = useState(false);
+  const { status, slots, createSlot } = useGameStore((state) => ({
+    status: state.status,
+    slots: state.slots,
+    createSlot: state.createSlot
+  }));
+
+  const handlePlayDemo = useCallback(
+    async (event: MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      if (isStartingDemo) return;
+
+      setIsStartingDemo(true);
+      try {
+        if (!slots.length) {
+          await createSlot();
+        }
+        navigate("/lobby");
+      } catch (error) {
+        console.error("Unable to start demo", error);
+      } finally {
+        setIsStartingDemo(false);
+      }
+    },
+    [createSlot, isStartingDemo, navigate, slots.length]
+  );
 
   return (
     <div className="relative min-h-screen overflow-hidden text-white">
@@ -31,6 +58,7 @@ const MenuRoute = () => {
           {/* GIOCA DEMO - Marrone con testo bianco */}
           <Link
             to="/lobby"
+            onClick={handlePlayDemo}
             className="rounded-full border border-[#a67c52] bg-[#a67c52] px-6 py-3 text-lg font-semibold uppercase tracking-widest text-white transition hover:-translate-y-1 hover:bg-[#8b5e34] hover:border-[#8b5e34]"
           >
             {t("menu.play")}

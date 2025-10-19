@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-10-19T03:18:09Z",
+  "generated_at": "2025-10-19T08:00:50Z",
   "entries": [
     {
       "root": "/Users/delugan/Library/CloudStorage/GoogleDrive-kevin.delugan@juvenes.it/.shortcut-targets-by-id/1BGP7ik13prJr-3oY_ClP2i8r5Z1m4pVP/Door/Demo - Door/assets",
@@ -187,7 +187,7 @@
                 "path": "animali/animali.psb",
                 "type": "file",
                 "extension": ".psb",
-                "size_bytes": 25080234
+                "size_bytes": 28870789
               },
               {
                 "name": "aquila.png",
@@ -278,7 +278,7 @@
                 "path": "animali/icone.psb",
                 "type": "file",
                 "extension": ".psb",
-                "size_bytes": 25502661
+                "size_bytes": 29333597
               },
               {
                 "name": "ippopotamo.png",
@@ -366,54 +366,18 @@
             "type": "directory",
             "children": [
               {
-                "name": "munizioni",
-                "path": "armi/munizioni",
-                "type": "directory",
-                "children": [
-                  {
-                    "name": "cartucce.png",
-                    "path": "armi/munizioni/cartucce.png",
-                    "type": "file",
-                    "extension": ".png",
-                    "size_bytes": 66321
-                  },
-                  {
-                    "name": "dardo.png",
-                    "path": "armi/munizioni/dardo.png",
-                    "type": "file",
-                    "extension": ".png",
-                    "size_bytes": 41510
-                  },
-                  {
-                    "name": "freccia.png",
-                    "path": "armi/munizioni/freccia.png",
-                    "type": "file",
-                    "extension": ".png",
-                    "size_bytes": 38770
-                  },
-                  {
-                    "name": "granate.png",
-                    "path": "armi/munizioni/granate.png",
-                    "type": "file",
-                    "extension": ".png",
-                    "size_bytes": 71176
-                  },
-                  {
-                    "name": "proiettili.png",
-                    "path": "armi/munizioni/proiettili.png",
-                    "type": "file",
-                    "extension": ".png",
-                    "size_bytes": 74251
-                  }
-                ],
-                "item_count": 5
-              },
-              {
                 "name": "arco.png",
                 "path": "armi/arco.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 68561
+              },
+              {
+                "name": "badge.png",
+                "path": "armi/badge.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 63825
               },
               {
                 "name": "cerbottana.png",
@@ -998,6 +962,49 @@
             "item_count": 1
           },
           {
+            "name": "munizioni",
+            "path": "munizioni",
+            "type": "directory",
+            "children": [
+              {
+                "name": "cartucce.png",
+                "path": "munizioni/cartucce.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 66321
+              },
+              {
+                "name": "dardo.png",
+                "path": "munizioni/dardo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 41510
+              },
+              {
+                "name": "freccia.png",
+                "path": "munizioni/freccia.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 38770
+              },
+              {
+                "name": "granate.png",
+                "path": "munizioni/granate.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 71176
+              },
+              {
+                "name": "proiettili.png",
+                "path": "munizioni/proiettili.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 74251
+              }
+            ],
+            "item_count": 5
+          },
+          {
             "name": "porte",
             "path": "porte",
             "type": "directory",
@@ -1103,16 +1110,9 @@
                     "type": "file",
                     "extension": ".png",
                     "size_bytes": 47644
-                  },
-                  {
-                    "name": "porta_marrone_base.png",
-                    "path": "porte/magenta/porta_marrone_base.png",
-                    "type": "file",
-                    "extension": ".png",
-                    "size_bytes": 47320
                   }
                 ],
-                "item_count": 2
+                "item_count": 1
               },
               {
                 "name": "marrone",
@@ -1192,103 +1192,110 @@
             "item_count": 13
           },
           {
-            "name": "Scenari",
-            "path": "Scenari",
+            "name": "scenari",
+            "path": "scenari",
             "type": "directory",
             "children": [
               {
                 "name": "Stanza_arancione.png",
-                "path": "Scenari/Stanza_arancione.png",
+                "path": "scenari/Stanza_arancione.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 1031117
               },
               {
                 "name": "Stanza_azzurra.png",
-                "path": "Scenari/Stanza_azzurra.png",
+                "path": "scenari/Stanza_azzurra.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 1027765
               },
               {
+                "name": "Stanza_bianca.png",
+                "path": "scenari/Stanza_bianca.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1106225
+              },
+              {
                 "name": "Stanza_blu.png",
-                "path": "Scenari/Stanza_blu.png",
+                "path": "scenari/Stanza_blu.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 1065863
               },
               {
                 "name": "Stanza_gialla.png",
-                "path": "Scenari/Stanza_gialla.png",
+                "path": "scenari/Stanza_gialla.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 991254
               },
               {
                 "name": "Stanza_lime.png",
-                "path": "Scenari/Stanza_lime.png",
+                "path": "scenari/Stanza_lime.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 1128407
               },
               {
                 "name": "Stanza_marrone.png",
-                "path": "Scenari/Stanza_marrone.png",
+                "path": "scenari/Stanza_marrone.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 1074551
               },
               {
                 "name": "Stanza_nera.png",
-                "path": "Scenari/Stanza_nera.png",
+                "path": "scenari/Stanza_nera.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 965949
               },
               {
                 "name": "Stanza_neutrale.png",
-                "path": "Scenari/Stanza_neutrale.png",
+                "path": "scenari/Stanza_neutrale.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 962721
               },
               {
                 "name": "Stanza_rosa.png",
-                "path": "Scenari/Stanza_rosa.png",
+                "path": "scenari/Stanza_rosa.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 1009088
               },
               {
                 "name": "Stanza_rossa.png",
-                "path": "Scenari/Stanza_rossa.png",
+                "path": "scenari/Stanza_rossa.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 924566
               },
               {
                 "name": "Stanza_verde.png",
-                "path": "Scenari/Stanza_verde.png",
+                "path": "scenari/Stanza_verde.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 1021416
               }
             ],
-            "item_count": 11
+            "item_count": 12
           },
           {
             "name": "config_animali.json",
             "path": "config_animali.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 11876
+            "size_bytes": 11392
           },
           {
             "name": "config_armi.json",
             "path": "config_armi.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 669
+            "size_bytes": 661
           },
           {
             "name": "config_arredamento.json",
@@ -1302,7 +1309,7 @@
             "path": "config_bauli.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 1998
+            "size_bytes": 3330
           },
           {
             "name": "door_loot_tables.json",
@@ -1316,7 +1323,7 @@
             "path": "file_structure.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 43875
+            "size_bytes": 45535
           },
           {
             "name": "generate_hitbox.py",
@@ -1333,7 +1340,7 @@
             "size_bytes": 4573
           }
         ],
-        "item_count": 20
+        "item_count": 21
       }
     }
   ]
