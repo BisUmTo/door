@@ -49,10 +49,11 @@ export const WeaponsPanel = ({
   }, [weapons, weaponConfigs, ammoInventory]);
 
   const handleSelect = (weaponName: WeaponName) => {
-    setSelectedWeapon(weaponName);
     const ammoKind = getWeaponAmmoKind(weaponName);
     const available = ammoInventory[ammoKind] ?? 0;
-    setAmmoToSpend(Math.min(Math.max(1, ammoToSpend), Math.max(1, available)));
+    // Imposta la selezione e normalizza ammoToSpend in base alla disponibilità
+    setSelectedWeapon(weaponName);
+    setAmmoToSpend(Math.max(1, Math.min(ammoToSpend, Math.max(1, available))));
   };
 
   const handleConfirm = () => {
@@ -92,17 +93,22 @@ export const WeaponsPanel = ({
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {availableWeapons.map(({ weapon, config, ammoKind, ammoAvailable }) => {
             const iconSrc = config?.displayName ? resolveWeaponIcon(config.displayName) : null;
+            const isSelected = selectedWeapon === weapon.name;
             return (
               <button
                 key={weapon.name}
                 type="button"
                 disabled={locked || ammoAvailable <= 0}
                 onClick={() => handleSelect(weapon.name)}
+                // aggiunta di aria-pressed, tabIndex e classe ring per evidenziare la casella selezionata
+                aria-pressed={isSelected}
+                tabIndex={0}
                 className={clsx(
                   "rounded-xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-accent hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                  selectedWeapon === weapon.name && "border-accent bg-white/10",
+                  isSelected && "border-accent bg-white/10 ring-2 ring-accent",
                   (locked || ammoAvailable <= 0) && "cursor-not-allowed opacity-50"
                 )}
+                data-selected={isSelected ? "true" : "false"}
               >
                 <div className="flex items-start gap-3">
                   {/* Icona arma con badge */}

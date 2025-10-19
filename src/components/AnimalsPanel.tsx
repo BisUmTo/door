@@ -159,10 +159,16 @@ export const AnimalsPanel = ({
                               <img
                                 src={iconSrc}
                                 alt={entry.name}
-                                className="h-20 w-20 rounded-lg object-contain bg-black/20 p-1"
+                                className="h-28 w-28 rounded-lg object-contain bg-black/20 p-1" // Increased size
                                 draggable={false}
                                 onError={handleImageError}
                               />
+                              <div className="absolute text-xs text-white">
+                                <p>Vita: {entry.instance.life}/{entry.stats.lifeCap}</p>
+                                <p>Danno: {entry.stats.damage}</p>
+                                <p>Velocità: {entry.stats.attackSpeed}</p>
+                                <p>Armatura: {entry.instance.armor ?? 0}</p>
+                              </div>
                             </div>
 
                             {/* Info e stats */}

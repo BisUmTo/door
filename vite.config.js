@@ -44,7 +44,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 import { createReadStream } from "node:fs";
-import { cp, mkdir, rm, stat } from "node:fs/promises";
+import { cp, mkdir, stat } from "node:fs/promises";
 import { extname, resolve } from "node:path";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
@@ -137,14 +137,11 @@ var createStaticAssetPlugins = function () {
                     switch (_a.label) {
                         case 0:
                             target = resolve(buildOutDir, "assets");
-                            return [4 /*yield*/, rm(target, { recursive: true, force: true })];
+                            return [4 /*yield*/, mkdir(target, { recursive: true })];
                         case 1:
                             _a.sent();
-                            return [4 /*yield*/, mkdir(target, { recursive: true })];
+                            return [4 /*yield*/, cp(ASSETS_ROOT, target, { recursive: true, force: true })];
                         case 2:
-                            _a.sent();
-                            return [4 /*yield*/, cp(ASSETS_ROOT, target, { recursive: true })];
-                        case 3:
                             _a.sent();
                             return [2 /*return*/];
                     }

@@ -1,5 +1,5 @@
 import { createReadStream } from "node:fs";
-import { cp, mkdir, rm, stat } from "node:fs/promises";
+import { cp, mkdir, stat } from "node:fs/promises";
 import { extname, resolve } from "node:path";
 import { defineConfig, loadEnv, type PluginOption } from "vite";
 import react from "@vitejs/plugin-react-swc";
@@ -84,9 +84,8 @@ const createStaticAssetPlugins = (): PluginOption[] => {
     },
     async closeBundle() {
       const target = resolve(buildOutDir, "assets");
-      await rm(target, { recursive: true, force: true });
       await mkdir(target, { recursive: true });
-      await cp(ASSETS_ROOT, target, { recursive: true });
+      await cp(ASSETS_ROOT, target, { recursive: true, force: true });
     }
   };
 
