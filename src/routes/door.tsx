@@ -205,6 +205,7 @@ const DoorRoute = () => {
   const [shouldAutoOpenAnimals, setShouldAutoOpenAnimals] = useState(false);
   const [enemyEntering, setEnemyEntering] = useState(false);
   const enemyIndexRef = useRef<number | null>(battle?.door?.index ?? null);
+  const [showDefeatAnimation, setShowDefeatAnimation] = useState(false);
 
   useEffect(() => {
     if (!currentDuel) {
@@ -273,6 +274,15 @@ const DoorRoute = () => {
       if (finishFrame) cancelAnimationFrame(finishFrame);
     };
   }, [doorBattle?.index, currentDuel]);
+
+  useEffect(() => {
+    if (battleResult === "defeat") {
+      setShowDefeatAnimation(true);
+      const hide = setTimeout(() => setShowDefeatAnimation(false), 1600);
+      return () => clearTimeout(hide);
+    }
+    return () => undefined;
+  }, [battleResult]);
 
   const handleWeaponConfirm = (weaponName: WeaponName, ammoToSpend: number) => {
     resolveWeaponAttack(weaponName as any, ammoToSpend);
@@ -565,6 +575,17 @@ const DoorRoute = () => {
         <div className="absolute inset-0 bg-black/70" />
       </div>
 
+      {showDefeatAnimation ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="relative flex h-48 w-48 items-center justify-center rounded-full border border-red-500/50 bg-red-500/10 shadow-lg shadow-red-900/40">
+            <div className="absolute inset-0 animate-ping rounded-full border border-red-500/40" />
+            <span className="animate-bounce text-2xl font-bold uppercase tracking-[0.4em] text-red-300">
+              Sconfitta
+            </span>
+          </div>
+        </div>
+      ) : null}
+
       {battleResult === "victory" && pendingReward && save ? (
         <VictoryModal
           open
@@ -594,7 +615,7 @@ const DoorRoute = () => {
           onClick={() => navigate("/lobby")}
           className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-[#a67c52] hover:text-[#a67c52]"
         >
-          Fuga (Torna alla lobby)
+          Torna alla lobby
         </button>
       </header>
 
@@ -603,7 +624,7 @@ const DoorRoute = () => {
           <section className="rounded-3xl border border-white/10 bg-white/10 p-6 shadow-xl backdrop-blur">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-white/50">Scontro</p>
+                <p className="text-xs uppercase tracking-[0.35em] text-white/50">Ti contrasta ...</p>
                 <h2 className="text-3xl font-display uppercase tracking-[0.35em] text-[#a67c52]">
                   {enemyName}
                 </h2>
@@ -761,9 +782,28 @@ const DoorRoute = () => {
             </div>
 
             <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-              <div>
+              {currentDuel ? (
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-white/70 md:max-w-sm">
+                  <p className="text-xs uppercase tracking-[0.3em] text-white/50">Esito parziale</p>
+                  <p className="mt-2">
+                    {activeEvent
+                      ? activeEvent.attacker === "player"
+                        ? `Il tuo animale infligge ${activeEvent.damage} danni.`
+                        : `L'avversario infligge ${activeEvent.damage} danni.`
+                      : currentDuel.winner === "player"
+                        ? "Contrasto vinto."
+                        : "Contrasto in corso."}
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border border-white/10 bg-black/10 p-4 text-sm text-white/50 md:max-w-sm">
+                  <p className="text-xs uppercase tracking-[0.3em]">Esito parziale</p>
+                  <p className="mt-2">Schiera un animale per iniziare a contrastare.</p>
+                </div>
+              )}
+              <div className="md:ml-auto md:text-right">
                 <h3 className="text-xs uppercase tracking-[0.35em] text-white/50">Prossimi nemici</h3>
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-wrap justify-start gap-2 md:justify-end">
                   {upcomingEnemies.length ? (
                     upcomingEnemies.map((enemy, index) => {
                       const cfg = animalConfigs.find((item) => item.id === enemy.configId);
@@ -783,20 +823,6 @@ const DoorRoute = () => {
                   )}
                 </div>
               </div>
-              {currentDuel ? (
-                <div className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-white/70 md:max-w-sm">
-                  <p className="text-xs uppercase tracking-[0.3em] text-white/50">Esito parziale</p>
-                  <p className="mt-2">
-                    {activeEvent
-                      ? activeEvent.attacker === "player"
-                        ? `Il tuo animale infligge ${activeEvent.damage} danni.`
-                        : `L'avversario infligge ${activeEvent.damage} danni.`
-                      : currentDuel.winner === "player"
-                        ? "Scontro vinto."
-                        : "Scontro in corso."}
-                  </p>
-                </div>
-              ) : null}
             </div>
 
             <div className="mt-10 flex items-center justify-center gap-4">
@@ -825,13 +851,13 @@ const DoorRoute = () => {
       </main>
 
       {showResultModal && currentDuel ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70 px-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-6">
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-black/80 p-6 text-center">
-            <h3 className="text-xl font-semibold text-white">Scontro concluso</h3>
+            <h3 className="text-xl font-semibold text-white">Contrasto concluso</h3>
             <p className="mt-3 text-sm text-white/70">
               {currentDuel.winner === "player"
-                ? "Il tuo animale ha vinto lo scontro."
-                : "L'avversario ha vinto questo scontro."}
+                ? "Il tuo animale ha contrastato il nemico."
+                : "L'avversario ha contrastato la tua avanzata."}
             </p>
             {currentDuel.playerLifeEnd <= 0 ? (
               <p className="mt-2 text-sm text-rose-300">

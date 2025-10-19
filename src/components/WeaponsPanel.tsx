@@ -86,7 +86,7 @@ export const WeaponsPanel = ({
 
         {locked ? (
           <p className="mt-4 rounded bg-red-500/20 px-4 py-3 text-center text-sm text-red-200">
-            Le armi non possono pi\u00f9 essere usate in questo scontro.
+            Le armi non possono pi\u00f9 essere usate in questo contrasto.
           </p>
         ) : null}
 
