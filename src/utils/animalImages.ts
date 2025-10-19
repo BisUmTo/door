@@ -1,8 +1,9 @@
 import type { AnimalConfig } from "@/game/types";
+import { assetUrl } from "@/utils/assetUrl";
 
-const ANIMAL_ICON_BASE = "/assets/animali/icona";
+const ANIMAL_ICON_BASE = assetUrl("/assets/animali/icona");
 // Usa un'icona generica esistente come fallback
-const FALLBACK_ANIMAL_IMG = "/assets/animali/icona/gatto.png";
+const FALLBACK_ANIMAL_IMG = assetUrl("/assets/animali/icona/gatto.png");
 
 /**
  * Converte una stringa in formato slug (lowercase, no spazi, no caratteri speciali)
@@ -34,7 +35,11 @@ export const resolveAnimalIconImage = (config: AnimalConfig | null): string => {
 
   // Se ha già un'immagine specifica, usala
   if ("image" in config && config.image) {
-    return config.image as string;
+    const value = String(config.image);
+    if (value.startsWith("/assets/") || value.startsWith("assets/")) {
+      return assetUrl(value);
+    }
+    return value;
   }
 
   // Altrimenti costruisci il path dalla kind

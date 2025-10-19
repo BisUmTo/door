@@ -10,15 +10,16 @@ import {
 } from "@/game/animals";
 import type { AmmoKind, AnimalConfig, AnimalInstance, WeaponConfig } from "@/game/types";
 import { resolveAnimalIconImage, handleImageError } from "@/utils/animalImages";
+import { assetUrl } from "@/utils/assetUrl";
 // Icona arma in base al displayName (i file stanno in /assets/armi e hanno il nome in minuscolo)
 const resolveWeaponIcon = (displayName: string) => {
   // es: "Fucile a pompa" -> "/assets/armi/fucile%20a%20pompa.png"
   const file = `${encodeURIComponent(displayName.toLowerCase())}.png`;
-  return `/assets/armi/${file}`;
+  return assetUrl(`/assets/armi/${file}`);
 };
 
 // opzionale: fallback generico se l’immagine non esiste
-const WEAPON_FALLBACK_ICON = "/assets/armi/placeholder.png"; // metti un placeholder in /public o assets
+const WEAPON_FALLBACK_ICON = assetUrl("/assets/armi/placeholder.png"); // metti un placeholder in /public o assets
 
 type InventoryTab = "animals" | "weapons";
 
@@ -173,7 +174,10 @@ const InventoryRoute = () => {
     <div className="relative min-h-screen overflow-hidden text-white">
       {/* SFONDO: stessa immagine + blur + overlay scuro */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur" />
+        <div
+          className="absolute inset-0 bg-cover bg-center blur"
+          style={{ backgroundImage: `url(${assetUrl("/assets/lobby/sfondo_lobby.png")})` }}
+        />
         <div className="absolute inset-0 bg-black/70" />
       </div>
 
@@ -593,7 +597,7 @@ const InventoryRoute = () => {
                           {/* Icona arma con badge */}
                           <div className="flex-shrink-0 relative">
                             <img
-                              src="/assets/armi/badge.png"
+                              src={assetUrl("/assets/armi/badge.png")}
                               alt="badge"
                               className="h-14 w-14 object-contain"
                               draggable={false}
@@ -642,7 +646,7 @@ const InventoryRoute = () => {
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0 relative">
                         <img
-                          src="/assets/armi/badge.png"
+                          src={assetUrl("/assets/armi/badge.png")}
                           alt="badge"
                           className="h-24 w-24 object-contain"
                           draggable={false}

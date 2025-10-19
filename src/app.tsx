@@ -12,6 +12,7 @@ import CreditsRoute from "./routes/credits";
 import InventoryRoute from "./routes/inventory";
 import MedalsRoute from "./routes/medals";
 import DoorTypesRoute from "./routes/doorTypes";
+import { assetUrl } from "@/utils/assetUrl";
 
 const App = () => {
   const { status, bootstrap, onlineStatus, setOnlineStatus } = useGameStore((state) => ({
@@ -40,7 +41,7 @@ const App = () => {
         setOnlineStatus("checking");
         const controller = new AbortController();
         const timeout = window.setTimeout(() => controller.abort(), 2000);
-        const response = await fetch("/assets/file_structure.json", {
+        const response = await fetch(assetUrl("/assets/file_structure.json"), {
           method: "GET",
           cache: "no-store",
           signal: controller.signal

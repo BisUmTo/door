@@ -4,6 +4,7 @@ import P5Scene, { type SceneConfig, type SceneElementConfig } from "@/components
 import Tooltip from "@/components/Tooltip";
 import { useGameStore } from "@/state/store";
 import type { SaveGame } from "@/game/types";
+import { assetUrl } from "@/utils/assetUrl";
 
 const HOUSE_IMAGE_WIDTH = 1785;
 const HOUSE_IMAGE_HEIGHT = 1004;
@@ -33,9 +34,9 @@ const houseAreas: HouseAreaConfig[] = [
   {
     id: "bacheca",
     label: "Bacheca",
-    hitboxPath: "/assets/casa/pulsanti/bacheca.json",
-    image: "/assets/casa/pulsanti/bacheca.png",
-    selectedImage: "/assets/casa/pulsanti/bacheca_selected.png",
+    hitboxPath: assetUrl("/assets/casa/pulsanti/bacheca.json"),
+    image: assetUrl("/assets/casa/pulsanti/bacheca.png"),
+    selectedImage: assetUrl("/assets/casa/pulsanti/bacheca_selected.png"),
     layout: {
       x: 0,
       y: 0,
@@ -48,9 +49,9 @@ const houseAreas: HouseAreaConfig[] = [
   {
     id: "incubatrice",
     label: "Incubatrice",
-    hitboxPath: "/assets/casa/pulsanti/incubatrice.json",
-    image: "/assets/casa/pulsanti/incubatrice.png",
-    selectedImage: "/assets/casa/pulsanti/incubatrice_selected.png",
+    hitboxPath: assetUrl("/assets/casa/pulsanti/incubatrice.json"),
+    image: assetUrl("/assets/casa/pulsanti/incubatrice.png"),
+    selectedImage: assetUrl("/assets/casa/pulsanti/incubatrice_selected.png"),
     layout: {
       x: 0,
       y: 0,
@@ -63,9 +64,9 @@ const houseAreas: HouseAreaConfig[] = [
   {
     id: "porta",
     label: "Lobby",
-    hitboxPath: "/assets/casa/pulsanti/porta.json",
-    image: "/assets/casa/pulsanti/porta.png",
-    selectedImage: "/assets/casa/pulsanti/porta_selected.png",
+    hitboxPath: assetUrl("/assets/casa/pulsanti/porta.json"),
+    image: assetUrl("/assets/casa/pulsanti/porta.png"),
+    selectedImage: assetUrl("/assets/casa/pulsanti/porta_selected.png"),
     layout: {
       x: 0,
       y: 0,
@@ -179,7 +180,7 @@ const HouseRoute = () => {
 
       return {
         id: `furniture-${object.id}`,
-        image: `/assets/casa/arredamento/${assetKey}_${stage}.png`,
+        image: assetUrl(`/assets/casa/arredamento/${assetKey}_${stage}.png`),
         layout: {
           x: 0,
           y: 0,
@@ -204,7 +205,7 @@ const HouseRoute = () => {
     return {
       baseWidth: HOUSE_IMAGE_WIDTH,
       baseHeight: HOUSE_IMAGE_HEIGHT,
-      backgroundImage: "/assets/casa/sfondo_casa.png",
+      backgroundImage: assetUrl("/assets/casa/sfondo_casa.png"),
       elements: [...furnitureElements, ...areaElements]
     };
   }, [handleAreaClick, handleHoverChange, visibleObjects]);

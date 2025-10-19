@@ -157,6 +157,7 @@ export default defineConfig(function (_a) {
     var enableCache = env.ENABLE_CACHE === "true";
     var staticAssetPlugins = createStaticAssetPlugins();
     return {
+        base: "./",
         define: {
             __ENABLE_CACHE__: JSON.stringify(enableCache)
         },

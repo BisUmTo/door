@@ -2,11 +2,12 @@ import { useMemo, useState } from "react";
 import clsx from "clsx";
 import type { AmmoKind, WeaponConfig, WeaponName, WeaponState } from "@/game/types";
 import { getWeaponAmmoKind } from "@/data/normalize";
+import { assetUrl } from "@/utils/assetUrl";
 
 // Risolvi l'icona dell'arma in base al displayName
 const resolveWeaponIcon = (displayName: string) => {
   const file = `${encodeURIComponent(displayName.toLowerCase())}.png`;
-  return `/assets/armi/${file}`;
+  return assetUrl(`/assets/armi/${file}`);
 };
 
 interface WeaponsPanelProps {
@@ -115,7 +116,7 @@ export const WeaponsPanel = ({
                   {iconSrc && (
                     <div className="flex-shrink-0 relative">
                       <img
-                        src="/assets/armi/badge.png"
+                        src={assetUrl("/assets/armi/badge.png")}
                         alt="badge"
                         className="h-16 w-16 object-contain"
                         draggable={false}

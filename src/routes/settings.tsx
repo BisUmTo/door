@@ -2,6 +2,7 @@ import { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useSettingsStore } from "@/state/settings";
+import { assetUrl } from "@/utils/assetUrl";
 
 const languages = [
   { value: "it", label: "Italiano" },
@@ -22,7 +23,10 @@ const SettingsRoute = () => {
     <div className="relative min-h-screen overflow-hidden text-white">
       {/* SFONDO CON IMMAGINE E OVERLAY */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur" />
+        <div
+          className="absolute inset-0 bg-cover bg-center blur"
+          style={{ backgroundImage: `url(${assetUrl("/assets/lobby/sfondo_lobby.png")})` }}
+        />
         <div className="absolute inset-0 bg-black/70" />
       </div>
 

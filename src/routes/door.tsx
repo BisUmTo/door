@@ -12,6 +12,7 @@ import {
   getMissingStamina,
   type AnimalReadiness
 } from "@/game/animals";
+import { assetUrl } from "@/utils/assetUrl";
 
 /* ========= AMMO ========= */
 const EMPTY_AMMO: Record<AmmoKind, number> = {
@@ -26,24 +27,24 @@ const EMPTY_AMMO: Record<AmmoKind, number> = {
    Assicurati che i file esistano in /assets/scenari/
    e che i nomi coincidano. */
 const SCENARIO_BY_DOOR: Record<DoorType, string> = {
-  white: "/assets/scenari/Stanza_bianca.png",
-  black: "/assets/scenari/Stanza_nera.png",
-  red: "/assets/scenari/Stanza_rossa.png",
-  orange: "/assets/scenari/Stanza_arancione.png",
-  yellow: "/assets/scenari/Stanza_gialla.png",
-  purple: "/assets/scenari/Stanza_rosa.png",     // usa "viola.png" o il nome reale del file
-  blue: "/assets/scenari/Stanza_blu.png",
-  lightBlue: "/assets/scenari/Stanza_azzurra.png",
-  brown: "/assets/scenari/Stanza_marrone.png",
-  lime: "/assets/scenari/Stanza_lime.png",
-  green: "/assets/scenari/Stanza_verde.png",
-  neutral: "/assets/scenari/Stanza_neutrale.png"
+  white: assetUrl("/assets/scenari/Stanza_bianca.png"),
+  black: assetUrl("/assets/scenari/Stanza_nera.png"),
+  red: assetUrl("/assets/scenari/Stanza_rossa.png"),
+  orange: assetUrl("/assets/scenari/Stanza_arancione.png"),
+  yellow: assetUrl("/assets/scenari/Stanza_gialla.png"),
+  purple: assetUrl("/assets/scenari/Stanza_rosa.png"), // usa "viola.png" o il nome reale del file
+  blue: assetUrl("/assets/scenari/Stanza_blu.png"),
+  lightBlue: assetUrl("/assets/scenari/Stanza_azzurra.png"),
+  brown: assetUrl("/assets/scenari/Stanza_marrone.png"),
+  lime: assetUrl("/assets/scenari/Stanza_lime.png"),
+  green: assetUrl("/assets/scenari/Stanza_verde.png"),
+  neutral: assetUrl("/assets/scenari/Stanza_neutrale.png")
 };
-const FALLBACK_SCENARIO = "/assets/scenari/Stanza_neutrale.png";
+const FALLBACK_SCENARIO = assetUrl("/assets/scenari/Stanza_neutrale.png");
 
 /* ========= Helpers immagine nemico ========= */
-const ENEMY_IMG_BASE = "/assets/animali/icona";
-const FALLBACK_ANIMAL_IMG = "/assets/ui/animal_placeholder.png"; // aggiungi in /public
+const ENEMY_IMG_BASE = assetUrl("/assets/animali/icona");
+const FALLBACK_ANIMAL_IMG = assetUrl("/assets/ui/animal_placeholder.png"); // aggiungi in /public
 
 const toSlug = (s: string) =>
   s

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { assetUrl } from "@/utils/assetUrl";
 
 const CreditsRoute = () => {
   const contributors = [
@@ -13,7 +14,10 @@ const CreditsRoute = () => {
     <div className="relative min-h-screen overflow-hidden text-white">
       {/* SFONDO */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur" />
+        <div
+          className="absolute inset-0 bg-cover bg-center blur"
+          style={{ backgroundImage: `url(${assetUrl("/assets/lobby/sfondo_lobby.png")})` }}
+        />
         <div className="absolute inset-0 bg-black/70" />
       </div>
 

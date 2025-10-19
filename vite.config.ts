@@ -98,6 +98,7 @@ export default defineConfig(({ mode }) => {
   const staticAssetPlugins = createStaticAssetPlugins();
 
   return {
+    base: "./",
     define: {
       __ENABLE_CACHE__: JSON.stringify(enableCache)
     },

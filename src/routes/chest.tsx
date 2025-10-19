@@ -11,6 +11,7 @@ import {
   isFurnitureResource
 } from "@/game/furniture";
 import { useGameStore } from "@/state/store";
+import { assetUrl } from "@/utils/assetUrl";
 
 type OpeningStage = "idle" | "preview" | "opening" | "opened";
 
@@ -102,7 +103,10 @@ const ChestRoute = () => {
   return (
     <div className="relative min-h-screen overflow-hidden text-white">
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur-sm opacity-60" />
+        <div
+          className="absolute inset-0 bg-cover bg-center blur-sm opacity-60"
+          style={{ backgroundImage: `url(${assetUrl("/assets/lobby/sfondo_lobby.png")})` }}
+        />
         <div className="absolute inset-0 bg-black/75" />
       </div>
 

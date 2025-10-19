@@ -10,6 +10,7 @@ import {
   normalizeWeaponName,
   normalizeAmmoKind
 } from "./normalize";
+import { assetUrl } from "@/utils/assetUrl";
 
 const baseRequestInit: RequestInit = __ENABLE_CACHE__
   ? {}
@@ -21,9 +22,11 @@ const baseRequestInit: RequestInit = __ENABLE_CACHE__
     };
 
 const fetchJson = async <T>(path: string): Promise<T> => {
-  const response = await fetch(path, baseRequestInit);
+  const shouldResolve = path.startsWith("/assets/") || path.startsWith("assets/");
+  const resolvedPath = shouldResolve ? assetUrl(path) : path;
+  const response = await fetch(resolvedPath, baseRequestInit);
   if (!response.ok) {
-    throw new Error(`Failed to fetch ${path}: ${response.status}`);
+    throw new Error(`Failed to fetch ${resolvedPath}: ${response.status}`);
   }
   return (await response.json()) as T;
 };

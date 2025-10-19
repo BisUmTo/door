@@ -7,6 +7,7 @@ import type { DoorType } from "@/game/types";
 import { useGameStore } from "@/state/store";
 import { useLobbyDoors } from "@/state/selectors";
 import { getDoorBadgeStyles } from "@/theme/doorColors";
+import { assetUrl } from "@/utils/assetUrl";
 
 const LOBBY_IMAGE_WIDTH = 1785;
 const LOBBY_IMAGE_HEIGHT = 1004;
@@ -37,9 +38,9 @@ const lobbyAreas: LobbyAreaConfig[] = [
   {
     id: "casa",
     label: "Casa",
-    hitboxPath: "/assets/lobby/pulsanti/casa.json",
-    image: "/assets/lobby/pulsanti/casa.png",
-    selectedImage: "/assets/lobby/pulsanti/casa_selected.png",
+    hitboxPath: assetUrl("/assets/lobby/pulsanti/casa.json"),
+    image: assetUrl("/assets/lobby/pulsanti/casa.png"),
+    selectedImage: assetUrl("/assets/lobby/pulsanti/casa_selected.png"),
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
     labelPosition: { x: 155, y: 240 },
     zIndex: 10,
@@ -48,9 +49,9 @@ const lobbyAreas: LobbyAreaConfig[] = [
   {
     id: "baule",
     label: "Baule",
-    hitboxPath: "/assets/lobby/pulsanti/baule.json",
-    image: "/assets/lobby/pulsanti/baule.png",
-    selectedImage: "/assets/lobby/pulsanti/baule_selected.png",
+    hitboxPath: assetUrl("/assets/lobby/pulsanti/baule.json"),
+    image: assetUrl("/assets/lobby/pulsanti/baule.png"),
+    selectedImage: assetUrl("/assets/lobby/pulsanti/baule_selected.png"),
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
     labelPosition: { x: 1700, y: 680 },
     zIndex: 12,
@@ -59,9 +60,9 @@ const lobbyAreas: LobbyAreaConfig[] = [
   {
     id: "zaino",
     label: "Zaino",
-    hitboxPath: "/assets/lobby/pulsanti/zaino.json",
-    image: "/assets/lobby/pulsanti/zaino.png",
-    selectedImage: "/assets/lobby/pulsanti/zaino_selected.png",
+    hitboxPath: assetUrl("/assets/lobby/pulsanti/zaino.json"),
+    image: assetUrl("/assets/lobby/pulsanti/zaino.png"),
+    selectedImage: assetUrl("/assets/lobby/pulsanti/zaino_selected.png"),
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
     labelPosition: { x: 760, y: 735 },
     zIndex: 14,
@@ -70,9 +71,9 @@ const lobbyAreas: LobbyAreaConfig[] = [
   {
     id: "porta1",
     label: "Porta 1",
-    hitboxPath: "/assets/lobby/pulsanti/porta1.json",
-    image: "/assets/lobby/pulsanti/porta1.png",
-    selectedImage: "/assets/lobby/pulsanti/porta1.png",
+    hitboxPath: assetUrl("/assets/lobby/pulsanti/porta1.json"),
+    image: assetUrl("/assets/lobby/pulsanti/porta1.png"),
+    selectedImage: assetUrl("/assets/lobby/pulsanti/porta1.png"),
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
     labelPosition: { x: 535, y: 365 },
     zIndex: 20,
@@ -81,9 +82,9 @@ const lobbyAreas: LobbyAreaConfig[] = [
   {
     id: "porta2",
     label: "Porta 2",
-    hitboxPath: "/assets/lobby/pulsanti/porta2.json",
-    image: "/assets/lobby/pulsanti/porta2.png",
-    selectedImage: "/assets/lobby/pulsanti/porta2.png",
+    hitboxPath: assetUrl("/assets/lobby/pulsanti/porta2.json"),
+    image: assetUrl("/assets/lobby/pulsanti/porta2.png"),
+    selectedImage: assetUrl("/assets/lobby/pulsanti/porta2.png"),
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
     labelPosition: { x: 986.5, y: 365 },
     zIndex: 22,
@@ -92,9 +93,9 @@ const lobbyAreas: LobbyAreaConfig[] = [
   {
     id: "porta3",
     label: "Porta 3",
-    hitboxPath: "/assets/lobby/pulsanti/porta3.json",
-    image: "/assets/lobby/pulsanti/porta3.png",
-    selectedImage: "/assets/lobby/pulsanti/porta3.png",
+    hitboxPath: assetUrl("/assets/lobby/pulsanti/porta3.json"),
+    image: assetUrl("/assets/lobby/pulsanti/porta3.png"),
+    selectedImage: assetUrl("/assets/lobby/pulsanti/porta3.png"),
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
     labelPosition: { x: 1428.5, y: 365 },
     zIndex: 24,
@@ -126,8 +127,8 @@ const doorColorAssets: Record<DoorType, string | null> = {
 const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;
 const getDoorTexturePath = (type: DoorType) =>
   type === "neutral"
-    ? "/assets/porte/porta_base.png"
-    : `/assets/porte/${doorColorAssets[type]}/porta_${doorColorAssets[type]}_base.png`;
+    ? assetUrl("/assets/porte/porta_base.png")
+    : assetUrl(`/assets/porte/${doorColorAssets[type]}/porta_${doorColorAssets[type]}_base.png`);
 
 const LobbyRoute = () => {
   const navigate = useNavigate();
@@ -232,7 +233,7 @@ const LobbyRoute = () => {
     return {
       baseWidth: LOBBY_IMAGE_WIDTH,
       baseHeight: LOBBY_IMAGE_HEIGHT,
-      backgroundImage: "/assets/lobby/sfondo_lobby.png",
+      backgroundImage: assetUrl("/assets/lobby/sfondo_lobby.png"),
       elements
     };
   }, [doors, areaCallbacks]);

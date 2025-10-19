@@ -6,6 +6,7 @@ import { it, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { useGameStore } from "@/state/store";
 import { useSettingsStore } from "@/state/settings";
+import { assetUrl } from "@/utils/assetUrl";
 
 const localeMap = {
   it,
@@ -105,7 +106,10 @@ const SavesRoute = () => {
     <div className="relative min-h-screen overflow-hidden text-white">
       {/* SFONDO CON IMMAGINE + BLUR + OVERLAY */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur" />
+        <div
+          className="absolute inset-0 bg-cover bg-center blur"
+          style={{ backgroundImage: `url(${assetUrl("/assets/lobby/sfondo_lobby.png")})` }}
+        />
         <div className="absolute inset-0 bg-black/70" />
       </div>
 
