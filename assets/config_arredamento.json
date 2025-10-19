@@ -12,7 +12,7 @@
     },
     {
       "id": 2,
-      "nome": "Dispensa",
+      "nome": "Mensola",
       "pezzi": 4,
       "bonus": {
         "tipo": "Cibo",
@@ -22,7 +22,7 @@
     },
     {
       "id": 3,
-      "nome": "Tavolo da Lavoro",
+      "nome": "Tavolino",
       "pezzi": 5,
       "bonus": {
         "tipo": "Munizioni",
@@ -32,7 +32,7 @@
     },
     {
       "id": 4,
-      "nome": "Scrivania",
+      "nome": "sedie",
       "pezzi": 2,
       "bonus": {
         "tipo": "Monete",

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useGameStore } from "@/state/store";
 import { getLifeCap, getStaminaCap } from "@/game/animals";
@@ -27,6 +27,10 @@ const InventoryRoute = () => {
 
   const animalConfigs = configs?.animals ?? [];
   const weaponConfigs = configs?.weapons ?? [];
+
+  useEffect(() => {
+    console.debug("[InventoryRoute] Game state snapshot:", useGameStore.getState());
+  }, []);
 
   const animals = save?.animals.owned ?? [];
   const weapons = save?.weapons ?? [];
@@ -122,8 +126,8 @@ const InventoryRoute = () => {
               }}
               className={`rounded-full px-6 py-2 text-sm uppercase tracking-[0.3em] transition ${
                 activeTab === "animals"
-                  ? "border border-emerald-400 bg-emerald-400/20 text-emerald-300"
-                  : "border border-white/20 bg-black/40 text-white/60 hover:border-emerald-400 hover:text-emerald-300"
+                  ? "border border-[#a67c52] bg-[#a67c52]/20 text-[#a67c52]"
+                  : "border border-white/20 bg-black/40 text-white/60 hover:border-[#a67c52] hover:text-[#a67c52]"
               }`}
             >
               Animali
@@ -151,8 +155,8 @@ const InventoryRoute = () => {
                         onClick={() => setSelectedAnimal(index)}
                         className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
                           selected
-                            ? "border-emerald-400 bg-emerald-400/10"
-                            : "border-white/10 bg-white/5 hover:border-emerald-300/60"
+                            ? "border-[#a67c52] bg-[#a67c52]/10"
+                            : "border-white/10 bg-white/5 hover:border-[#a67c52]/60"
                         }`}
                       >
                         <div className="flex items-center justify-between text-sm text-white/80">

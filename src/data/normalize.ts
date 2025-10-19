@@ -30,9 +30,9 @@ const doorAliasPairs: Array<[string, DoorType]> = [
   ["\ud83d\udfe1 gialla", "yellow"],
   ["gialla", "yellow"],
   ["yellow", "yellow"],
-  ["\ud83d\udc9c rosa/viola", "purple"],
+  ["\ud83d\udc9c rosa", "purple"],
   ["viola", "purple"],
-  ["rosa/viola", "purple"],
+  ["rosa", "purple"],
   ["purple", "purple"],
   ["\ud83d\udd35 blu", "blue"],
   ["blu", "blue"],
@@ -233,7 +233,7 @@ export interface AnimalConfigRaw {
   vita: number | string;
   danno: number | string;
   velocita_di_attacco: number | string;
-  taglia: string;
+  eta: string;
   stamina_max: number | string;
   upgradable_armature: boolean | string | number;
   costo_crescita_cibo: number | string;
@@ -250,7 +250,7 @@ export const normalizeAnimalConfig = (raw: Record<string, unknown>): AnimalConfi
     attackSpeed: normalizeNumber(
       (source.velocita_di_attacco ?? (source as Record<string, unknown>)["attackSpeed"]) ?? 1
     ),
-    size: normalizeSize(source.taglia ?? "Small"),
+    size: normalizeSize(source.eta ?? "Small"),
     staminaMax: normalizeNumber(
       (source.stamina_max ?? (source as Record<string, unknown>)["staminaMax"]) ?? 0
     ),

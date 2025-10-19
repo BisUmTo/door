@@ -51,13 +51,16 @@ import {
   ensureVersion,
   getActiveSlot,
   listSlots,
+  buildSavesExport,
+  importSavesSnapshot,
   loadSave,
+  parseSavesExportJson,
   persistSave,
   renameSlot,
   saveSlots,
-  SaveSlotMeta,
   setActiveSlot
 } from "@/save/saves";
+import type { SaveSlotMeta, SavesExportPayload } from "@/save/saves";
 import { runMigrations } from "@/save/migrations";
 import { simulateAnimalDuel, simulateWeaponAttack } from "@/game/battle";
 import type { DoorLootTablesRegistry } from "@/game/loot";
@@ -121,6 +124,8 @@ interface GameStoreState {
   loadSlot: (slotId: string) => Promise<void>;
   renameSlot: (slotId: string, name: string) => void;
   deleteSlot: (slotId: string) => void;
+  exportSavesSnapshot: () => SavesExportPayload;
+  importSavesFromJson: (json: string) => void;
   drawLobbyDoors: () => DoorType[];
   openDoor: (doorType: DoorType) => DoorEncounter | null;
   resolveWeaponAttack: (weapon: WeaponName, ammoToSpend: number) => void;
@@ -293,7 +298,15 @@ const ensureInventoryAmmo = (ammo: Partial<Record<AmmoKind, number>>): Record<Am
   return next;
 };
 
-const buildWeaponsState = (configs: WeaponConfig[], existing?: WeaponState[]): WeaponState[] => {
+const buildWeaponsState = (
+  configs: WeaponConfig[],
+  existing?: WeaponState[]
+): WeaponState[] => {
+  // Elenco delle armi sbloccate all'inizio, con ammo personalizzata
+  const initialUnlockedWeapons: Record<string, number> = {
+    blowgun: 8
+  };
+
   return configs.map((weapon) => {
     const stored = existing?.find((entry) => entry.name === weapon.name);
     if (stored) {
@@ -303,13 +316,31 @@ const buildWeaponsState = (configs: WeaponConfig[], existing?: WeaponState[]): W
         unlocked: stored.unlocked ?? weapon.name === "blowgun"
       };
     }
+
     return {
       name: weapon.name,
-      ammo: 100,
-      unlocked: weapon.name === "blowgun"
+      ammo: initialUnlockedWeapons[weapon.name] ?? 0,
+      unlocked: initialUnlockedWeapons.hasOwnProperty(weapon.name)
     };
   });
 };
+// const buildWeaponsState = (configs: WeaponConfig[], existing?: WeaponState[]): WeaponState[] => {
+//   return configs.map((weapon) => {
+//     const stored = existing?.find((entry) => entry.name === weapon.name);
+//     if (stored) {
+//       return {
+//         name: weapon.name,
+//         ammo: Math.max(0, stored.ammo ?? 0),
+//         unlocked: stored.unlocked ?? weapon.name === "blowgun"
+//       };
+//     }
+//     return {
+//       name: weapon.name,
+//       ammo: 100,
+//       unlocked: weapon.name === "blowgun"
+//     };
+//   });
+// };
 
 const buildHouseBlueprints = (config: HouseConfig): HouseBlueprint[] => {
   return config.arredamento.map((item) => ({
@@ -790,6 +821,37 @@ export const useGameStore = create<GameStoreState>()(
         save: nextSave
       });
       debugLog("deleteSlot completed", { slotId, nextActive: activeSlotId });
+    },
+
+    exportSavesSnapshot: () => {
+      debugLog("exportSavesSnapshot called");
+      return buildSavesExport();
+    },
+
+    importSavesFromJson: (json) => {
+      debugLog("importSavesFromJson called");
+      const snapshot = parseSavesExportJson(json);
+      importSavesSnapshot(snapshot);
+
+      const slots = listSlots();
+      const activeSlotId = getActiveSlot();
+      const { configs } = get();
+
+      let nextSave: SaveGame | null = null;
+      if (configs && activeSlotId) {
+        const loaded = loadSave(activeSlotId);
+        if (loaded) {
+          const migrated = runMigrations(loaded);
+          nextSave = syncSaveWithConfigs(migrated, configs);
+        }
+      }
+
+      set({
+        slots,
+        activeSlotId,
+        save: nextSave
+      });
+      debugLog("importSavesFromJson completed", { slotCount: slots.length, activeSlotId });
     },
 
     drawLobbyDoors: () => {
@@ -1357,7 +1419,7 @@ export const useGameStore = create<GameStoreState>()(
       if (!save || !configs) return;
       const instance = save.animals.owned[animalIndex];
       if (!instance || !instance.alive) return;
-      if (instance.size === "Large") return;
+      if (instance.size === "Adult") return;
 
       const config = configs.animals.find((entry) => entry.id === instance.configId);
       if (!config) return;

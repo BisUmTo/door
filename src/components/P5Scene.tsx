@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import p5 from "p5";
 
 type Point = [number, number];
@@ -70,6 +70,7 @@ interface ElementState {
 const P5SceneComponent = ({ config, className }: P5SceneProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const p5InstanceRef = useRef<p5 | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const sortedElements = useMemo(
     () =>
@@ -80,11 +81,14 @@ const P5SceneComponent = ({ config, className }: P5SceneProps) => {
   );
 
   useEffect(() => {
+    let isMounted = true;
     const container = containerRef.current;
     if (!container) return undefined;
 
     let canvasWidth = config.baseWidth;
     let canvasHeight = config.baseHeight;
+
+    setIsLoading(true);
 
     const sketch = (p: p5) => {
       let backgroundImage: p5.Image | null = null;
@@ -169,6 +173,9 @@ const P5SceneComponent = ({ config, className }: P5SceneProps) => {
         p.noStroke();
         p.noLoop();
         updateCanvasSize();
+        if (isMounted) {
+          setIsLoading(false);
+        }
       };
 
       p.draw = () => {
@@ -221,13 +228,24 @@ const P5SceneComponent = ({ config, className }: P5SceneProps) => {
     observer.observe(container);
 
     return () => {
+      isMounted = false;
       observer.disconnect();
       instance.remove();
       p5InstanceRef.current = null;
     };
   }, [config.backgroundImage, config.baseHeight, config.baseWidth, sortedElements]);
 
-  return <div ref={containerRef} className={className} />;
+  return (
+    <div className={className}>
+      <div ref={containerRef} className="relative">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm pointer-events-none">
+            <div className="h-10 w-10 border-4 border-white/50 border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 // Memoize the component to prevent unnecessary re-renders

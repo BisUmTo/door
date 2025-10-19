@@ -16,6 +16,14 @@ export interface SaveSlotMeta {
   updatedAt: string;
 }
 
+export interface SavesExportPayload {
+  version: string;
+  generatedAt: string;
+  activeSlotId: string | null;
+  slots: SaveSlotMeta[];
+  saves: Record<string, SaveGame | null>;
+}
+
 interface SlotsPayload {
   slots: SaveSlotMeta[];
 }
@@ -190,4 +198,141 @@ export const ensureVersion = () => {
   if (storedVersion !== CURRENT_VERSION) {
     localStorage.setItem(STORAGE_KEYS.version, CURRENT_VERSION);
   }
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> => {
+  return typeof value === "object" && value !== null;
+};
+
+const isSaveSlotMeta = (value: unknown): value is SaveSlotMeta => {
+  if (!isRecord(value)) return false;
+  return (
+    typeof value.id === "string" &&
+    typeof value.name === "string" &&
+    typeof value.createdAt === "string" &&
+    typeof value.updatedAt === "string"
+  );
+};
+
+const normalizeSavesMap = (
+  slots: SaveSlotMeta[],
+  value: unknown
+): Record<string, SaveGame | null> => {
+  if (!isRecord(value)) {
+    throw new Error("Invalid saves map");
+  }
+  const result: Record<string, SaveGame | null> = {};
+  for (const slot of slots) {
+    const entry = value[slot.id];
+    if (entry === undefined || entry === null) {
+      result[slot.id] = null;
+      continue;
+    }
+    if (!isRecord(entry)) {
+      throw new Error(`Invalid save payload for slot ${slot.id}`);
+    }
+    if (!isRecord(entry.meta) || entry.meta.slotId !== slot.id) {
+      throw new Error(`Mismatched slot id for save ${slot.id}`);
+    }
+    result[slot.id] = entry as SaveGame;
+  }
+  return result;
+};
+
+export const buildSavesExport = (): SavesExportPayload => {
+  const slots = listSlots();
+  const activeSlotId = getActiveSlot();
+  const saves = slots.reduce<Record<string, SaveGame | null>>((acc, slot) => {
+    acc[slot.id] = loadSave(slot.id);
+    return acc;
+  }, {});
+
+  return {
+    version: CURRENT_VERSION,
+    generatedAt: nowIso(),
+    activeSlotId,
+    slots,
+    saves
+  };
+};
+
+export const parseSavesExportJson = (json: string): SavesExportPayload => {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(json);
+  } catch {
+    throw new Error("Invalid JSON");
+  }
+  if (!isRecord(parsed)) {
+    throw new Error("Invalid export payload");
+  }
+
+  const slotsRaw = parsed.slots;
+  if (!Array.isArray(slotsRaw)) {
+    throw new Error("Slots list missing");
+  }
+  const slots = slotsRaw.map((slot) => {
+    if (!isSaveSlotMeta(slot)) {
+      throw new Error("Invalid slot metadata");
+    }
+    return slot;
+  });
+  const seenSlotIds = new Set<string>();
+  for (const slot of slots) {
+    if (seenSlotIds.has(slot.id)) {
+      throw new Error(`Duplicate slot id "${slot.id}" in export`);
+    }
+    seenSlotIds.add(slot.id);
+  }
+
+  const saves = normalizeSavesMap(slots, parsed.saves);
+
+  const activeSlotId =
+    typeof parsed.activeSlotId === "string" && slots.some((slot) => slot.id === parsed.activeSlotId)
+      ? parsed.activeSlotId
+      : null;
+
+  const version = typeof parsed.version === "string" && parsed.version.trim()
+    ? parsed.version
+    : CURRENT_VERSION;
+
+  const generatedAt =
+    typeof parsed.generatedAt === "string" && parsed.generatedAt.trim()
+      ? parsed.generatedAt
+      : nowIso();
+
+  return {
+    version,
+    generatedAt,
+    activeSlotId,
+    slots,
+    saves
+  };
+};
+
+export const importSavesSnapshot = (payload: SavesExportPayload) => {
+  const existingSlots = listSlots();
+  for (const slot of existingSlots) {
+    localStorage.removeItem(buildSaveKey(slot.id));
+  }
+
+  saveSlots(payload.slots);
+
+  for (const slot of payload.slots) {
+    const data = payload.saves[slot.id];
+    if (data) {
+      localStorage.setItem(buildSaveKey(slot.id), JSON.stringify(data));
+    } else {
+      localStorage.removeItem(buildSaveKey(slot.id));
+    }
+  }
+
+  if (payload.activeSlotId && payload.slots.some((slot) => slot.id === payload.activeSlotId)) {
+    setActiveSlot(payload.activeSlotId);
+  } else {
+    localStorage.removeItem(STORAGE_KEYS.activeSlot);
+  }
+
+  const version = payload.version.trim() ? payload.version : CURRENT_VERSION;
+  localStorage.setItem(STORAGE_KEYS.version, version);
 };

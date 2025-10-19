@@ -87,10 +87,10 @@ const houseAreas: HouseAreaConfig[] = [
 ];
 
 const objectLayouts: Record<number, { x: number; y: number; width: number; height: number }> = {
-  1: { x: 520, y: 700, width: 260, height: 220 },
-  2: { x: 330, y: 520, width: 220, height: 240 },
-  3: { x: 960, y: 630, width: 340, height: 220 },
-  4: { x: 1240, y: 560, width: 220, height: 210 }
+  1: { x: 1300, y: 500, width: 260, height: 220 },
+  2: { x: 1330, y: 120, width: 220, height: 240 },
+  3: { x: 1100, y: 630, width: 340, height: 220 },
+  4: { x: 200, y: 560, width: 220, height: 210 }
 };
 
 const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;
@@ -105,7 +105,7 @@ const HouseRoute = () => {
     incubatrice: false,
     porta: false
   });
-  const [hoveredObjectId, setHoveredObjectId] = useState<number | null>(null);
+  // const [hoveredObjectId, setHoveredObjectId] = useState<number | null>(null); // removed hoveredObjectId state (no hover popups for objects anymore)
 
   const visibleObjects = useMemo(() => {
     if (!save) return [];
@@ -207,7 +207,7 @@ const HouseRoute = () => {
                   ? Math.round((object.piecesOwned / object.piecesNeeded) * 100)
                   : 0;
                 const unlocked = object.unlocked;
-                const isHovered = hoveredObjectId === object.id;
+                // const isHovered = hoveredObjectId === object.id;
                 const isSelected = selectedId === object.id;
 
                 return (
@@ -226,10 +226,6 @@ const HouseRoute = () => {
                       type="button"
                       disabled={activePanel !== "none"}
                       onClick={() => setSelectedId(object.id)}
-                      onMouseEnter={() => setHoveredObjectId(object.id)}
-                      onMouseLeave={() =>
-                        setHoveredObjectId((current) => (current === object.id ? null : current))
-                      }
                       className={`relative flex h-full w-full flex-col justify-end rounded-3xl border px-4 py-3 text-left transition ${
                         unlocked
                           ? "border-emerald-400/60 bg-emerald-500/10"
@@ -238,10 +234,10 @@ const HouseRoute = () => {
                         isSelected ? "ring-2 ring-emerald-300" : ""
                       } disabled:cursor-not-allowed disabled:opacity-60`}
                     >
-                      <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white/80">
+                      <span className="text-sm font-semibold uppercase tracking-[0.3em] text-black">
                         {object.name}
                       </span>
-                      <span className="mt-1 text-xs uppercase text-white/50">
+                      <span className="mt-1 text-xs uppercase text-black/50">
                         {object.piecesOwned}/{object.piecesNeeded} pezzi
                       </span>
                       <div className="mt-2 h-1.5 w-full overflow-hidden rounded bg-white/10">
@@ -251,22 +247,7 @@ const HouseRoute = () => {
                         />
                       </div>
                     </button>
-                    {isHovered ? (
-                      <div className="pointer-events-none absolute left-1/2 top-0 flex w-[220px] -translate-x-1/2 -translate-y-full flex-col gap-1 rounded-2xl border border-white/10 bg-black/85 p-3 text-[11px] text-white/70 shadow-xl">
-                        <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
-                          {object.name}
-                        </span>
-                        <span>
-                          Pezzi posseduti: {object.piecesOwned}
-                        </span>
-                        <span>
-                          Pezzi mancanti: {Math.max(0, object.piecesNeeded - object.piecesOwned)}
-                        </span>
-                        {object.unlocked && object.turnsToNextBonus !== null ? (
-                          <span>Bonus ogni {object.bonus.turnsCooldown} turni</span>
-                        ) : null}
-                      </div>
-                    ) : null}
+                    {/* hover popup removed */}
                   </div>
                 );
               })}

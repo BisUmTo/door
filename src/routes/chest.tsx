@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import { CHEST_DEFINITIONS } from "@/game/chests";
@@ -19,6 +19,10 @@ const ChestRoute = () => {
   const [stage, setStage] = useState<OpeningStage>("idle");
   const [reward, setReward] = useState<ReturnType<typeof openChest>>(null);
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    console.debug("[ChestRoute] Game state snapshot:", useGameStore.getState());
+  }, []);
 
   const inventory = save?.chests.inventory ?? {
     common: 0,
