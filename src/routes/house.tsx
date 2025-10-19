@@ -42,7 +42,7 @@ const houseAreas: HouseAreaConfig[] = [
       width: HOUSE_IMAGE_WIDTH,
       height: HOUSE_IMAGE_HEIGHT
     },
-    labelPosition: { x: 342, y: 170 },
+    labelPosition: { x: 342, y: 160 },
     zIndex: 10
   },
   {
@@ -57,7 +57,7 @@ const houseAreas: HouseAreaConfig[] = [
       width: HOUSE_IMAGE_WIDTH,
       height: HOUSE_IMAGE_HEIGHT
     },
-    labelPosition: { x: 389, y: 665 },
+    labelPosition: { x: 389, y: 630 },
     zIndex: 12
   },
   {
@@ -72,16 +72,16 @@ const houseAreas: HouseAreaConfig[] = [
       width: HOUSE_IMAGE_WIDTH,
       height: HOUSE_IMAGE_HEIGHT
     },
-    labelPosition: { x: 925, y: 830 },
+    labelPosition: { x: 925, y: 800 },
     zIndex: 8
   }
 ];
 
 const objectLayouts: Record<number, { x: number; y: number; width: number; height: number }> = {
-  1: { x: 1300, y: 400, width: 260, height: 220 },
-  2: { x: 1330, y: 50, width: 220, height: 240 },
-  3: { x: 1180, y: 680, width: 340, height: 220 },
-  4: { x: 400, y: 800, width: 220, height: 210 }
+  1: { x: 1500, y: 408, width: 260, height: 220 },
+  2: { x: 1390, y: 140, width: 220, height: 240 },
+  3: { x: 1180, y: 872, width: 340, height: 220 },
+  4: { x: 395, y: 800, width: 220, height: 210 }
 };
 
 const furnitureStageOverrides: Record<string, number> = {

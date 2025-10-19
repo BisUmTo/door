@@ -99,6 +99,8 @@ interface PendingReward {
   weaponsUsed: { name: WeaponName; shots: number }[];
   fallenAnimals: { configId: number }[];
   medalUnlocked?: DoorType | null;
+  // nuovo: eventuale baule assegnato (rarità) da mostrare nella schermata di vittoria
+  chestRarity?: ChestRarity | null;
 }
 
 interface ChestOpenResult {
@@ -298,50 +300,29 @@ const ensureInventoryAmmo = (ammo: Partial<Record<AmmoKind, number>>): Record<Am
   return next;
 };
 
+const INITIAL_UNLOCKED_WEAPONS: ReadonlySet<WeaponName> = new Set<WeaponName>([
+  "blowgun"
+]);
+
 const buildWeaponsState = (
   configs: WeaponConfig[],
   existing?: WeaponState[]
 ): WeaponState[] => {
-  // Elenco delle armi sbloccate all'inizio, con ammo personalizzata
-  const initialUnlockedWeapons: Record<string, number> = {
-    blowgun: 8
-  };
-
   return configs.map((weapon) => {
     const stored = existing?.find((entry) => entry.name === weapon.name);
     if (stored) {
       return {
         name: weapon.name,
-        ammo: Math.max(0, stored.ammo ?? 0),
-        unlocked: stored.unlocked ?? weapon.name === "blowgun"
+        unlocked: stored.unlocked ?? INITIAL_UNLOCKED_WEAPONS.has(weapon.name)
       };
     }
 
     return {
       name: weapon.name,
-      ammo: initialUnlockedWeapons[weapon.name] ?? 0,
-      unlocked: initialUnlockedWeapons.hasOwnProperty(weapon.name)
+      unlocked: INITIAL_UNLOCKED_WEAPONS.has(weapon.name)
     };
   });
 };
-// const buildWeaponsState = (configs: WeaponConfig[], existing?: WeaponState[]): WeaponState[] => {
-//   return configs.map((weapon) => {
-//     const stored = existing?.find((entry) => entry.name === weapon.name);
-//     if (stored) {
-//       return {
-//         name: weapon.name,
-//         ammo: Math.max(0, stored.ammo ?? 0),
-//         unlocked: stored.unlocked ?? weapon.name === "blowgun"
-//       };
-//     }
-//     return {
-//       name: weapon.name,
-//       ammo: 100,
-//       unlocked: weapon.name === "blowgun"
-//     };
-//   });
-// };
-
 const buildHouseBlueprints = (config: HouseConfig): HouseBlueprint[] => {
   return config.arredamento.map((item) => ({
     id: item.id,
@@ -395,6 +376,20 @@ const createStarterAnimals = (animalsConfig: AnimalConfig[], count = 2) => {
 };
 
 const syncSaveWithConfigs = (save: SaveGame, configs: GameConfigs): SaveGame => {
+  const inventoryAmmo = ensureInventoryAmmo(save.inventory.ammo);
+  const migratedAmmo = { ...inventoryAmmo };
+
+  for (const weapon of save.weapons ?? []) {
+    const legacyAmmo =
+      typeof (weapon as { ammo?: unknown }).ammo === "number"
+        ? Math.max(0, Math.floor((weapon as { ammo?: number }).ammo ?? 0))
+        : 0;
+    if (legacyAmmo > 0) {
+      const ammoKind = getWeaponAmmoKind(weapon.name);
+      migratedAmmo[ammoKind] += legacyAmmo;
+    }
+  }
+
   return {
     ...save,
     weapons: buildWeaponsState(configs.weapons, save.weapons),
@@ -403,7 +398,7 @@ const syncSaveWithConfigs = (save: SaveGame, configs: GameConfigs): SaveGame => 
     },
     inventory: {
       ...save.inventory,
-      ammo: ensureInventoryAmmo(save.inventory.ammo)
+      ammo: migratedAmmo
     },
     animals: {
       owned: normalizeOwnedAnimals(save.animals.owned, configs.animals),
@@ -580,6 +575,41 @@ const generateDoorEncounter = (
 const ensureDoorHistoryLimit = (history: SaveGame["doorHistory"], limit = 50) => {
   if (history.length <= limit) return history;
   return history.slice(history.length - limit);
+};
+
+// Helper: controlla se il giocatore ha risorse per combattere
+const canPlayerFight = (save: SaveGame, configs: AnimalConfig[]): boolean => {
+  // Controlla se ha almeno un animale vivo con stamina piena
+  const hasReadyAnimal = save.animals.owned.some((animal) => {
+    if (!animal.alive) return false;
+    const config = configs.find((c) => c.id === animal.configId);
+    if (!config) return false;
+    const staminaCap = getStaminaCap(config, animal.size);
+    return animal.stamina >= staminaCap;
+  });
+
+  // Controlla se ha almeno una munizione disponibile
+  const hasAmmo = Object.values(save.inventory.ammo).some((qty) => qty > 0);
+
+  return hasReadyAnimal || hasAmmo;
+};
+
+// helper: sceglie un baùlo (anche "none") dalla config basandosi su peso_baule
+const rollChestByPeso = (save: SaveGame, door: DoorType, configs: GameConfigs, offset = 13): ChestRarity | "none" | null => {
+  const list = configs.chests.bauli;
+  if (!Array.isArray(list) || list.length === 0) return null;
+  const total = list.reduce((s, e) => s + (typeof (e as any).peso_baule === "number" ? (e as any).peso_baule : 0), 0);
+  if (total <= 0) return null;
+  const rng = randomForDoor(save, door, offset);
+  const roll = rng.nextFloat() * total;
+  let cumulative = 0;
+  for (const entry of list) {
+    cumulative += (entry as any).peso_baule ?? 0;
+    if (roll <= cumulative) {
+      return (entry as any).id ?? null;
+    }
+  }
+  return (list.at(-1) as any)?.id ?? null;
 };
 
 export const useGameStore = create<GameStoreState>()(
@@ -920,6 +950,36 @@ export const useGameStore = create<GameStoreState>()(
       if (!save || !configs) return null;
 
       const enemies = generateDoorEncounter(save, doorType, configs.animals);
+
+      // Se ci sono nemici e il giocatore non può combattere, sconfitta immediata
+      if (enemies.length > 0 && !canPlayerFight(save, configs.animals)) {
+        const regeneratedAnimals = regenerateAnimalStamina(save.animals.owned, configs.animals, 5);
+        const nextSave: SaveGame = {
+          ...save,
+          animals: {
+            ...save.animals,
+            owned: regeneratedAnimals
+          },
+          battleState: defaultBattleState,
+          doorHistory: ensureDoorHistoryLimit([
+            ...save.doorHistory,
+            {
+              type: doorType,
+              result: "defeat",
+              timestamp: new Date().toISOString()
+            }
+          ])
+        };
+        persistSave(nextSave);
+        set({
+          save: nextSave,
+          pendingReward: null,
+          weaponsPhaseLocked: false,
+          battleResult: "defeat"
+        });
+        return null;
+      }
+
       const nextBattleState = enemies.length
         ? {
             active: true,
@@ -999,12 +1059,35 @@ export const useGameStore = create<GameStoreState>()(
           triggers
         );
 
-        pendingReward = {
-          doorType,
-          loot,
-          weaponsUsed: [],
-          fallenAnimals: []
-        };
+        // assegna eventuale baule (incrementa inventario dei bauli se presente)
+        const chestId = rollChestByPeso(save, doorType, configs, 13);
+        if (chestId && chestId !== "none") {
+          const rarity = chestId as ChestRarity;
+          nextSave = {
+            ...nextSave,
+            chests: {
+              ...nextSave.chests,
+              inventory: {
+                ...nextSave.chests.inventory,
+                [rarity]: (nextSave.chests.inventory[rarity] ?? 0) + 1
+              }
+            }
+          };
+          pendingReward = {
+            doorType,
+            loot,
+            weaponsUsed: [],
+            fallenAnimals: [],
+            chestRarity: rarity
+          };
+        } else {
+          pendingReward = {
+            doorType,
+            loot,
+            weaponsUsed: [],
+            fallenAnimals: []
+          };
+        }
 
         persistSave(nextSave);
       } else {
@@ -1034,7 +1117,6 @@ export const useGameStore = create<GameStoreState>()(
       const { save, configs } = get();
       if (!save || !configs) return;
       if (!save.battleState.active || !save.battleState.door) return;
-      if (save.battleState.weaponsLocked) return;
 
       const weaponConfig = configs.weapons.find((weapon) => weapon.name === weaponName);
       if (!weaponConfig) return;
@@ -1066,7 +1148,8 @@ export const useGameStore = create<GameStoreState>()(
         }
       };
 
-      let weaponsLocked: boolean = save.battleState.weaponsLocked;
+      // Always allow weapons (never lock)
+      let weaponsLocked: boolean = false;
       let battleResult: GameStoreState["battleResult"] = null;
       let newBattleState = save.battleState;
       let nextSave = save;
@@ -1126,6 +1209,39 @@ export const useGameStore = create<GameStoreState>()(
 
           weaponsLocked = false;
           battleResult = "victory";
+
+          // nuovo: roll per baùlo e aggiornamento inventario + pendingReward
+          const chestId = rollChestByPeso(save, doorType, configs, 21);
+          let chestRarity: ChestRarity | null = null;
+          if (chestId && chestId !== "none") {
+            chestRarity = chestId as ChestRarity;
+            nextSave = {
+              ...nextSave,
+              chests: {
+                ...nextSave.chests,
+                inventory: {
+                  ...nextSave.chests.inventory,
+                  [chestRarity]: (nextSave.chests.inventory[chestRarity] ?? 0) + 1
+                }
+              }
+            };
+          }
+
+          const finalUsedWeapons = [
+            ...save.battleState.usedWeapons,
+            { name: weaponName, shots: result.ammoSpent }
+          ];
+
+          // Impostiamo pendingReward con loot, armi usate, fallenAnimals e possibile chest
+          set({
+            pendingReward: {
+              doorType,
+              loot,
+              weaponsUsed: finalUsedWeapons,
+              fallenAnimals: save.battleState.fallenAnimals,
+              chestRarity
+            }
+          });
         } else {
           newBattleState = {
             ...save.battleState,
@@ -1141,7 +1257,7 @@ export const useGameStore = create<GameStoreState>()(
           };
         }
       } else {
-        weaponsLocked = true;
+        // Do NOT lock weapons here: allow repeated weapon usage during same battle
         newBattleState = {
           ...save.battleState,
           door: {
@@ -1152,7 +1268,7 @@ export const useGameStore = create<GameStoreState>()(
             ...save.battleState.usedWeapons,
             { name: weaponName, shots: result.ammoSpent }
           ],
-          weaponsLocked: true
+          weaponsLocked: false
         };
         nextSave = {
           ...save,
@@ -1176,7 +1292,7 @@ export const useGameStore = create<GameStoreState>()(
       persistSave(nextSave);
       set({
         save: nextSave,
-        weaponsPhaseLocked: weaponsLocked,
+        weaponsPhaseLocked: false,
         battleResult
       });
     },
@@ -1318,12 +1434,30 @@ export const useGameStore = create<GameStoreState>()(
 
           nextSave = applyHouseRewards(baseSave, triggers);
 
+          // nuovo: roll per baùlo e aggiornamento inventario + pendingReward
+          const chestId = rollChestByPeso(save, doorType, configs, 33);
+          let chestRarity: ChestRarity | null = null;
+          if (chestId && chestId !== "none") {
+            chestRarity = chestId as ChestRarity;
+            nextSave = {
+              ...nextSave,
+              chests: {
+                ...nextSave.chests,
+                inventory: {
+                  ...nextSave.chests.inventory,
+                  [chestRarity]: (nextSave.chests.inventory[chestRarity] ?? 0) + 1
+                }
+              }
+            };
+          }
+
           pendingReward = {
             doorType,
             loot: effectiveLoot,
             weaponsUsed: save.battleState.usedWeapons,
             fallenAnimals,
-            medalUnlocked
+            medalUnlocked,
+            chestRarity
           };
           battleResult = "victory";
         } else {

@@ -63,7 +63,7 @@ const defaultAmmoState = (): Record<AmmoKind, number> => ({
   bullets: 0,
   shells: 0,
   arrows: 0,
-  darts: 0,
+  darts: 8, // Provide starting darts so the blowgun can be used immediately
   grenades: 0
 });
 

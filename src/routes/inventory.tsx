@@ -8,7 +8,7 @@ import {
   getDisplayBattleStats,
   getMissingStamina
 } from "@/game/animals";
-import type { AnimalConfig, AnimalInstance, WeaponConfig } from "@/game/types";
+import type { AmmoKind, AnimalConfig, AnimalInstance, WeaponConfig } from "@/game/types";
 import { resolveAnimalIconImage, handleImageError } from "@/utils/animalImages";
 // Icona arma in base al displayName (i file stanno in /assets/armi e hanno il nome in minuscolo)
 const resolveWeaponIcon = (displayName: string) => {
@@ -21,6 +21,24 @@ const resolveWeaponIcon = (displayName: string) => {
 const WEAPON_FALLBACK_ICON = "/assets/armi/placeholder.png"; // metti un placeholder in /public o assets
 
 type InventoryTab = "animals" | "weapons";
+
+const AMMO_ORDER: AmmoKind[] = ["bullets", "shells", "arrows", "darts", "grenades"];
+
+const AMMO_LABELS: Record<AmmoKind, string> = {
+  bullets: "Proiettili",
+  shells: "Cartucce",
+  arrows: "Frecce",
+  darts: "Dardi",
+  grenades: "Granate"
+};
+
+const EMPTY_AMMO: Record<AmmoKind, number> = {
+  bullets: 0,
+  shells: 0,
+  arrows: 0,
+  darts: 0,
+  grenades: 0
+};
 
 const formatSize = (size: AnimalInstance["size"]) => (size === "Small" ? "Piccolo" : "Grande");
 
@@ -63,6 +81,7 @@ const InventoryRoute = () => {
   const animals = save?.animals.owned ?? [];
   const weapons = save?.weapons ?? [];
   const foodAvailable = save?.inventory.food ?? 0;
+  const ammoInventory = save?.inventory.ammo ?? EMPTY_AMMO;
 
   const decoratedAnimals = useMemo(() => {
     const entries: DecoratedAnimal[] = [];
@@ -123,14 +142,24 @@ const InventoryRoute = () => {
     return getDisplayBattleStats(selectedAnimalData.config, grownInstance);
   }, [selectedAnimalData]);
 
+  const ammoSummary = useMemo(
+    () =>
+      AMMO_ORDER.map((kind) => ({
+        kind,
+        amount: ammoInventory[kind] ?? 0
+      })),
+    [ammoInventory]
+  );
+
   const selectedWeaponData = useMemo(() => {
     if (selectedWeapon === null) return null;
     const weapon = weapons[selectedWeapon];
     if (!weapon) return null;
     const config = weaponConfigs.find((entry) => entry.name === weapon.name);
     if (!config) return null;
-    return { weapon, config };
-  }, [selectedWeapon, weapons, weaponConfigs]);
+    const ammoAvailable = ammoInventory[config.ammoType] ?? 0;
+    return { weapon, config, ammoAvailable };
+  }, [selectedWeapon, weapons, weaponConfigs, ammoInventory]);
 
   const handleFeed = (index: number) => {
     feedAnimal(index);
@@ -176,6 +205,15 @@ const InventoryRoute = () => {
               <span className="text-white/50">Cibo</span>
               <span className="ml-3 font-semibold text-white">{save?.inventory.food ?? 0}</span>
             </div>
+            {/*ammoSummary.map(({ kind, amount }) => (
+              <div
+                key={kind}
+                className="rounded-full border border-white/15 bg-black/40 px-4 py-2"
+              >
+                <span className="text-white/50">{AMMO_LABELS[kind]}</span>
+                <span className="ml-3 font-semibold text-white">{amount}</span>
+              </div>
+            ))*/}
           </div>
 
           {/* TAB: sostituito accent viola con marrone */}
@@ -539,7 +577,12 @@ const InventoryRoute = () => {
                     const config = weaponConfigs.find((entry) => entry.name === weapon.name);
                     if (!config) return null;
                     const selected = selectedWeapon === index;
-                    const ammoPercent = config.maxAmmo > 0 ? Math.round((weapon.ammo / config.maxAmmo) * 100) : 0;
+                    const ammoAvailable = ammoInventory[config.ammoType] ?? 0;
+                    const ammoRelative = Math.min(ammoAvailable, config.maxAmmo);
+                    const ammoPercent =
+                      config.maxAmmo > 0 ? Math.round((ammoRelative / config.maxAmmo) * 100) : 0;
+                    const iconSrc = resolveWeaponIcon(config.displayName);
+
                     return (
                       <button
                         key={weapon.name}
@@ -553,7 +596,9 @@ const InventoryRoute = () => {
                       >
                         <div className="flex items-center justify-between text-sm text-white/80">
                           <span className="font-semibold text-white">{config.displayName}</span>
-                          <span className="text-xs uppercase text-white/50">{config.ammoType}</span>
+                          <span className="text-xs uppercase text-white/50">
+                            {AMMO_LABELS[config.ammoType]}
+                          </span>
                         </div>
                         <div className="mt-3 h-2 w-full overflow-hidden rounded bg-white/10">
                           <div
@@ -561,6 +606,10 @@ const InventoryRoute = () => {
                             style={{ backgroundColor: "#a67c52", width: `${Math.min(100, Math.max(0, ammoPercent))}%` }}
                           />
                         </div>
+                        <p className="mt-2 text-xs uppercase text-white/60">
+                          Disponibili:{" "}
+                          <span className="font-semibold text-white">{ammoAvailable}</span>
+                        </p>
                       </button>
                     );
                   })
@@ -575,14 +624,20 @@ const InventoryRoute = () => {
                         {selectedWeaponData.config.displayName}
                       </h2>
                       <p className="text-xs uppercase text-white/50">
-                        {selectedWeaponData.config.ammoType}
+                        {AMMO_LABELS[selectedWeaponData.config.ammoType]}
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-3 text-xs text-white/70">
                       <div className="rounded-lg border border-white/10 bg-white/5 p-3">
-                        <p className="uppercase text-white/40">Munizioni</p>
+                        <p className="uppercase text-white/40">Munizioni disponibili</p>
                         <p className="text-lg font-semibold text-white">
-                          {selectedWeaponData.weapon.ammo}/{selectedWeaponData.config.maxAmmo}
+                          {selectedWeaponData.ammoAvailable}
+                        </p>
+                        <p className="mt-1 text-[10px] uppercase text-white/40">
+                          Max per attacco:{" "}
+                          <span className="font-semibold text-white/70">
+                            {selectedWeaponData.config.maxAmmo}
+                          </span>
                         </p>
                       </div>
                       <div className="rounded-lg border border-white/10 bg-white/5 p-3">

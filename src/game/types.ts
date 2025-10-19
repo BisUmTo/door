@@ -74,7 +74,6 @@ export interface WeaponConfig {
 
 export interface WeaponState {
   name: WeaponName;
-  ammo: number;
   unlocked: boolean;
 }
 

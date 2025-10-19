@@ -273,12 +273,7 @@ const ChestRoute = () => {
                       >
                         Apri Altro ({inventory[selected] ?? 0})
                       </button>
-                      <Link
-                        to="/lobby"
-                        className="flex-1 rounded-full border border-white/30 bg-white/5 px-6 py-3 text-center font-semibold uppercase tracking-[0.35em] text-white/80 transition-all duration-300 hover:scale-105 hover:border-white/50 hover:bg-white/10"
-                      >
-                        Torna
-                      </Link>
+                      
                     </div>
                   </div>
                 ) : null}
