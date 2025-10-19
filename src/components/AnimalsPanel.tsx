@@ -7,6 +7,7 @@ import {
   getDisplayBattleStats,
   getMissingStamina
 } from "@/game/animals";
+import { resolveAnimalIconImage, handleImageError } from "@/utils/animalImages";
 
 interface AnimalsPanelProps {
   open: boolean;
@@ -41,10 +42,10 @@ export const AnimalsPanel = ({
   if (!open) return null;
 
   const decoratedAnimals = animals.reduce<DecoratedAnimal[]>((acc, instance, index) => {
-    const config = findAnimalConfig(configs, instance.configId);
-    const stats = getDisplayBattleStats(config ?? null, instance);
-    const readiness = getAnimalReadiness(config ?? null, instance);
-    const missingStamina = getMissingStamina(config ?? null, instance);
+    const config = findAnimalConfig(configs, instance.configId) ?? null;
+    const stats = getDisplayBattleStats(config, instance);
+    const readiness = getAnimalReadiness(config, instance);
+    const missingStamina = getMissingStamina(config, instance);
     const staminaPercent =
       stats.staminaCap > 0
         ? Math.round((Math.max(0, instance.stamina) / stats.staminaCap) * 100)
@@ -143,6 +144,7 @@ export const AnimalsPanel = ({
                   <div className="mt-3 grid gap-3 sm:grid-cols-2">
                     {list.map((entry) => {
                       const meta = readinessMeta[entry.readiness];
+                      const iconSrc = resolveAnimalIconImage(entry.config);
                       return (
                         <div
                           key={`${entry.config?.id ?? "cfg"}-${entry.index}`}
@@ -151,80 +153,96 @@ export const AnimalsPanel = ({
                             entry.readiness === "fallen" && "opacity-60"
                           )}
                         >
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <span className="text-lg font-semibold text-white">
-                                {entry.name}
-                              </span>
-                              <p className="text-xs uppercase text-white/50">{entry.instance.size}</p>
+                          <div className="flex items-start gap-4">
+                            {/* Icona animale */}
+                            <div className="flex-shrink-0">
+                              <img
+                                src={iconSrc}
+                                alt={entry.name}
+                                className="h-20 w-20 rounded-lg object-contain bg-black/20 p-1"
+                                draggable={false}
+                                onError={handleImageError}
+                              />
                             </div>
-                            <span
-                              className={clsx(
-                                "rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.2em]",
-                                meta.tone
-                              )}
-                            >
-                              {meta.label}
-                            </span>
-                          </div>
-                          <dl className="mt-3 space-y-1 text-sm text-white/80">
-                            <div className="flex justify-between">
-                              <dt>Vita</dt>
-                              <dd>
-                                {entry.instance.life}/{entry.stats.lifeCap}
-                              </dd>
-                            </div>
-                            <div className="flex justify-between">
-                              <dt>Danno</dt>
-                              <dd>{entry.stats.damage}</dd>
-                            </div>
-                            <div className="flex justify-between">
-                              <dt>Velocità</dt>
-                              <dd>{entry.stats.attackSpeed}</dd>
-                            </div>
-                            <div className="flex justify-between">
-                              <dt>Armatura</dt>
-                              <dd>{entry.instance.armor ?? 0}</dd>
-                            </div>
-                          </dl>
-                          <div className="mt-3 space-y-2 text-xs uppercase text-white/60">
-                            <div>
-                              <span>Stamina</span>
-                              <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
-                                <div
-                                  className="h-full rounded bg-emerald-400"
-                                  style={{
-                                    width: `${Math.min(100, Math.max(0, entry.staminaPercent))}%`
-                                  }}
-                                />
+
+                            {/* Info e stats */}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between">
+                                <div>
+                                  <span className="text-lg font-semibold text-white">
+                                    {entry.name}
+                                  </span>
+                                  <p className="text-xs uppercase text-white/50">{entry.instance.size}</p>
+                                </div>
+                                <span
+                                  className={clsx(
+                                    "rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.2em]",
+                                    meta.tone
+                                  )}
+                                >
+                                  {meta.label}
+                                </span>
                               </div>
-                            </div>
-                            <div>
-                              <span>Resistenza</span>
-                              <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
-                                <div
-                                  className="h-full rounded bg-sky-400"
-                                  style={{
-                                    width: `${Math.min(100, Math.max(0, entry.lifePercent))}%`
-                                  }}
-                                />
+                              <dl className="mt-3 space-y-1 text-sm text-white/80">
+                                <div className="flex justify-between">
+                                  <dt>Vita</dt>
+                                  <dd>
+                                    {entry.instance.life}/{entry.stats.lifeCap}
+                                  </dd>
+                                </div>
+                                <div className="flex justify-between">
+                                  <dt>Danno</dt>
+                                  <dd>{entry.stats.damage}</dd>
+                                </div>
+                                <div className="flex justify-between">
+                                  <dt>Velocità</dt>
+                                  <dd>{entry.stats.attackSpeed}</dd>
+                                </div>
+                                <div className="flex justify-between">
+                                  <dt>Armatura</dt>
+                                  <dd>{entry.instance.armor ?? 0}</dd>
+                                </div>
+                              </dl>
+                              <div className="mt-3 space-y-2 text-xs uppercase text-white/60">
+                                <div>
+                                  <span>Stamina</span>
+                                  <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
+                                    <div
+                                      className="h-full rounded bg-emerald-400"
+                                      style={{
+                                        width: `${Math.min(100, Math.max(0, entry.staminaPercent))}%`
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <span>Resistenza</span>
+                                  <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
+                                    <div
+                                      className="h-full rounded bg-sky-400"
+                                      style={{
+                                        width: `${Math.min(100, Math.max(0, entry.lifePercent))}%`
+                                      }}
+                                    />
+                                  </div>
+                                </div>
                               </div>
+                              <p className="mt-3 text-xs text-white/60">{meta.helper(entry)}</p>
+                              <button
+                                type="button"
+                                disabled={meta.disabled}
+                                onClick={() => onDeploy(entry.index)}
+                                className={clsx(
+                                  "mt-4 w-full rounded px-4 py-2 text-sm uppercase tracking-[0.3em]",
+                                  meta.disabled
+                                    ? "border border-white/20 text-white/40"
+                                    : "border border-emerald-400 bg-emerald-500 text-black hover:bg-emerald-400"
+                                )}
+                              >
+                                {meta.action}
+                              </button>
                             </div>
                           </div>
-                          <p className="mt-3 text-xs text-white/60">{meta.helper(entry)}</p>
-                          <button
-                            type="button"
-                            disabled={meta.disabled}
-                            onClick={() => onDeploy(entry.index)}
-                            className={clsx(
-                              "mt-4 w-full rounded px-4 py-2 text-sm uppercase tracking-[0.3em]",
-                              meta.disabled
-                                ? "border border-white/20 text-white/40"
-                                : "border border-emerald-400 bg-emerald-500 text-black hover:bg-emerald-400"
-                            )}
-                          >
-                            {meta.action}
-                          </button>
                         </div>
                       );
                     })}

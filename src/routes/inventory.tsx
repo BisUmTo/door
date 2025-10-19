@@ -9,6 +9,7 @@ import {
   getMissingStamina
 } from "@/game/animals";
 import type { AnimalConfig, AnimalInstance, WeaponConfig } from "@/game/types";
+import { resolveAnimalIconImage, handleImageError } from "@/utils/animalImages";
 
 type InventoryTab = "animals" | "weapons";
 
@@ -57,10 +58,10 @@ const InventoryRoute = () => {
   const decoratedAnimals = useMemo(() => {
     const entries: DecoratedAnimal[] = [];
     animals.forEach((instance, index) => {
-      const config = animalConfigs.find((entry) => entry.id === instance.configId);
-      const stats = getDisplayBattleStats(config ?? null, instance);
-      const readiness = getAnimalReadiness(config ?? null, instance);
-      const missingStamina = getMissingStamina(config ?? null, instance);
+      const config = animalConfigs.find((entry) => entry.id === instance.configId) ?? null;
+      const stats = getDisplayBattleStats(config, instance);
+      const readiness = getAnimalReadiness(config, instance);
+      const missingStamina = getMissingStamina(config, instance);
       const staminaPercent =
         stats.staminaCap > 0
           ? Math.round((Math.max(0, instance.stamina) / stats.staminaCap) * 100)
@@ -254,6 +255,7 @@ const InventoryRoute = () => {
                                   : entry.readiness === "recovering"
                                     ? `Mancano ${entry.missingStamina} stamina - costo cibo ${entry.missingStamina}`
                                     : "Rientrerà disponibile dopo il prossimo riposo.";
+                              const iconSrc = resolveAnimalIconImage(entry.config);
                               return (
                                 <button
                                   key={`${entry.config?.id ?? "cfg"}-${entry.index}`}
@@ -265,28 +267,44 @@ const InventoryRoute = () => {
                                       : "border-white/10 bg-white/5 hover:border-[#a67c52]/60"
                                   }`}
                                 >
-                                  <div className="flex items-start justify-between text-sm text-white/80">
-                                    <div>
-                                      <span className="font-semibold text-white">{entry.name}</span>
-                                      <span className="ml-3 text-xs uppercase text-white/50">
-                                        {formatSize(entry.instance.size)}
-                                      </span>
+                                  <div className="flex items-start gap-3">
+                                    {/* Icona animale piccola */}
+                                    <div className="flex-shrink-0">
+                                      <img
+                                        src={iconSrc}
+                                        alt={entry.name}
+                                        className="h-14 w-14 rounded-lg object-contain bg-black/20 p-1"
+                                        draggable={false}
+                                        onError={handleImageError}
+                                      />
                                     </div>
-                                    <span
-                                      className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] ${readinessTone}`}
-                                    >
-                                      {readinessLabel}
-                                    </span>
+
+                                    {/* Info */}
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-start justify-between text-sm text-white/80">
+                                        <div>
+                                          <span className="font-semibold text-white">{entry.name}</span>
+                                          <span className="ml-3 text-xs uppercase text-white/50">
+                                            {formatSize(entry.instance.size)}
+                                          </span>
+                                        </div>
+                                        <span
+                                          className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] ${readinessTone}`}
+                                        >
+                                          {readinessLabel}
+                                        </span>
+                                      </div>
+                                      <div className="mt-3 h-2 w-full overflow-hidden rounded bg-white/10">
+                                        <div
+                                          className="h-full bg-emerald-400"
+                                          style={{
+                                            width: `${Math.min(100, Math.max(0, entry.staminaPercent))}%`
+                                          }}
+                                        />
+                                      </div>
+                                      <p className="mt-2 text-xs text-white/60">{helperText}</p>
+                                    </div>
                                   </div>
-                                  <div className="mt-3 h-2 w-full overflow-hidden rounded bg-white/10">
-                                    <div
-                                      className="h-full bg-emerald-400"
-                                      style={{
-                                        width: `${Math.min(100, Math.max(0, entry.staminaPercent))}%`
-                                      }}
-                                    />
-                                  </div>
-                                  <p className="mt-2 text-xs text-white/60">{helperText}</p>
                                 </button>
                               );
                             })}
@@ -301,18 +319,30 @@ const InventoryRoute = () => {
               <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
                 {selectedAnimalData ? (
                   <div className="space-y-4 text-sm text-white/80">
-                    <div>
-                      <h2 className="text-xl font-semibold text-white">
-                        {selectedAnimalData.name}
-                      </h2>
-                      <p className="text-xs uppercase text-white/50">
-                        {formatSize(selectedAnimalData.instance.size)} -{" "}
-                        {selectedAnimalData.readiness === "ready"
-                          ? "Pronto"
-                          : selectedAnimalData.readiness === "recovering"
-                            ? "In recupero"
-                            : "Ko"}
-                      </p>
+                    {/* Icona e header */}
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0">
+                        <img
+                          src={resolveAnimalIconImage(selectedAnimalData.config)}
+                          alt={selectedAnimalData.name}
+                          className="h-24 w-24 rounded-xl object-contain bg-black/30 p-2"
+                          draggable={false}
+                          onError={handleImageError}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-xl font-semibold text-white">
+                          {selectedAnimalData.name}
+                        </h2>
+                        <p className="text-xs uppercase text-white/50">
+                          {formatSize(selectedAnimalData.instance.size)} -{" "}
+                          {selectedAnimalData.readiness === "ready"
+                            ? "Pronto"
+                            : selectedAnimalData.readiness === "recovering"
+                              ? "In recupero"
+                              : "Ko"}
+                        </p>
+                      </div>
                     </div>
                     <div className="space-y-3 text-xs uppercase text-white/60">
                       <div>

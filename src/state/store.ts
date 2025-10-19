@@ -38,10 +38,6 @@ import {
   isMedalResource,
   medalResourceToDoorType
 } from "@/game/medals";
-import {
-  getFurnitureResourceTargetId,
-  isFurnitureResource
-} from "@/game/furniture";
 import { getChestDefinition } from "@/game/chests";
 import {
   applyGrowthToInstance,
@@ -381,6 +377,23 @@ const buildHouseState = (
   });
 };
 
+// Aggiungi helper per creare due animali iniziali basati sulle prime configurazioni disponibili
+const createStarterAnimals = (animalsConfig: AnimalConfig[], count = 2) => {
+  const selected = animalsConfig.slice(0, count);
+  const owned = selected.map((config) => ({
+    configId: config.id,
+    life: getLifeCap(config, "Adult"),
+    stamina: getStaminaCap(config, "Adult"),
+    size: "Adult" as const,
+    armor: 0,
+    alive: true
+  }));
+  return {
+    owned,
+    bestiarySeen: selected.map((s) => s.id)
+  };
+};
+
 const syncSaveWithConfigs = (save: SaveGame, configs: GameConfigs): SaveGame => {
   return {
     ...save,
@@ -569,88 +582,6 @@ const ensureDoorHistoryLimit = (history: SaveGame["doorHistory"], limit = 50) =>
   return history.slice(history.length - limit);
 };
 
-const applyFurniturePieces = (
-  objects: SaveGame["house"]["objects"],
-  quantity: number,
-  rng: RNG,
-  preferredId: number | null
-): { objects: SaveGame["house"]["objects"]; applied: number } => {
-  if (quantity <= 0) {
-    return { objects, applied: 0 };
-  }
-
-  const updated = objects.map((object) => ({ ...object }));
-  let applied = 0;
-  let targetId = preferredId;
-
-  const pickRandomIndex = () => {
-    const candidates = updated
-      .map((object, index) => ({ object, index }))
-      .filter(({ object }) => object.piecesOwned < object.piecesNeeded);
-    if (!candidates.length) {
-      return -1;
-    }
-    if (candidates.length === 1) {
-      return candidates[0].index;
-    }
-    const roll = rng.nextInt(0, candidates.length - 1);
-    return candidates[roll].index;
-  };
-
-  for (let i = 0; i < quantity; i += 1) {
-    let index = -1;
-
-    if (targetId !== null) {
-      index = updated.findIndex(
-        (object) => object.id === targetId && object.piecesOwned < object.piecesNeeded
-      );
-      if (index < 0) {
-        targetId = null;
-      }
-    }
-
-    if (index < 0) {
-      index = pickRandomIndex();
-    }
-
-    if (index < 0) {
-      break;
-    }
-
-    const current = updated[index];
-    if (current.piecesOwned >= current.piecesNeeded) {
-      continue;
-    }
-
-    const nextPiecesOwned = Math.min(current.piecesNeeded, current.piecesOwned + 1);
-    const unlockedNow = current.unlocked || nextPiecesOwned >= current.piecesNeeded;
-    const turnsToNextBonus =
-      !current.unlocked && unlockedNow
-        ? current.bonus.turnsCooldown > 0
-          ? current.bonus.turnsCooldown
-          : null
-        : current.turnsToNextBonus;
-
-    updated[index] = {
-      ...current,
-      piecesOwned: nextPiecesOwned,
-      unlocked: unlockedNow,
-      turnsToNextBonus
-    };
-
-    applied += 1;
-
-    if (targetId !== null && nextPiecesOwned >= current.piecesNeeded) {
-      targetId = null;
-    }
-  }
-
-  return {
-    objects: updated,
-    applied
-  };
-};
-
 export const useGameStore = create<GameStoreState>()(
   immer((set, get) => ({
     status: "idle",
@@ -710,6 +641,10 @@ export const useGameStore = create<GameStoreState>()(
           const weapons = buildWeaponsState(configs.weapons);
           const houseObjects = buildHouseState(configs.house);
           save = createSaveTemplate(slotId, weapons, houseObjects);
+
+          // Imposta sempre due animali iniziali prima di sincronizzare con le config
+          save.animals = createStarterAnimals(configs.animals);
+
           save = syncSaveWithConfigs(save, configs);
           const newSlot: SaveSlotMeta = {
             id: slotId,
@@ -769,6 +704,10 @@ export const useGameStore = create<GameStoreState>()(
         const weapons = buildWeaponsState(configs.weapons);
         const houseObjects = buildHouseState(configs.house);
         let save = createSaveTemplate(slotId, weapons, houseObjects);
+
+        // Imposta sempre due animali iniziali prima di sincronizzare con le config
+        save.animals = createStarterAnimals(configs.animals);
+
         save = syncSaveWithConfigs(save, configs);
         persistSave(save);
 
@@ -1004,9 +943,8 @@ export const useGameStore = create<GameStoreState>()(
 
       if (!enemies.length) {
         const lootRng = randomForDoor(save, doorType, 7);
-        let loot = rollLoot(doorType, configs.lootTables, lootRng);
+        const loot = rollLoot(doorType, configs.lootTables, lootRng);
         const inventory = { ...save.inventory, ammo: { ...save.inventory.ammo } };
-        let houseObjects = save.house.objects;
         if (loot) {
           if (loot.type in inventory.ammo) {
             const ammoType = loot.type as AmmoKind;
@@ -1015,16 +953,6 @@ export const useGameStore = create<GameStoreState>()(
             inventory.coins += loot.qty;
           } else if (loot.type === "food") {
             inventory.food += loot.qty;
-          } else if (isFurnitureResource(loot.type)) {
-            const targetId = getFurnitureResourceTargetId(loot.type);
-            const pieces = Math.max(0, Math.floor(loot.qty));
-            const applied = applyFurniturePieces(houseObjects, pieces, lootRng, targetId);
-            houseObjects = applied.objects;
-            if (applied.applied <= 0) {
-              loot = null;
-            } else {
-              loot = { ...loot, qty: applied.applied };
-            }
           } else if (loot.type === "armor") {
             inventory.armors = [
               ...inventory.armors,
@@ -1043,7 +971,7 @@ export const useGameStore = create<GameStoreState>()(
         const conflictsRng = randomForDoor(save, doorType, 11);
         const blocked = applyConflicts(doorType, decremented, conflictsRng);
         const available = computeAvailable(ALL_DOOR_TYPES, blocked);
-        const { objects, triggers } = tickHouseBonuses(houseObjects);
+        const { objects, triggers } = tickHouseBonuses(save.house.objects);
         nextSave = applyHouseRewards(
           {
             ...nextSave,
@@ -1149,9 +1077,8 @@ export const useGameStore = create<GameStoreState>()(
           // Victory
           const doorType = save.battleState.door.type;
           const lootRng = randomForDoor(save, doorType, 17);
-          let loot = rollLoot(doorType, configs.lootTables, lootRng);
+          const loot = rollLoot(doorType, configs.lootTables, lootRng);
           let inventoryAfterLoot = { ...inventory };
-          let houseObjects = save.house.objects;
           if (loot) {
             if (loot.type in inventoryAfterLoot.ammo) {
               const ammoType = loot.type as AmmoKind;
@@ -1160,16 +1087,6 @@ export const useGameStore = create<GameStoreState>()(
               inventoryAfterLoot.coins += loot.qty;
             } else if (loot.type === "food") {
               inventoryAfterLoot.food += loot.qty;
-            } else if (isFurnitureResource(loot.type)) {
-              const targetId = getFurnitureResourceTargetId(loot.type);
-              const pieces = Math.max(0, Math.floor(loot.qty));
-              const applied = applyFurniturePieces(houseObjects, pieces, lootRng, targetId);
-              houseObjects = applied.objects;
-              if (applied.applied <= 0) {
-                loot = null;
-              } else {
-                loot = { ...loot, qty: applied.applied };
-              }
             }
           }
 
@@ -1177,7 +1094,7 @@ export const useGameStore = create<GameStoreState>()(
           const conflictsRng = randomForDoor(save, doorType, 23);
           const blocked = applyConflicts(doorType, decremented, conflictsRng);
           const available = computeAvailable(ALL_DOOR_TYPES, blocked);
-          const { objects, triggers } = tickHouseBonuses(houseObjects);
+          const { objects, triggers } = tickHouseBonuses(save.house.objects);
 
           nextSave = applyHouseRewards(
             {
@@ -1579,7 +1496,6 @@ export const useGameStore = create<GameStoreState>()(
         armors: [...save.inventory.armors],
         specialItems: [...save.inventory.specialItems]
       };
-      let houseObjects = save.house.objects;
 
       if (loot && isMedalResource(loot.type)) {
         const medalDoor = medalResourceToDoorType(loot.type as MedalResource);
@@ -1612,16 +1528,6 @@ export const useGameStore = create<GameStoreState>()(
           inventory.coins += loot.qty;
         } else if (loot.type === "food") {
           inventory.food += loot.qty;
-        } else if (isFurnitureResource(loot.type)) {
-          const targetId = getFurnitureResourceTargetId(loot.type);
-          const pieces = Math.max(0, Math.floor(loot.qty));
-          const applied = applyFurniturePieces(houseObjects, pieces, rng, targetId);
-          houseObjects = applied.objects;
-          if (applied.applied <= 0) {
-            loot = null;
-          } else {
-            loot = { ...loot, qty: applied.applied };
-          }
         } else if (loot.type === "armor") {
           inventory.armors = [
             ...inventory.armors,
@@ -1648,10 +1554,7 @@ export const useGameStore = create<GameStoreState>()(
             [rarity]: Math.max(owned - 1, 0)
           }
         },
-        medals: medalsState,
-        house: {
-          objects: houseObjects
-        }
+        medals: medalsState
       };
 
       persistSave(nextSave);

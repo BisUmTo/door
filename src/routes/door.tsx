@@ -20,20 +20,20 @@ const EMPTY_AMMO: Record<AmmoKind, number> = {
    Assicurati che i file esistano in /assets/scenari/
    e che i nomi coincidano. */
 const SCENARIO_BY_DOOR: Record<DoorType, string> = {
-  white: "/assets/scenari/bianco.png",
-  black: "/assets/scenari/nero.png",
-  red: "/assets/scenari/rosso.png",
-  orange: "/assets/scenari/arancione.png",
-  yellow: "/assets/scenari/giallo.png",
-  purple: "/assets/scenari/viola.png",     // usa "viola.png" o il nome reale del file
-  blue: "/assets/scenari/blu.png",
-  lightBlue: "/assets/scenari/azzurro.png",
-  brown: "/assets/scenari/marrone.png",
-  lime: "/assets/scenari/lime.png",
-  green: "/assets/scenari/verde.png",
-  neutral: "/assets/scenari/neutro.png"
+  white: "/assets/scenari/Stanza_bianca.png",
+  black: "/assets/scenari/Stanza_nera.png",
+  red: "/assets/scenari/Stanza_rossa.png",
+  orange: "/assets/scenari/Stanza_arancione.png",
+  yellow: "/assets/scenari/Stanza_gialla.png",
+  purple: "/assets/scenari/Stanza_rosa.png",     // usa "viola.png" o il nome reale del file
+  blue: "/assets/scenari/Stanza_blu.png",
+  lightBlue: "/assets/scenari/Stanza_azzurra.png",
+  brown: "/assets/scenari/Stanza_marrone.png",
+  lime: "/assets/scenari/Stanza_lime.png",
+  green: "/assets/scenari/Stanza_verde.png",
+  neutral: "/assets/scenari/Stanza_neutra.png"
 };
-const FALLBACK_SCENARIO = "/assets/scenari/neutro.png";
+const FALLBACK_SCENARIO = "/assets/scenari/Stanza_neutra.png";
 
 /* ========= Helpers immagine nemico ========= */
 const ENEMY_IMG_BASE = "/assets/animali/icona";
