@@ -84,17 +84,17 @@ const App = () => {
       ) : null}
       <Suspense fallback={<div className="p-6 text-xl text-white">Loading...</div>}>
         <Routes>
-          <Route path="/" element={<MenuRoute />} />
-          <Route path="/settings" element={<SettingsRoute />} />
-          <Route path="/saves" element={<SavesRoute />} />
-          <Route path="/lobby" element={<LobbyRoute />} />
-          <Route path="/door" element={<DoorRoute />} />
-          <Route path="/house" element={<HouseRoute />} />
-          <Route path="/chest" element={<ChestRoute />} />
-          <Route path="/credits" element={<CreditsRoute />} />
-          <Route path="/inventory" element={<InventoryRoute />} />
-          <Route path="/medals" element={<MedalsRoute />} />
-          <Route path="/door-types" element={<DoorTypesRoute />} />
+          <Route path="/" element={<MenuRoute key="menu" />} />
+          <Route path="/settings" element={<SettingsRoute key="settings" />} />
+          <Route path="/saves" element={<SavesRoute key="saves" />} />
+          <Route path="/lobby" element={<LobbyRoute key="lobby" />} />
+          <Route path="/door" element={<DoorRoute key="door" />} />
+          <Route path="/house" element={<HouseRoute key="house" />} />
+          <Route path="/chest" element={<ChestRoute key="chest" />} />
+          <Route path="/credits" element={<CreditsRoute key="credits" />} />
+          <Route path="/inventory" element={<InventoryRoute key="inventory" />} />
+          <Route path="/medals" element={<MedalsRoute key="medals" />} />
+          <Route path="/door-types" element={<DoorTypesRoute key="door-types" />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

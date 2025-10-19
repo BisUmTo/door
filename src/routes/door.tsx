@@ -122,6 +122,50 @@ const DoorRoute = () => {
     setAnimalsOpen(false);
   };
 
+  // Permetti di chiudere i menu con Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (weaponsOpen) setWeaponsOpen(false);
+        if (animalsOpen) setAnimalsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [weaponsOpen, animalsOpen]);
+  
+  // Helper per il custom overlay Animali (usato durante la battaglia)
+  const animalsList = save?.animals.owned ?? [];
+  const renderAnimalItem = (instance: any, idx: number) => {
+    const cfg = animalConfigs.find((a) => a.id === instance.configId) ?? null;
+    const name = cfg?.kind ?? `#${instance.configId}`;
+    const img = resolveEnemyImage(cfg) ?? FALLBACK_ANIMAL_IMG;
+    return (
+      <button
+        key={`${instance.configId}-${idx}`}
+        type="button"
+        onClick={() => handleAnimalDeploy(idx)}
+        className="w-full flex items-center gap-3 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-left hover:border-[#a67c52]/60"
+      >
+        <img
+          src={img}
+          alt={name}
+          className="h-12 w-12 rounded-md object-contain bg-black/20 p-1"
+          draggable={false}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).src = FALLBACK_ANIMAL_IMG;
+          }}
+        />
+        <div className="flex-1 min-w-0 text-sm text-white/80">
+          <div className="flex items-center justify-between">
+            <span className="font-semibold text-white truncate">{name}</span>
+            <span className="text-xs uppercase text-white/50">{instance.size === "Small" ? "Baby" : "Adulto"}</span>
+          </div>
+        </div>
+      </button>
+    );
+  };
+
   const handleVictoryContinue = () => {
     collectReward();
     resetBattleResult();
@@ -174,7 +218,7 @@ const DoorRoute = () => {
           onClick={() => navigate("/lobby")}
           className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-[#a67c52] hover:text-[#a67c52]"
         >
-          Torna alla lobby
+          Fuga (Torna alla lobby)
         </button>
       </header>
 
@@ -295,13 +339,44 @@ const DoorRoute = () => {
       ) : null}
 
       {configs && battle?.active ? (
-        <AnimalsPanel
-          open={animalsOpen}
-          animals={save?.animals.owned ?? []}
-          configs={animalConfigs}
-          onClose={() => setAnimalsOpen(false)}
-          onDeploy={handleAnimalDeploy}
-        />
+        // Se siamo in battaglia e il pannello Animali è aperto, usa un overlay custom
+        animalsOpen && battle?.active ? (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            {/* backdrop */}
+            <div
+              className="absolute inset-0 bg-black/60"
+              onClick={() => setAnimalsOpen(false)}
+            />
+            {/* modal */}
+            <div className="relative z-10 w-[min(720px,90%)] max-h-[80vh] overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-4">
+              <div className="flex items-center justify-between pb-3">
+                <h3 className="text-sm uppercase text-white/60">Scegli un animale</h3>
+                <button
+                  type="button"
+                  onClick={() => setAnimalsOpen(false)}
+                  className="text-sm text-white/50 hover:text-white"
+                >
+                  Chiudi
+                </button>
+              </div>
+              <div className="space-y-2 overflow-auto pr-2" style={{ maxHeight: "calc(80vh - 64px)" }}>
+                {animalsList.length === 0 ? (
+                  <p className="text-sm text-white/60">Nessun animale disponibile.</p>
+                ) : (
+                  animalsList.map((a, i) => renderAnimalItem(a, i))
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <AnimalsPanel
+            open={animalsOpen}
+            animals={save?.animals.owned ?? []}
+            configs={animalConfigs}
+            onClose={() => setAnimalsOpen(false)}
+            onDeploy={handleAnimalDeploy}
+          />
+        )
       ) : null}
     </div>
   );
