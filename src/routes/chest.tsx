@@ -179,7 +179,7 @@ const ChestRoute = () => {
                     "relative mt-8 flex h-64 w-64 items-center justify-center rounded-full shadow-2xl transition-all duration-500",
                     stage === "preview" && "bg-black/30",
                     stage === "opening" && "bg-gradient-to-br from-yellow-500/20 to-orange-500/20 animate-pulse scale-110",
-                    stage === "opened" && "bg-gradient-to-br from-green-500/10 to-emerald-500/10"
+                    stage === "opened" && "bg-gradient-to-br from-emerald-500/20 to-green-500/10"
                   )}
                   style={{
                     boxShadow: stage === "opening"
@@ -192,15 +192,38 @@ const ChestRoute = () => {
                   {stage === "opening" && (
                     <div className="absolute inset-0 rounded-full border-4 border-yellow-400/50 animate-ping" />
                   )}
-                  <img
-                    src={focusedDefinition.image}
-                    alt={focusedDefinition.name}
-                    className={clsx(
-                      "h-48 w-48 object-contain transition-all duration-500",
-                      stage === "opening" && "scale-90 blur-sm",
-                      stage === "opened" && "scale-105"
-                    )}
-                  />
+
+                  {stage !== "opened" ? (
+                    <img
+                      src={focusedDefinition.image}
+                      alt={focusedDefinition.name}
+                      className={clsx(
+                        "h-48 w-48 object-contain transition-all duration-500",
+                        stage === "opening" && "scale-90 blur-sm"
+                      )}
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center p-6 animate-fade-in">
+                      {reward?.loot ? (
+                        <div className="text-center">
+                          <div className="text-6xl mb-3">🎁</div>
+                          <p className="text-xs uppercase tracking-[0.35em] text-emerald-300/80">
+                            Ricompensa
+                          </p>
+                          <p className="mt-2 text-2xl font-bold text-emerald-100">
+                            {formatLootText(reward.loot)}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="text-center">
+                          <div className="text-5xl mb-3">❌</div>
+                          <p className="text-sm text-emerald-100/70">
+                            Nessun bottino
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {stage === "preview" ? (
@@ -227,51 +250,31 @@ const ChestRoute = () => {
                 ) : null}
 
                 {stage === "opened" ? (
-                  <div className="mt-6 flex w-full max-w-md flex-col gap-4">
-                    <div className="animate-fade-in rounded-3xl border-2 border-emerald-400/60 bg-gradient-to-br from-emerald-500/20 to-green-500/10 p-6 shadow-xl shadow-emerald-500/20">
-                      {reward?.loot ? (
-                        <div className="text-center">
-                          <p className="text-xs uppercase tracking-[0.35em] text-emerald-300/80">
-                            🎁 Ricompensa Ottenuta
-                          </p>
-                          <p className="mt-3 text-2xl font-bold text-emerald-100">
-                            {formatLootText(reward.loot)}
-                          </p>
-                          {reward?.medalUnlocked ? (
-                            <div className="mt-4 rounded-full border border-yellow-400/40 bg-yellow-400/10 px-4 py-2">
-                              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-yellow-300">
-                                ✨ Nuova medaglietta ottenuta!
-                              </p>
-                            </div>
-                          ) : null}
-                        </div>
-                      ) : (
-                        <p className="text-center text-sm text-emerald-100/70">
-                          Nessun bottino trovato questa volta.
+                  <div className="mt-6 flex w-full max-w-md flex-col gap-4 animate-fade-in">
+                    {reward?.medalUnlocked ? (
+                      <div className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-6 py-2 text-center">
+                        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-yellow-300">
+                          ✨ Nuova medaglietta ottenuta!
                         </p>
-                      )}
-                    </div>
+                      </div>
+                    ) : null}
 
                     <div className="flex gap-3">
-                      <button
-                        type="button"
-                        onClick={handleOpenAnother}
-                        disabled={(inventory[selected] ?? 0) <= 0}
-                        className={clsx(
-                          "flex-1 rounded-full border px-6 py-3 font-semibold uppercase tracking-[0.35em] transition-all duration-300",
-                          (inventory[selected] ?? 0) > 0
-                            ? "border-yellow-400/60 bg-yellow-400/10 text-yellow-200 hover:scale-105 hover:bg-yellow-400/20 hover:shadow-lg hover:shadow-yellow-400/30"
-                            : "cursor-not-allowed border-white/10 bg-white/5 text-white/30"
-                        )}
-                      >
-                        Apri Altro ({inventory[selected] ?? 0})
-                      </button>
-                      <Link
-                        to="/lobby"
-                        className="flex-1 rounded-full border border-white/30 bg-white/5 px-6 py-3 text-center font-semibold uppercase tracking-[0.35em] text-white/80 transition-all duration-300 hover:scale-105 hover:border-white/50 hover:bg-white/10"
-                      >
-                        Torna
-                      </Link>
+                      { selected ?
+                        <button
+                          type="button"
+                          onClick={handleOpenAnother}
+                          disabled={(inventory[selected] ?? 0) <= 0}
+                          className={clsx(
+                            "flex-1 rounded-full border px-6 py-3 font-semibold uppercase tracking-[0.35em] transition-all duration-300",
+                            (inventory[selected] ?? 0) > 0
+                              ? "border-yellow-400/60 bg-yellow-400/10 text-yellow-200 hover:scale-105 hover:bg-yellow-400/20 hover:shadow-lg hover:shadow-yellow-400/30"
+                              : "cursor-not-allowed border-white/10 bg-white/5 text-white/30"
+                          )}
+                        >
+                          Apri Altro ({inventory[selected] ?? 0})
+                        </button>
+                      : null}
                     </div>
                   </div>
                 ) : null}

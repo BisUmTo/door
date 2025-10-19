@@ -11,77 +11,86 @@ export interface DoorTypeDefinition {
 const definitions: DoorTypeDefinition[] = [
   {
     type: "white",
-    summary: "Ricompense bilanciate con piccole quantità di risorse per ogni categoria.",
-    uniqueRewards: ["Piccoli pacchetti di cibo", "Munizioni base"],
-    conflicts: "Blocca temporaneamente le porte Rosse e Nere per 1 turno."
+    summary: "Permette di accumulare ricchezza con costanza, ma limita l’accesso a opportunità più vantaggiose. Ricompense: Monete (3–7) e Cibo (1–3).",
+    uniqueRewards: ["Monete (3–7)", "Cibo (1–3)"],
+    conflicts: "Blocca la porta Gialla per 1–2 turni."
   },
   {
     type: "black",
-    summary: "Ricompense rare orientate alle armature e ai potenziamenti difensivi.",
-    uniqueRewards: ["Frammenti di armatura", "Bonus difesa"],
-    conflicts: "Blocca le porte Gialle per 2 turni."
+    summary: "Imprevedibile e instabile: può alterare l’equilibrio delle scelte, con rischi elevati e ricompense incerte.",
+    uniqueRewards: [],
+    conflicts: "Blocca la porta Arancione e 2 porte casuali diverse per 3–5 turni."
   },
   {
     type: "red",
-    summary: "Fornisce risorse offensive e munizioni ad alto impatto.",
-    uniqueRewards: ["Munizioni speciali", "Boost danno"],
-    conflicts: "Blocca le porte Blu e Verde per 2 turni."
+    summary: "Rafforza la potenza offensiva, ma riduce il controllo e la capacità di adattamento. Ricompense: Proiettili (1–2) e Granata (1).",
+    uniqueRewards: ["Proiettili (1–2)", "Granata (1)"],
+    conflicts: "Blocca la porta Blu e Verde chiaro per 2–4 turni."
   },
   {
     type: "orange",
-    summary: "Ricompense legate ai potenziamenti tattici e alle risorse miste.",
-    uniqueRewards: ["Pacchetti misti", "Carte evento"],
-    conflicts: "Blocca le porte Bianche per 1 turno."
+    summary: "Potenzia la difesa delle creature alleate, ma rallenta la preparazione e il recupero. Ricompense: Armatura (1) e Granata (1).",
+    uniqueRewards: ["Armatura (1)", "Granata (1)"],
+    conflicts: "Blocca la porta Verde chiaro e Verde scuro per 3–5 turni."
   },
   {
     type: "yellow",
-    summary: "Grande quantità di monete e acceleratori di progressione.",
-    uniqueRewards: ["Sacchetti di monete", "Coupon negozio"],
-    conflicts: "Blocca le porte Lime per 1 turno."
+    summary: "Amplia le risorse economiche, ma può saturare il mercato e indebolire altre fonti di guadagno. Ricompense: Monete (5–25).",
+    uniqueRewards: ["Monete (5–25)"],
+    conflicts: "Blocca la porta Bianca e Gialla per 1–3 turni."
   },
   {
-    type: "purple",
-    summary: "Ricompense speciali e oggetti rari dalla collezione.",
-    uniqueRewards: ["Oggetti unici", "Potenziamenti magici"],
-    conflicts: "Blocca le porte Azzurre per 2 turni."
+    type: "purple", 
+    summary: "Favorisce la crescita e la sostenibilità, ma tende a sbilanciare la stabilità generale. Ricompense: Cibo (3–7) e Monete (3–7).",
+    uniqueRewards: ["Cibo (3–7)", "Monete (3–7)"],
+    conflicts: "Blocca la porta Verde scuro e Marrone per 2–3 turni."
   },
   {
     type: "blue",
-    summary: "Loot energetici, ottimi per rigenerare stamina e cibo.",
-    uniqueRewards: ["Stimolanti stamina", "Scorte di cibo"],
-    conflicts: "Blocca le porte Arancioni per 1 turno."
+    summary: "Aumenta la forza dell’arsenale, ma limita l’accesso a risorse di supporto e flessibilità. Ricompense: Cartucce (1–3) e Granata (1).",
+    uniqueRewards: ["Cartucce (1–3)", "Granata (1)"],
+    conflicts: "Blocca la porta Rossa e Arancione per 3–4 turni."
   },
   {
     type: "lightBlue",
-    summary: "Supporto e potenziamenti logistici utili a lungo termine.",
-    uniqueRewards: ["Componenti casa", "Potenziamenti incubatrice"],
-    conflicts: "Blocca le porte Viola per 1 turno."
+    summary: "Offre equilibrio e precisione, ma richiede una gestione attenta per non perdere slancio. Ricompense: Frecce (1–4) e Dardi (1–4).",
+    uniqueRewards: ["Frecce (1–4)", "Dardi (1–4)"],
+    conflicts: "Blocca la porta Verde scuro per 2–3 turni."
   },
   {
     type: "brown",
-    summary: "Ricompense dedicate alle strutture della casa e bonus di costruzione.",
-    uniqueRewards: ["Pezzi arredamento", "Bonus produzione"],
-    conflicts: "Blocca le porte Bianche per 1 turno."
+    summary: "Fornisce una protezione moderata e costante, ma rende più difficili alcune scelte future. Ricompense: Armatura (1).",
+    uniqueRewards: ["Armatura (1)"],
+    conflicts: "Blocca la porta Arancione e Verde chiaro per 3–4 turni."
   },
   {
     type: "lime",
-    summary: "Potenziamenti ibridi che combinano stamina e risorse speciali.",
-    uniqueRewards: ["Pozioni stamina", "Pacchetti misti"],
-    conflicts: "Blocca le porte Gialle per 1 turno."
+    summary: "Favorisce la sopravvivenza e la resistenza, ma riduce la spinta offensiva. Ricompense: Cibo (20).",
+    uniqueRewards: ["Cibo (20)"],
+    conflicts: "Blocca la porta Rossa, Blu e Azzurra per 2–4 turni."
   },
   {
     type: "green",
-    summary: "Ricompense per il potenziamento degli animali e del nutrimento.",
-    uniqueRewards: ["Cibo di alta qualità", "Upgrade animali"],
-    conflicts: "Blocca le porte Rosse per 1 turno."
+    summary: "Bilancia potenza e sostegno, ma limita l’aggressività diretta nel lungo periodo. Ricompense: Dardi (1–3) e Cibo (3–7).",
+    uniqueRewards: ["Dardi (1–3)", "Cibo (3–7)"],
+    conflicts: "Blocca la porta Azzurra e Rossa per 2–3 turni."
   },
   {
     type: "neutral",
-    summary: "Loot generico utile per completare set mancanti e materiali di supporto.",
-    uniqueRewards: ["Materiali vari", "Loot casuale"],
-    conflicts: "Non genera Contrasti, ma ha drop limitati."
+    summary: "Sempre accessibile. Mantiene aperto il percorso e consente di proseguire anche nei momenti più critici, sebbene con basse probabilità di trovare ricompense. Ricompense: Monete (1–3), Cibo (1–3), Dardi (1–3), Frecce (1–3), Proiettili (1–2), Cartucce (1), Granate (1).",
+    uniqueRewards: [
+      "Monete (1–3)",
+      "Cibo (1–3)",
+      "Dardi (1–3)",
+      "Frecce (1–3)",
+      "Proiettili (1–2)",
+      "Cartucce (1)",
+      "Granate (1)"
+    ],
+    conflicts: "Blocca la porta Nera per 1 turno."
   }
 ];
+
 
 export const getDoorTypeDefinitions = () =>
   definitions.map((definition) => ({
