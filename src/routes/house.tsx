@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import P5Scene, { type SceneConfig, type SceneElementConfig } from "@/components/P5Scene";
 import Tooltip from "@/components/Tooltip";
 import { useGameStore } from "@/state/store";
+import type { SaveGame } from "@/game/types";
 
 const HOUSE_IMAGE_WIDTH = 1785;
 const HOUSE_IMAGE_HEIGHT = 1004;
@@ -83,6 +84,37 @@ const objectLayouts: Record<number, { x: number; y: number; width: number; heigh
   4: { x: 400, y: 800, width: 220, height: 210 }
 };
 
+const furnitureStageOverrides: Record<string, number> = {
+  poltrona: 1,
+  mensola: 4,
+  tavolino: 3,
+  sedie: 2,
+  lampada: 1,
+  orologio: 1,
+  tappeto: 1,
+  tavolo: 1
+};
+
+const normalizeFurnitureKey = (value: string) => {
+  const base = value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_|_$/g, "");
+  return base.length > 0 ? base : "arredamento";
+};
+
+const resolveFurnitureAsset = (
+  object: SaveGame["house"]["objects"][number]
+): { key: string; maxStage: number } => {
+  const key = normalizeFurnitureKey(object.name);
+  const override = furnitureStageOverrides[key];
+  const fallback = Number.isFinite(object.piecesNeeded) ? object.piecesNeeded : 0;
+  const maxStage = Math.max(0, override ?? Math.max(0, Math.round(fallback)));
+  return { key, maxStage };
+};
+
 const toPercent = (value: number, total: number) => `${(value / total) * 100}%`;
 
 const HouseRoute = () => {
@@ -98,7 +130,7 @@ const HouseRoute = () => {
 
   const visibleObjects = useMemo(() => {
     if (!save) return [];
-    return save.house.objects.filter((object) => object.piecesOwned > 0 || object.unlocked);
+    return save.house.objects;
   }, [save]);
 
   const selectedObject = visibleObjects.find((object) => object.id === selectedId) ?? null;
@@ -139,7 +171,26 @@ const HouseRoute = () => {
   }, [activePanel]);
 
   const sceneConfig = useMemo<SceneConfig>(() => {
-    const elements: SceneElementConfig[] = houseAreas.map((area) => ({
+    const furnitureElements: SceneElementConfig[] = visibleObjects.map((object, index) => {
+      const { key: assetKey, maxStage } = resolveFurnitureAsset(object);
+      const clampedMax = Math.max(0, maxStage);
+      const collectedPieces = Math.max(0, object.piecesOwned);
+      const stage = object.unlocked ? clampedMax : Math.min(clampedMax, collectedPieces);
+
+      return {
+        id: `furniture-${object.id}`,
+        image: `/assets/casa/arredamento/${assetKey}_${stage}.png`,
+        layout: {
+          x: 0,
+          y: 0,
+          width: HOUSE_IMAGE_WIDTH,
+          height: HOUSE_IMAGE_HEIGHT
+        },
+        zIndex: 2 + index
+      };
+    });
+
+    const areaElements: SceneElementConfig[] = houseAreas.map((area) => ({
       id: area.id,
       image: area.image,
       selectedImage: area.selectedImage,
@@ -154,9 +205,9 @@ const HouseRoute = () => {
       baseWidth: HOUSE_IMAGE_WIDTH,
       baseHeight: HOUSE_IMAGE_HEIGHT,
       backgroundImage: "/assets/casa/sfondo_casa.png",
-      elements
+      elements: [...furnitureElements, ...areaElements]
     };
-  }, [handleAreaClick, handleHoverChange]);
+  }, [handleAreaClick, handleHoverChange, visibleObjects]);
 
   return (
     <div className="relative min-h-screen flex flex-col bg-[#080910] text-white">
@@ -182,47 +233,50 @@ const HouseRoute = () => {
             <div className="absolute inset-0">
               {visibleObjects.map((object) => {
                 const layout = objectLayouts[object.id];
-                if (!layout) return null;
-                const left = toPercent(layout.x, HOUSE_IMAGE_WIDTH);
-                const top = toPercent(layout.y, HOUSE_IMAGE_HEIGHT);
-                const width = toPercent(layout.width, HOUSE_IMAGE_WIDTH);
-                const height = toPercent(layout.height, HOUSE_IMAGE_HEIGHT);
+                const left = layout ? toPercent(layout.x, HOUSE_IMAGE_WIDTH) : "50%";
+                const top = layout ? toPercent(layout.y, HOUSE_IMAGE_HEIGHT) : "85%";
                 const progress = object.piecesNeeded
                   ? Math.round((object.piecesOwned / object.piecesNeeded) * 100)
                   : 0;
                 const unlocked = object.unlocked;
+                const isSelected = selectedId === object.id;
 
                 return (
-                  <div
-                    key={object.id}
-                    className="absolute"
-                    style={{
-                      left,
-                      top,
-                      width,
-                      height,
-                      transform: "translate(-50%, -50%)"
-                    }}
-                  >
-                    <button
-                      type="button"
-                      disabled={activePanel !== "none"}
-                      onClick={() => setSelectedId(object.id)}
-                      className="relative flex h-full w-full flex-col justify-end rounded-3xl px-3 py-2 text-left transition disabled:cursor-not-allowed disabled:opacity-60"
+                  <div key={object.id} className="absolute inset-0 pointer-events-none">
+                    <div
+                      className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                      style={{
+                        left,
+                        top
+                      }}
                     >
-                      <span className="inline-block rounded-md border border-black/20 px-2 py-0.5 text-sm font-semibold uppercase tracking-[0.3em] text-black bg-transparent">
-                        {object.name}
-                      </span>
-                      <span className="mt-1 text-xs uppercase text-black/50">
-                        {object.piecesOwned}/{object.piecesNeeded} pezzi
-                      </span>
-                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded bg-white/10">
-                        <div
-                          className={`h-full ${unlocked ? "bg-emerald-400" : "bg-white/40"}`}
-                          style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
-                        />
-                      </div>
-                    </button>
+                      <button
+                        type="button"
+                        disabled={activePanel !== "none"}
+                        onClick={() => setSelectedId(object.id)}
+                        className={`pointer-events-auto flex min-w-[200px] flex-col gap-2 rounded-2xl border px-4 py-3 text-left backdrop-blur-sm transition ${
+                          unlocked
+                            ? "border-emerald-400/60 bg-emerald-500/20"
+                            : "border-white/20 bg-black/60"
+                        } ${isSelected ? "ring-2 ring-[#a67c52]" : ""} disabled:cursor-not-allowed disabled:opacity-60`}
+                      >
+                        <span className="text-sm font-semibold uppercase tracking-[0.3em] text-white">
+                          {object.name}
+                        </span>
+                        <span className="text-xs uppercase text-white/70">
+                          {object.piecesOwned}/{object.piecesNeeded} pezzi
+                        </span>
+                        <div className="h-1.5 w-full overflow-hidden rounded bg-white/15">
+                          <div
+                            className={`h-full ${unlocked ? "bg-emerald-400" : "bg-white/50"}`}
+                            style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+                          />
+                        </div>
+                        <span className="text-[11px] uppercase tracking-[0.3em] text-white/60">
+                          {unlocked ? "Bonus attivo" : `${progress}% completato`}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 );
               })}

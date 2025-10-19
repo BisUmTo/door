@@ -40,7 +40,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/casa.png",
     selectedImage: "/assets/lobby/pulsanti/casa_selected.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 155, y: 225 },
+    labelPosition: { x: 155, y: 250 },
     zIndex: 10,
     route: "/house"
   },
@@ -51,7 +51,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/baule.png",
     selectedImage: "/assets/lobby/pulsanti/baule_selected.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 1700, y: 675 },
+    labelPosition: { x: 1700, y: 700 },
     zIndex: 12,
     route: "/chest"
   },
@@ -62,7 +62,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/zaino.png",
     selectedImage: "/assets/lobby/pulsanti/zaino_selected.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 760, y: 720 },
+    labelPosition: { x: 760, y: 760 },
     zIndex: 14,
     route: "/inventory"
   },
@@ -73,7 +73,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/porta1.png",
     selectedImage: "/assets/lobby/pulsanti/porta1.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 535, y: 200 },
+    labelPosition: { x: 535, y: 380 },
     zIndex: 20,
     isDoor: true
   },
@@ -84,7 +84,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/porta2.png",
     selectedImage: "/assets/lobby/pulsanti/porta2.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 986.5, y: 200 },
+    labelPosition: { x: 986.5, y: 380 },
     zIndex: 22,
     isDoor: true
   },
@@ -95,7 +95,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/porta3.png",
     selectedImage: "/assets/lobby/pulsanti/porta3.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 1428.5, y: 200 },
+    labelPosition: { x: 1428.5, y: 380 },
     zIndex: 24,
     isDoor: true
   }
@@ -238,17 +238,24 @@ const LobbyRoute = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-[#080910] text-white">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 uppercase tracking-[0.4em] text-white/70">
-        <span>Lobby</span>
-        <button
-          type="button"
-          onClick={() => navigate("/")}
-          className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-[#a67c52] hover:text-[#a67c52]"
+      {/* 🔵 Sostituisci il vecchio header con questo blocco */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-50">
+        <div className="group/header relative h-8 w-full pointer-events-auto">
+        <div
+          className="absolute inset-x-0 top-0 flex items-center justify-between px-6 py-3 bg-[#0b3a6f]/90 text-whit border-b border-white/10 backdrop-blur transition-all duration-300 ease-out  opacity-0 -translate-y-full  group-hover/header:opacity-100 group-hover/header:translate-y-0  pointer-events-auto
+          "
         >
-          Esci
-        </button>
-      </header>
+          <span className="text-xs uppercase tracking-[0.4em]">Lobby</span>
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-[#a67c52] hover:text-[#a67c52]"
+          >
+            Esci
+          </button>
+        </div>
+      </div>
+    </div>
 
       {/* Lobby Scene fullscreen */}
       <main className="relative flex-1">
@@ -308,7 +315,7 @@ const LobbyRoute = () => {
 
         {/* InfoPanel fluttuante sopra la porta destra */}
         {save ? (
-          <div className="absolute right-[10%] top-[20%] z-50 w-64">
+          <div className="absolute right-[5%] top-[5%] z-50 w-64">
             <InfoPanel
               doorsOpened={save.progress.doorsOpened}
               turn={save.progress.turn}

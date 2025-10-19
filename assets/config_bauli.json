@@ -3,28 +3,57 @@
     {
       "id": "common",
       "rarita": "Comune",
+      "probabilita_baule": 0.5,
       "loot": [
-        { "loot": "monete", "peso": 60, "quantita": "5-12" },
-        { "loot": "cibo", "peso": 25, "quantita": "2-4" },
-        { "loot": null, "peso": 15 }
+        { "loot": "Monete", "peso": 1, "quantita": "10–20" },
+        { "loot": "Cibo", "peso": 1, "quantita": "5–10" },
+        { "loot": "Proiettili", "peso": 1, "quantita": "2–5" }
+      ]
+    },
+    {
+      "id": "uncommon",
+      "rarita": "Non Comune",
+      "probabilita_baule": 0.2,
+      "loot": [
+        { "loot": "Monete", "peso": 1, "quantita": "20–40" },
+        { "loot": "Cibo", "peso": 1, "quantita": "10–20" },
+        { "loot": "Pezzi oggetti casa", "peso": 1, "quantita": "1" },
+        { "loot": "Munizioni", "peso": 1, "quantita": "5–10" }
       ]
     },
     {
       "id": "rare",
       "rarita": "Raro",
+      "probabilita_baule": 0.15,
       "loot": [
-        { "loot": "armatura", "peso": 30, "quantita": "1" },
-        { "loot": "monete", "peso": 50, "quantita": "10-20" },
-        { "loot": "proiettili", "peso": 20, "quantita": "4-8" }
+        { "loot": "Monete", "peso": 1, "quantita": "40–70" },
+        { "loot": "Cibo", "peso": 1, "quantita": "20–30" },
+        { "loot": "Pezzi oggetti casa", "peso": 1, "quantita": "1–2" },
+        { "loot": "Munizioni", "peso": 1, "quantita": "10–15" }
       ]
     },
     {
       "id": "epic",
       "rarita": "Epico",
+      "probabilita_baule": 0.1,
       "loot": [
-        { "loot": "granate", "peso": 25, "quantita": "1-3" },
-        { "loot": "speciale", "peso": 25, "quantita": "1" },
-        { "loot": "monete", "peso": 50, "quantita": "20-40" }
+        { "loot": "Monete", "peso": 1, "quantita": "70–120" },
+        { "loot": "Cibo", "peso": 1, "quantita": "30–50" },
+        { "loot": "Pezzi oggetti casa", "peso": 1, "quantita": "2–3" },
+        { "loot": "Munizioni", "peso": 1, "quantita": "15–25" }
+      ]
+    },
+    {
+      "id": "legendary",
+      "rarita": "Leggendario",
+      "probabilita_baule": 0.05,
+      "loot": [
+        { "loot": "Monete", "peso": 1, "quantita": "120–200" },
+        { "loot": "Cibo", "peso": 1, "quantita": "40–75" },
+        { "loot": "Pezzi oggetti casa", "peso": 1, "quantita": "3–4" },
+        { "loot": "Munizioni", "peso": 1, "quantita": "20–40" },
+        { "loot": "Oggetto speciale", "peso": 1, "quantita": "1" },
+        { "loot": "Oggetto speciale", "peso": 1, "quantita": "1" } 
       ]
     }
   ]
