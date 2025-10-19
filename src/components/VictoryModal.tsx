@@ -13,6 +13,8 @@ interface VictoryModalProps {
   onContinue: () => void;
 }
 
+const ACCENT = "#a67c52";
+
 const weaponLabel = (weaponConfigs: WeaponConfig[], name: WeaponName) =>
   weaponConfigs.find((weapon) => weapon.name === name)?.displayName ?? name;
 
@@ -39,14 +41,14 @@ export const VictoryModal = ({
     if (isMedalResource(loot.type)) {
       const doorType = medalResourceToDoorType(loot.type);
       return (
-        <p className="mt-2 text-lg font-semibold text-emerald-200">
+        <p className="mt-2 text-lg font-semibold" style={{ color: ACCENT }}>
           {`Medaglietta ${doorLabels[doorType]}`}
         </p>
       );
     }
 
     return (
-      <p className="mt-2 text-lg font-semibold text-emerald-200">
+      <p className="mt-2 text-lg font-semibold" style={{ color: ACCENT }}>
         +{loot.qty} {loot.type}
       </p>
     );
@@ -54,18 +56,26 @@ export const VictoryModal = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
-      <div className="w-full max-w-xl rounded-3xl border border-emerald-400/30 bg-emerald-950/60 p-6 text-white shadow-glow">
-        <h2 className="text-4xl font-display uppercase tracking-[0.4em] text-emerald-300">
+      {/* Card principale: vetroso scuro + bordi chiari */}
+      <div className="w-full max-w-xl rounded-3xl border border-white/10 bg-white/10 p-6 text-white shadow-xl backdrop-blur">
+        {/* Titolo */}
+        <h2
+          className="text-4xl font-display uppercase tracking-[0.4em]"
+          style={{ color: ACCENT }}
+        >
           Vittoria
         </h2>
 
-        <section className="mt-4 space-y-3">
+        {/* Sezioni info */}
+        <section className="mt-4 space-y-4">
           <div>
-            <h3 className="text-sm uppercase text-emerald-200/70">Armi utilizzate</h3>
+            <h3 className="text-sm uppercase tracking-[0.3em] text-white/60">
+              Armi utilizzate
+            </h3>
             {weaponsUsed.length === 0 ? (
               <p className="text-sm text-white/70">Nessun colpo sparato.</p>
             ) : (
-              <ul className="mt-1 space-y-1 text-sm">
+              <ul className="mt-2 space-y-1 text-sm">
                 {weaponsUsed.map((weapon) => (
                   <li key={weapon.name} className="flex justify-between">
                     <span>{weaponLabel(weaponConfigs, weapon.name)}</span>
@@ -75,12 +85,15 @@ export const VictoryModal = ({
               </ul>
             )}
           </div>
+
           <div>
-            <h3 className="text-sm uppercase text-emerald-200/70">Animali caduti</h3>
+            <h3 className="text-sm uppercase tracking-[0.3em] text-white/60">
+              Animali caduti
+            </h3>
             {fallenAnimals.length === 0 ? (
               <p className="text-sm text-white/70">Nessuna perdita.</p>
             ) : (
-              <ul className="mt-1 list-inside list-disc space-y-1 text-sm">
+              <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-white/80">
                 {fallenAnimals.map((animal, index) => (
                   <li key={`${animal.configId}-${index}`}>
                     {animalName(animalConfigs, animal.configId)}
@@ -91,26 +104,42 @@ export const VictoryModal = ({
           </div>
         </section>
 
-        <section className="mt-4 rounded-xl border border-emerald-400/30 bg-emerald-900/40 p-4 text-center">
-          <h3 className="text-sm uppercase text-emerald-200/70">Ricompensa</h3>
+        {/* Ricompensa */}
+        <section className="mt-5 rounded-xl border border-white/10 bg-black/40 p-4 text-center">
+          <h3 className="text-sm uppercase tracking-[0.3em] text-white/60">Ricompensa</h3>
           {renderLoot()}
         </section>
 
+        {/* Medaglietta sbloccata (se presente) */}
         {medalUnlocked ? (
-          <section className="mt-3 rounded-xl border border-yellow-400/40 bg-yellow-500/10 p-4 text-center text-yellow-200">
-            <h4 className="text-xs uppercase tracking-[0.35em] text-yellow-200/80">
+          <section
+            className="mt-3 rounded-xl border p-4 text-center"
+            style={{ borderColor: ACCENT, backgroundColor: "rgba(166,124,82,0.12)", color: "#f4e7da" }}
+          >
+            <h4 className="text-xs uppercase tracking-[0.35em]" style={{ color: "#e7d6c7" }}>
               Nuova medaglietta sbloccata!
             </h4>
-            <p className="mt-2 text-lg font-semibold">
+            <p className="mt-2 text-lg font-semibold" style={{ color: ACCENT }}>
               {doorLabels[medalUnlocked]}
             </p>
           </section>
         ) : null}
 
+        {/* CTA */}
         <button
           type="button"
           onClick={onContinue}
-          className="mt-6 w-full rounded-full bg-emerald-400 py-3 text-sm font-semibold uppercase tracking-widest text-emerald-950 hover:bg-emerald-300"
+          className="mt-6 w-full rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-widest transition"
+          style={{
+            backgroundColor: ACCENT,
+            color: "#0f0f0f"
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = "#8b5e34";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.backgroundColor = ACCENT;
+          }}
         >
           Procedi
         </button>

@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import P5Scene, { type SceneConfig, type SceneElementConfig } from "@/components/P5Scene";
 import Tooltip from "@/components/Tooltip";
 import { useGameStore } from "@/state/store";
-import InfoPanel from '../components/InfoPanel';
 
 const HOUSE_IMAGE_WIDTH = 1785;
 const HOUSE_IMAGE_HEIGHT = 1004;
@@ -42,10 +41,7 @@ const houseAreas: HouseAreaConfig[] = [
       width: HOUSE_IMAGE_WIDTH,
       height: HOUSE_IMAGE_HEIGHT
     },
-    labelPosition: {
-      x: 342,
-      y: 135
-    },
+    labelPosition: { x: 342, y: 170 },
     zIndex: 10
   },
   {
@@ -60,15 +56,12 @@ const houseAreas: HouseAreaConfig[] = [
       width: HOUSE_IMAGE_WIDTH,
       height: HOUSE_IMAGE_HEIGHT
     },
-    labelPosition: {
-      x: 389,
-      y: 650
-    },
+    labelPosition: { x: 389, y: 665 },
     zIndex: 12
   },
   {
     id: "porta",
-    label: "lobby",
+    label: "Lobby",
     hitboxPath: "/assets/casa/pulsanti/porta.json",
     image: "/assets/casa/pulsanti/porta.png",
     selectedImage: "/assets/casa/pulsanti/porta_selected.png",
@@ -78,18 +71,15 @@ const houseAreas: HouseAreaConfig[] = [
       width: HOUSE_IMAGE_WIDTH,
       height: HOUSE_IMAGE_HEIGHT
     },
-    labelPosition: {
-      x: 925,
-      y: 802
-    },
+    labelPosition: { x: 925, y: 830 },
     zIndex: 8
   }
 ];
 
 const objectLayouts: Record<number, { x: number; y: number; width: number; height: number }> = {
-  1: { x: 1300, y: 500, width: 260, height: 220 },
-  2: { x: 1330, y: 120, width: 220, height: 240 },
-  3: { x: 1180, y: 820, width: 340, height: 220 },
+  1: { x: 1300, y: 400, width: 260, height: 220 },
+  2: { x: 1330, y: 50, width: 220, height: 240 },
+  3: { x: 1180, y: 680, width: 340, height: 220 },
   4: { x: 400, y: 800, width: 220, height: 210 }
 };
 
@@ -105,7 +95,6 @@ const HouseRoute = () => {
     incubatrice: false,
     porta: false
   });
-  // const [hoveredObjectId, setHoveredObjectId] = useState<number | null>(null); // removed hoveredObjectId state (no hover popups for objects anymore)
 
   const visibleObjects = useMemo(() => {
     if (!save) return [];
@@ -116,13 +105,8 @@ const HouseRoute = () => {
 
   const handleHoverChange = useCallback((areaId: HouseAreaId, hovered: boolean) => {
     setHoveredAreas((previous) => {
-      if ((previous[areaId] ?? false) === hovered) {
-        return previous;
-      }
-      return {
-        ...previous,
-        [areaId]: hovered
-      };
+      if ((previous[areaId] ?? false) === hovered) return previous;
+      return { ...previous, [areaId]: hovered };
     });
   }, []);
 
@@ -150,11 +134,7 @@ const HouseRoute = () => {
 
   useEffect(() => {
     if (activePanel !== "none") {
-      setHoveredAreas({
-        bacheca: false,
-        incubatrice: false,
-        porta: false
-      });
+      setHoveredAreas({ bacheca: false, incubatrice: false, porta: false });
     }
   }, [activePanel]);
 
@@ -179,22 +159,26 @@ const HouseRoute = () => {
   }, [handleAreaClick, handleHoverChange]);
 
   return (
-    <div className="relative min-h-screen bg-[#080910] text-white">
-      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1920px] flex-col px-6 py-8">
-        <header className="flex items-center justify-between uppercase tracking-[0.4em] text-white/70">
-          <span>Casa</span>
-          <Link
-            to="/lobby"
-            className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-accent hover:text-accent"
-          >
-            Lobby
-          </Link>
-        </header>
+    <div className="relative min-h-screen flex flex-col bg-[#080910] text-white">
+      {/* Header */}
+      <header className="flex items-center justify-between px-6 py-4 uppercase tracking-[0.4em] text-white/70">
+        <span>Casa</span>
+        <Link
+          to="/lobby"
+          className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-[#a67c52] hover:text-[#a67c52]"
+        >
+          Lobby
+        </Link>
+      </header>
 
-        <main className="mt-8 flex-1">
-          <div className="relative mx-auto w-full max-w-5xl overflow-hidden rounded-[32px] shadow-lg">
-            <P5Scene config={sceneConfig} className="w-full" />
+      {/* Scena FULL SCREEN (riempie tutto lo spazio rimanente) */}
+      <main className="relative flex-1">
+        <div className="absolute inset-0">
+          {/* Contenitore a schermo pieno per P5 */}
+          <div className="relative w-screen h-full overflow-hidden">
+            <P5Scene config={sceneConfig} className="w-full h-full" />
 
+            {/* Overlay oggetti */}
             <div className="absolute inset-0">
               {visibleObjects.map((object) => {
                 const layout = objectLayouts[object.id];
@@ -207,8 +191,6 @@ const HouseRoute = () => {
                   ? Math.round((object.piecesOwned / object.piecesNeeded) * 100)
                   : 0;
                 const unlocked = object.unlocked;
-                // const isHovered = hoveredObjectId === object.id;
-                const isSelected = selectedId === object.id;
 
                 return (
                   <div
@@ -226,15 +208,9 @@ const HouseRoute = () => {
                       type="button"
                       disabled={activePanel !== "none"}
                       onClick={() => setSelectedId(object.id)}
-                      className={`relative flex h-full w-full flex-col justify-end rounded-3xl border px-4 py-3 text-left transition ${
-                        unlocked
-                          ? "border-emerald-400/60 bg-emerald-500/10"
-                          : "border-dashed border-white/15 bg-white/5"
-                      } ${
-                        isSelected ? "ring-2 ring-emerald-300" : ""
-                      } disabled:cursor-not-allowed disabled:opacity-60`}
+                      className="relative flex h-full w-full flex-col justify-end rounded-3xl px-3 py-2 text-left transition disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      <span className="text-sm font-semibold uppercase tracking-[0.3em] text-black">
+                      <span className="inline-block rounded-md border border-black/20 px-2 py-0.5 text-sm font-semibold uppercase tracking-[0.3em] text-black bg-transparent">
                         {object.name}
                       </span>
                       <span className="mt-1 text-xs uppercase text-black/50">
@@ -247,12 +223,12 @@ const HouseRoute = () => {
                         />
                       </div>
                     </button>
-                    {/* hover popup removed */}
                   </div>
                 );
               })}
             </div>
 
+            {/* Overlay etichette aree */}
             <div className="pointer-events-none absolute inset-0">
               {houseAreas.map((area) => {
                 const hovered = hoveredAreas[area.id];
@@ -266,97 +242,33 @@ const HouseRoute = () => {
                       top: toPercent(area.labelPosition.y, HOUSE_IMAGE_HEIGHT)
                     }}
                   >
-                      <span
-                        className={`rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.35em] ${
-                          highlight
-                            ? "border-yellow-300 bg-yellow-400/20 text-yellow-200"
-                            : hovered
-                              ? "border-accent bg-black/70 text-accent"
-                              : "border-white/30 bg-black/60 text-white"
-                        }`}
-                      >
-                        {area.label}
-                      </span>
-                    </div>
-                  );
+                    <span
+                      className={`rounded-full border px-3 py-1 text-[11px] uppercase tracking-[0.35em] ${
+                        highlight
+                          ? "border-yellow-300 bg-yellow-400/20 text-yellow-200"
+                          : hovered
+                          ? "border-[#a67c52] bg-black/70 text-[#a67c52]"
+                          : "border-white/30 bg-black/60 text-white"
+                      }`}
+                    >
+                      {area.label}
+                    </span>
+                  </div>
+                );
               })}
             </div>
           </div>
+        </div>
+      </main>
 
-          <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start">
-            {selectedObject && activePanel === "none" ? (
-              <section className="flex-1 rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-white/80 shadow-lg">
-                <div className="flex items-center justify-between gap-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-white">{selectedObject.name}</h3>
-                    <p className="text-xs uppercase text-white/50">
-                      {selectedObject.unlocked ? "Completato" : "Incompleto"}
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedId(null)}
-                    className="rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.35em] text-white/60 transition hover:border-white/40 hover:text-white"
-                  >
-                    Chiudi
-                  </button>
-                </div>
-
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
-                  <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
-                    <p className="text-xs uppercase text-white/50">Pezzi raccolti</p>
-                    <p className="mt-1 text-2xl font-semibold text-white">
-                      {selectedObject.piecesOwned}/{selectedObject.piecesNeeded}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
-                    <p className="text-xs uppercase text-white/50">Bonus</p>
-                    {selectedObject.unlocked ? (
-                      <p className="mt-1 text-white/80">
-                        {Array.isArray(selectedObject.bonus.amount)
-                          ? selectedObject.bonus.amount.join(", ")
-                          : selectedObject.bonus.amount}
-                      </p>
-                    ) : (
-                      <p className="mt-1 text-white/60">
-                        Mancano {Math.max(0, selectedObject.piecesNeeded - selectedObject.piecesOwned)} pezzi da trovare.
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {selectedObject.unlocked ? (
-                  <p className="mt-3 text-xs uppercase text-white/60">
-                    Turni al prossimo bonus: {selectedObject.turnsToNextBonus ?? "-"}
-                  </p>
-                ) : (
-                  <p className="mt-3 text-xs uppercase text-white/60">
-                    Completa l&apos;arredo per sbloccare i bonus periodici.
-                  </p>
-                )}
-              </section>
-            ) : null}
-
-            <aside className="w-full lg:max-w-sm">
-              {save ? (
-                <InfoPanel
-                  doorsOpened={save.progress.doorsOpened}
-                  turn={save.progress.turn}
-                  blockedDoors={save.progress.blockedDoors}
-                />
-              ) : null}
-            </aside>
-          </div>
-        </main>
-      </div>
-
+      {/* Modale Bacheca */}
       {activePanel === "bacheca" ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
           <div className="relative w-full max-w-4xl rounded-[28px] border border-white/10 bg-[#111522]/95 p-6 shadow-xl">
             <button
               type="button"
               onClick={closePanel}
-              className="absolute right-6 top-6 rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.4em] text-white/80 hover:border-accent hover:text-accent"
+              className="absolute right-6 top-6 rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.4em] text-white/80 transition hover:border-[#a67c52] hover:text-[#a67c52]"
             >
               Chiudi
             </button>
@@ -378,7 +290,7 @@ const HouseRoute = () => {
                     key={object.id}
                     type="button"
                     onClick={() => setSelectedId(object.id)}
-                    className="rounded-3xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-accent hover:text-accent"
+                    className="rounded-3xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-[#a67c52] hover:text-[#a67c52]"
                   >
                     <span className="text-lg font-semibold text-white">{object.name}</span>
                     <div className="mt-2 text-xs uppercase text-white/60">
@@ -427,13 +339,14 @@ const HouseRoute = () => {
         </div>
       ) : null}
 
+      {/* Modale Incubatrice */}
       {activePanel === "incubatrice" ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-6">
           <div className="relative w-full max-w-md rounded-[28px] border border-white/10 bg-[#111522]/95 p-6 text-center shadow-xl">
             <button
               type="button"
               onClick={closePanel}
-              className="absolute right-6 top-6 rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.4em] text-white/80 hover:border-accent hover:text-accent"
+              className="absolute right-6 top-6 rounded-full border border-white/20 px-3 py-1 text-xs uppercase tracking-[0.4em] text-white/80 transition hover:border-[#a67c52] hover:text-[#a67c52]"
             >
               Chiudi
             </button>
