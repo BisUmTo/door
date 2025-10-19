@@ -594,22 +594,46 @@ const InventoryRoute = () => {
                             : "border-white/10 bg-white/5 hover:border-[#a67c52]/60"
                         }`}
                       >
-                        <div className="flex items-center justify-between text-sm text-white/80">
-                          <span className="font-semibold text-white">{config.displayName}</span>
-                          <span className="text-xs uppercase text-white/50">
-                            {AMMO_LABELS[config.ammoType]}
-                          </span>
+                        <div className="flex items-start gap-3">
+                          {/* Icona arma con badge */}
+                          <div className="flex-shrink-0 relative">
+                            <img
+                              src="/assets/armi/badge.png"
+                              alt="badge"
+                              className="h-14 w-14 object-contain"
+                              draggable={false}
+                            />
+                            <img
+                              src={iconSrc}
+                              alt={config.displayName}
+                              className="absolute inset-0 h-14 w-14 object-contain p-1"
+                              draggable={false}
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between text-sm text-white/80">
+                              <span className="font-semibold text-white">{config.displayName}</span>
+                              <span className="text-xs uppercase text-white/50">
+                                {AMMO_LABELS[config.ammoType]}
+                              </span>
+                            </div>
+                            <div className="mt-3 h-2 w-full overflow-hidden rounded bg-white/10">
+                              <div
+                                className="h-full"
+                                style={{ backgroundColor: "#a67c52", width: `${Math.min(100, Math.max(0, ammoPercent))}%` }}
+                              />
+                            </div>
+                            <p className="mt-2 text-xs uppercase text-white/60">
+                              Disponibili:{" "}
+                              <span className="font-semibold text-white">{ammoAvailable}</span>
+                            </p>
+                          </div>
                         </div>
-                        <div className="mt-3 h-2 w-full overflow-hidden rounded bg-white/10">
-                          <div
-                            className="h-full"
-                            style={{ backgroundColor: "#a67c52", width: `${Math.min(100, Math.max(0, ammoPercent))}%` }}
-                          />
-                        </div>
-                        <p className="mt-2 text-xs uppercase text-white/60">
-                          Disponibili:{" "}
-                          <span className="font-semibold text-white">{ammoAvailable}</span>
-                        </p>
                       </button>
                     );
                   })
@@ -619,13 +643,33 @@ const InventoryRoute = () => {
               <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
                 {selectedWeaponData ? (
                   <div className="space-y-4 text-sm text-white/80">
-                    <div>
-                      <h2 className="text-xl font-semibold text-white">
-                        {selectedWeaponData.config.displayName}
-                      </h2>
-                      <p className="text-xs uppercase text-white/50">
-                        {AMMO_LABELS[selectedWeaponData.config.ammoType]}
-                      </p>
+                    {/* Icona e header */}
+                    <div className="flex items-start gap-4">
+                      <div className="flex-shrink-0 relative">
+                        <img
+                          src="/assets/armi/badge.png"
+                          alt="badge"
+                          className="h-24 w-24 object-contain"
+                          draggable={false}
+                        />
+                        <img
+                          src={resolveWeaponIcon(selectedWeaponData.config.displayName)}
+                          alt={selectedWeaponData.config.displayName}
+                          className="absolute inset-0 h-24 w-24 object-contain p-2"
+                          draggable={false}
+                          onError={(e) => {
+                            (e.currentTarget as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="text-xl font-semibold text-white">
+                          {selectedWeaponData.config.displayName}
+                        </h2>
+                        <p className="text-xs uppercase text-white/50">
+                          {AMMO_LABELS[selectedWeaponData.config.ammoType]}
+                        </p>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3 text-xs text-white/70">
                       <div className="rounded-lg border border-white/10 bg-white/5 p-3">

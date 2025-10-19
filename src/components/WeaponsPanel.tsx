@@ -3,6 +3,12 @@ import clsx from "clsx";
 import type { AmmoKind, WeaponConfig, WeaponName, WeaponState } from "@/game/types";
 import { getWeaponAmmoKind } from "@/data/normalize";
 
+// Risolvi l'icona dell'arma in base al displayName
+const resolveWeaponIcon = (displayName: string) => {
+  const file = `${encodeURIComponent(displayName.toLowerCase())}.png`;
+  return `/assets/armi/${file}`;
+};
+
 interface WeaponsPanelProps {
   open: boolean;
   locked?: boolean;
@@ -84,24 +90,53 @@ export const WeaponsPanel = ({
         ) : null}
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          {availableWeapons.map(({ weapon, config, ammoKind, ammoAvailable }) => (
-            <button
-              key={weapon.name}
-              type="button"
-              disabled={locked || ammoAvailable <= 0}
-              onClick={() => handleSelect(weapon.name)}
-              className={clsx(
-                "rounded-xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-accent hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                selectedWeapon === weapon.name && "border-accent bg-white/10",
-                (locked || ammoAvailable <= 0) && "cursor-not-allowed opacity-50"
-              )}
-            >
-              <h3 className="text-lg font-semibold text-white">{config?.displayName}</h3>
-              <p className="text-xs uppercase text-white/50">Munizioni {ammoKind}</p>
-              <p className="mt-2 text-sm text-white/80">Danno colpo: {config?.damagePerShot}</p>
-              <p className="text-sm text-white/80">Disponibili: {ammoAvailable}</p>
-            </button>
-          ))}
+          {availableWeapons.map(({ weapon, config, ammoKind, ammoAvailable }) => {
+            const iconSrc = config?.displayName ? resolveWeaponIcon(config.displayName) : null;
+            return (
+              <button
+                key={weapon.name}
+                type="button"
+                disabled={locked || ammoAvailable <= 0}
+                onClick={() => handleSelect(weapon.name)}
+                className={clsx(
+                  "rounded-xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-accent hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                  selectedWeapon === weapon.name && "border-accent bg-white/10",
+                  (locked || ammoAvailable <= 0) && "cursor-not-allowed opacity-50"
+                )}
+              >
+                <div className="flex items-start gap-3">
+                  {/* Icona arma con badge */}
+                  {iconSrc && (
+                    <div className="flex-shrink-0 relative">
+                      <img
+                        src="/assets/armi/badge.png"
+                        alt="badge"
+                        className="h-16 w-16 object-contain"
+                        draggable={false}
+                      />
+                      <img
+                        src={iconSrc}
+                        alt={config?.displayName}
+                        className="absolute inset-0 h-16 w-16 object-contain p-1"
+                        draggable={false}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-white">{config?.displayName}</h3>
+                    <p className="text-xs uppercase text-white/50">Munizioni {ammoKind}</p>
+                    <p className="mt-2 text-sm text-white/80">Danno colpo: {config?.damagePerShot}</p>
+                    <p className="text-sm text-white/80">Disponibili: {ammoAvailable}</p>
+                  </div>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         {selectedWeapon ? (

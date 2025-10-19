@@ -39,6 +39,7 @@ const ChestRoute = () => {
 
   const history = save?.chests.unlockedHistory ?? [];
   const houseObjects = save?.house.objects ?? [];
+  const selectedAvailable = selected ? inventory[selected] ?? 0 : 0;
 
   const resolveResourceLabel = (loot: LootEntry): string => {
     if (isFurnitureResource(loot.type)) {
@@ -230,7 +231,13 @@ const ChestRoute = () => {
                   <button
                     type="button"
                     onClick={handleOpenChest}
-                    className="mt-8 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 px-8 py-3 font-semibold uppercase tracking-[0.35em] text-white shadow-lg shadow-yellow-500/30 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-yellow-500/40"
+                    disabled={selectedAvailable <= 0}
+                    className={clsx(
+                      "mt-8 rounded-full px-8 py-3 font-semibold uppercase tracking-[0.35em] transition-all duration-300",
+                      selectedAvailable > 0
+                        ? "bg-gradient-to-r from-yellow-500 to-orange-500 text-white shadow-lg shadow-yellow-500/30 hover:scale-105 hover:shadow-xl hover:shadow-yellow-500/40"
+                        : "cursor-not-allowed border border-white/10 bg-white/10 text-white/40"
+                    )}
                   >
                     Apri Baule
                   </button>
