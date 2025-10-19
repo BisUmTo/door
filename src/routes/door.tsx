@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { AmmoKind, AnimalConfig, WeaponName } from "@/game/types";
+import type { AmmoKind, WeaponName, DoorType } from "@/game/types";
 import WeaponsPanel from "@/components/WeaponsPanel";
 import AnimalsPanel from "@/components/AnimalsPanel";
 import VictoryModal from "@/components/VictoryModal";
 import DefeatModal from "@/components/DefeatModal";
 import { useGameStore } from "@/state/store";
-import { getAnimalReadiness, getDisplayBattleStats } from "@/game/animals";
 
+/* ========= AMMO ========= */
 const EMPTY_AMMO: Record<AmmoKind, number> = {
   bullets: 0,
   shells: 0,
@@ -15,6 +15,25 @@ const EMPTY_AMMO: Record<AmmoKind, number> = {
   darts: 0,
   grenades: 0
 };
+
+/* ========= SCENARI PER PORTA =========
+   Assicurati che i file esistano in /assets/scenari/
+   e che i nomi coincidano. */
+const SCENARIO_BY_DOOR: Record<DoorType, string> = {
+  white: "/assets/scenari/bianco.png",
+  black: "/assets/scenari/nero.png",
+  red: "/assets/scenari/rosso.png",
+  orange: "/assets/scenari/arancione.png",
+  yellow: "/assets/scenari/giallo.png",
+  purple: "/assets/scenari/viola.png",     // usa "viola.png" o il nome reale del file
+  blue: "/assets/scenari/blu.png",
+  lightBlue: "/assets/scenari/azzurro.png",
+  brown: "/assets/scenari/marrone.png",
+  lime: "/assets/scenari/lime.png",
+  green: "/assets/scenari/verde.png",
+  neutral: "/assets/scenari/neutro.png"
+};
+const FALLBACK_SCENARIO = "/assets/scenari/neutro.png";
 
 /* ========= Helpers immagine nemico ========= */
 const ENEMY_IMG_BASE = "/assets/animali/icona";
@@ -79,45 +98,19 @@ const DoorRoute = () => {
   const animalConfigs = configs?.animals ?? [];
   const weaponConfigs = configs?.weapons ?? [];
 
-  const animalConfigMap = useMemo(() => {
-    const map = new Map<number, AnimalConfig>();
-    for (const config of animalConfigs) {
-      map.set(config.id, config);
-    }
-    return map;
-  }, [animalConfigs]);
-
   const currentEnemyConfig = useMemo(() => {
     if (!activeEnemy) return null;
-    return animalConfigMap.get(activeEnemy.configId) ?? null;
-  }, [animalConfigMap, activeEnemy]);
+    return animalConfigs.find((animal) => animal.id === activeEnemy.configId) ?? null;
+  }, [animalConfigs, activeEnemy]);
 
   const enemyImageSrc = useMemo(
     () => resolveEnemyImage(currentEnemyConfig),
     [currentEnemyConfig]
   );
 
-  const squadSummary = useMemo(() => {
-    if (!save) {
-      return { ready: 0, recovering: 0, fallen: 0, totalDamage: 0 };
-    }
-    return save.animals.owned.reduce(
-      (acc, instance) => {
-        const config = animalConfigMap.get(instance.configId) ?? null;
-        const readiness = getAnimalReadiness(config, instance);
-        if (readiness === "ready") {
-          acc.ready += 1;
-          acc.totalDamage += getDisplayBattleStats(config, instance).damage;
-        } else if (readiness === "recovering") {
-          acc.recovering += 1;
-        } else {
-          acc.fallen += 1;
-        }
-        return acc;
-      },
-      { ready: 0, recovering: 0, fallen: 0, totalDamage: 0 }
-    );
-  }, [save, animalConfigMap]);
+  /* ======= Tipo porta corrente + scenario ======= */
+  const doorType: DoorType = (battle?.door?.type ?? "neutral") as DoorType;
+  const scenarioUrl = SCENARIO_BY_DOOR[doorType] ?? FALLBACK_SCENARIO;
 
   const handleWeaponConfirm = (weaponName: WeaponName, ammoToSpend: number) => {
     resolveWeaponAttack(weaponName as any, ammoToSpend);
@@ -142,9 +135,13 @@ const DoorRoute = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden text-white">
-      {/* SFONDO stile “di sempre” */}
+      {/* 🔳 SFONDO SCENARIO in base al tipo di porta */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[url('/assets/lobby/sfondo_lobby.png')] bg-cover bg-center blur" />
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${scenarioUrl})` }}
+        />
+        {/* overlay scuro per leggibilità */}
         <div className="absolute inset-0 bg-black/70" />
       </div>
 
@@ -157,7 +154,6 @@ const DoorRoute = () => {
           animalConfigs={animalConfigs}
           weaponConfigs={weaponConfigs}
           medalUnlocked={pendingReward.medalUnlocked ?? null}
-          houseObjects={save?.house.objects ?? []}
           onContinue={handleVictoryContinue}
         />
       ) : null}
@@ -204,7 +200,7 @@ const DoorRoute = () => {
                 />
               </div>
 
-              {/* PROSSIMI NEMICI (a destra dell'icona su md+, sotto su mobile) */}
+              {/* PROSSIMI NEMICI */}
               <div className="flex flex-col items-center md:items-end gap-3 text-sm text-white/70">
                 <span className="uppercase text-white/50">Prossimi</span>
                 <div className="flex flex-wrap justify-center md:justify-end gap-2">
@@ -229,38 +225,37 @@ const DoorRoute = () => {
               </div>
             </div>
 
-            {/* Statistiche PIÙ PICCOLE sotto l'icona */}
-            {/* Statistiche 2x2 centrate e più compatte */}
-{/* Statistiche 2x2 centrate e leggermente più grandi */}
-<div className="mt-8 flex justify-center">
-  <dl className="grid grid-cols-2 gap-4 text-sm">
-    <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
-      <dt className="text-sm uppercase text-white/60">Vita</dt>
-      <dd className="text-xl font-semibold text-white leading-tight">
-        {activeEnemy.life}
-      </dd>
-    </div>
-    <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
-      <dt className="text-sm uppercase text-white/60">Danno</dt>
-      <dd className="text-xl font-semibold text-white leading-tight">
-        {currentEnemyConfig.damage}
-      </dd>
-    </div>
-    <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
-      <dt className="text-sm uppercase text-white/60">Velocità</dt>
-      <dd className="text-xl font-semibold text-white leading-tight">
-        {currentEnemyConfig.attackSpeed}
-      </dd>
-    </div>
-    <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
-      <dt className="text-sm uppercase text-white/60">Età</dt>
-      <dd className="text-xl font-semibold text-white leading-tight">
-        {activeEnemy.size === "Smmlll" ? "Baby" : "Adulto"}
-      </dd>
-    </div>
-  </dl>
-</div>
-            {/* Pulsanti PIÙ IN BASSO */}
+            {/* Statistiche 2x2 centrate */}
+            <div className="mt-8 flex justify-center">
+              <dl className="grid grid-cols-2 gap-4 text-sm">
+                <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
+                  <dt className="text-sm uppercase text-white/60">Vita</dt>
+                  <dd className="text-xl font-semibold text-white leading-tight">
+                    {activeEnemy.life}
+                  </dd>
+                </div>
+                <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
+                  <dt className="text-sm uppercase text-white/60">Danno</dt>
+                  <dd className="text-xl font-semibold text-white leading-tight">
+                    {currentEnemyConfig.damage}
+                  </dd>
+                </div>
+                <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
+                  <dt className="text-sm uppercase text-white/60">Velocità</dt>
+                  <dd className="text-xl font-semibold text-white leading-tight">
+                    {currentEnemyConfig.attackSpeed}
+                  </dd>
+                </div>
+                <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
+                  <dt className="text-sm uppercase text-white/60">Età</dt>
+                  <dd className="text-xl font-semibold text-white leading-tight">
+                    {activeEnemy.size}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+
+            {/* Pulsanti */}
             <div className="mt-10 flex items-center justify-center gap-4">
               <button
                 type="button"
@@ -277,27 +272,6 @@ const DoorRoute = () => {
               >
                 Animali
               </button>
-            </div>
-
-            <div className="mt-8 rounded-2xl border border-white/10 bg-black/40 p-4">
-              <h3 className="text-xs uppercase tracking-[0.3em] text-white/50">Squadra</h3>
-              <div className="mt-3 flex flex-wrap gap-4 text-sm text-white/70">
-                <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-4 py-1 text-emerald-100">
-                  Pronti: {squadSummary.ready}
-                </span>
-                <span className="rounded-full border border-amber-300/40 bg-amber-400/10 px-4 py-1 text-amber-100">
-                  Recupero: {squadSummary.recovering}
-                </span>
-                <span className="rounded-full border border-rose-400/40 bg-rose-500/10 px-4 py-1 text-rose-100">
-                  Ko: {squadSummary.fallen}
-                </span>
-                <span className="ml-auto rounded-full border border-white/20 px-4 py-1 text-white/70">
-                  Danno combinato pronto: {squadSummary.totalDamage}
-                </span>
-              </div>
-              <p className="mt-2 text-xs text-white/50">
-                Gli animali possono essere schierati solo quando la stamina è al massimo.
-              </p>
             </div>
           </section>
         ) : (
