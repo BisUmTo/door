@@ -31,9 +31,9 @@ const SCENARIO_BY_DOOR: Record<DoorType, string> = {
   brown: "/assets/scenari/Stanza_marrone.png",
   lime: "/assets/scenari/Stanza_lime.png",
   green: "/assets/scenari/Stanza_verde.png",
-  neutral: "/assets/scenari/Stanza_neutra.png"
+  neutral: "/assets/scenari/Stanza_neutrale.png"
 };
-const FALLBACK_SCENARIO = "/assets/scenari/Stanza_neutra.png";
+const FALLBACK_SCENARIO = "/assets/scenari/Stanza_neutrale.png";
 
 /* ========= Helpers immagine nemico ========= */
 const ENEMY_IMG_BASE = "/assets/animali/icona";

@@ -191,9 +191,9 @@ const weaponAliasPairs: Array<[string, WeaponName]> = [
   ["blowgun", "blowgun"],
   ["lanciagranate", "grenadeLauncher"],
   ["grenade launcher", "grenadeLauncher"],
-  ["arco semplice", "simpleBow"],
-  ["arco", "simpleBow"],
-  ["simple bow", "simpleBow"],
+  ["arco", "Bow"],
+  ["arco", "Bow"],
+  ["bow", "Bow"],
   ["pistola", "pistol"],
   ["pistol", "pistol"]
 ];
