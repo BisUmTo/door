@@ -234,7 +234,7 @@ const normalizeSavesMap = (
     if (!isRecord(entry.meta) || entry.meta.slotId !== slot.id) {
       throw new Error(`Mismatched slot id for save ${slot.id}`);
     }
-    result[slot.id] = entry as SaveGame;
+    result[slot.id] = entry as unknown as SaveGame;
   }
   return result;
 };

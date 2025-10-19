@@ -1,15 +1,15 @@
 /// <reference lib="webworker" />
+/// <reference types="vite/client" />
 
-declare const self: ServiceWorkerGlobalScope;
-declare const __ENABLE_CACHE__: boolean;
+const sw = self as unknown as ServiceWorkerGlobalScope;
 
 const CACHE_NAME = "gc-v1";
 const PRECACHE_URLS = __ENABLE_CACHE__
   ? ["/", "/index.html", "/manifest.webmanifest"]
   : [];
 
-self.addEventListener("install", (event) => {
-  self.skipWaiting();
+sw.addEventListener("install", (event) => {
+  sw.skipWaiting();
   if (__ENABLE_CACHE__) {
     event.waitUntil(
       caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS))
@@ -17,7 +17,7 @@ self.addEventListener("install", (event) => {
   }
 });
 
-self.addEventListener("activate", (event) => {
+sw.addEventListener("activate", (event) => {
   event.waitUntil(
     caches
       .keys()
@@ -28,11 +28,11 @@ self.addEventListener("activate", (event) => {
             .map((key) => caches.delete(key))
         )
       )
-      .then(() => self.clients.claim())
+      .then(() => sw.clients.claim())
   );
 });
 
-self.addEventListener("fetch", (event) => {
+sw.addEventListener("fetch", (event) => {
   const { request } = event;
 
   if (request.method !== "GET") {
@@ -68,13 +68,16 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
         const cached = await cache.match(request);
-        const networkFetch = fetch(request)
-          .then((response) => {
-            cache.put(request, response.clone());
-            return response;
-          })
-          .catch(() => cached);
-        return cached ?? networkFetch;
+        if (cached) {
+          return cached;
+        }
+        try {
+          const networkResponse = await fetch(request);
+          cache.put(request, networkResponse.clone());
+          return networkResponse;
+        } catch {
+          return new Response(null, { status: 404, statusText: "Not Found" });
+        }
       })
     );
     return;

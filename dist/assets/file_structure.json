@@ -1,0 +1,1347 @@
+{
+  "generated_at": "2025-10-19T08:00:50Z",
+  "entries": [
+    {
+      "root": "/Users/delugan/Library/CloudStorage/GoogleDrive-kevin.delugan@juvenes.it/.shortcut-targets-by-id/1BGP7ik13prJr-3oY_ClP2i8r5Z1m4pVP/Door/Demo - Door/assets",
+      "tree": {
+        "name": "assets",
+        "path": ".",
+        "type": "directory",
+        "children": [
+          {
+            "name": "animali",
+            "path": "animali",
+            "type": "directory",
+            "children": [
+              {
+                "name": "icona",
+                "path": "animali/icona",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "aquila.png",
+                    "path": "animali/icona/aquila.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 79808
+                  },
+                  {
+                    "name": "cane.png",
+                    "path": "animali/icona/cane.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 81494
+                  },
+                  {
+                    "name": "cavallo.png",
+                    "path": "animali/icona/cavallo.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 73000
+                  },
+                  {
+                    "name": "cervo.png",
+                    "path": "animali/icona/cervo.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 90762
+                  },
+                  {
+                    "name": "cinghiale.png",
+                    "path": "animali/icona/cinghiale.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 82361
+                  },
+                  {
+                    "name": "civetta.png",
+                    "path": "animali/icona/civetta.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 89013
+                  },
+                  {
+                    "name": "coccodrillo.png",
+                    "path": "animali/icona/coccodrillo.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 84176
+                  },
+                  {
+                    "name": "colomba.png",
+                    "path": "animali/icona/colomba.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 69931
+                  },
+                  {
+                    "name": "corvo.png",
+                    "path": "animali/icona/corvo.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 73373
+                  },
+                  {
+                    "name": "falco.png",
+                    "path": "animali/icona/falco.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 81865
+                  },
+                  {
+                    "name": "gatto.png",
+                    "path": "animali/icona/gatto.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 97588
+                  },
+                  {
+                    "name": "ghepardo.png",
+                    "path": "animali/icona/ghepardo.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 103898
+                  },
+                  {
+                    "name": "ippopotamo.png",
+                    "path": "animali/icona/ippopotamo.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 73728
+                  },
+                  {
+                    "name": "leone.png",
+                    "path": "animali/icona/leone.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 104224
+                  },
+                  {
+                    "name": "lince.png",
+                    "path": "animali/icona/lince.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 91169
+                  },
+                  {
+                    "name": "lupo.png",
+                    "path": "animali/icona/lupo.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 94595
+                  },
+                  {
+                    "name": "orso.png",
+                    "path": "animali/icona/orso.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 89251
+                  },
+                  {
+                    "name": "pantera.png",
+                    "path": "animali/icona/pantera.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 65395
+                  },
+                  {
+                    "name": "puma.png",
+                    "path": "animali/icona/puma.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 69529
+                  },
+                  {
+                    "name": "serpente.png",
+                    "path": "animali/icona/serpente.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 92793
+                  },
+                  {
+                    "name": "tartaruga.png",
+                    "path": "animali/icona/tartaruga.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 91254
+                  },
+                  {
+                    "name": "tigre.png",
+                    "path": "animali/icona/tigre.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 93576
+                  },
+                  {
+                    "name": "volpe.png",
+                    "path": "animali/icona/volpe.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 84456
+                  }
+                ],
+                "item_count": 23
+              },
+              {
+                "name": "animali.psb",
+                "path": "animali/animali.psb",
+                "type": "file",
+                "extension": ".psb",
+                "size_bytes": 28870789
+              },
+              {
+                "name": "aquila.png",
+                "path": "animali/aquila.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 124835
+              },
+              {
+                "name": "cane.png",
+                "path": "animali/cane.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 121748
+              },
+              {
+                "name": "cavallo.png",
+                "path": "animali/cavallo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 89685
+              },
+              {
+                "name": "cervo.png",
+                "path": "animali/cervo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 125335
+              },
+              {
+                "name": "cinghiale.png",
+                "path": "animali/cinghiale.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 95864
+              },
+              {
+                "name": "civetta.png",
+                "path": "animali/civetta.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 124217
+              },
+              {
+                "name": "coccodrillo.png",
+                "path": "animali/coccodrillo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 126054
+              },
+              {
+                "name": "colomba.png",
+                "path": "animali/colomba.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 68572
+              },
+              {
+                "name": "corvo.png",
+                "path": "animali/corvo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 98260
+              },
+              {
+                "name": "falco.png",
+                "path": "animali/falco.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 105724
+              },
+              {
+                "name": "gatto.png",
+                "path": "animali/gatto.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 158240
+              },
+              {
+                "name": "ghepardo.png",
+                "path": "animali/ghepardo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 140783
+              },
+              {
+                "name": "icone.psb",
+                "path": "animali/icone.psb",
+                "type": "file",
+                "extension": ".psb",
+                "size_bytes": 29333597
+              },
+              {
+                "name": "ippopotamo.png",
+                "path": "animali/ippopotamo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 95586
+              },
+              {
+                "name": "leone.png",
+                "path": "animali/leone.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 148320
+              },
+              {
+                "name": "lince.png",
+                "path": "animali/lince.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 115061
+              },
+              {
+                "name": "lupo.png",
+                "path": "animali/lupo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 234757
+              },
+              {
+                "name": "orso.png",
+                "path": "animali/orso.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 271404
+              },
+              {
+                "name": "pantera.png",
+                "path": "animali/pantera.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 67616
+              },
+              {
+                "name": "puma.png",
+                "path": "animali/puma.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 73611
+              },
+              {
+                "name": "serpente.png",
+                "path": "animali/serpente.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 92793
+              },
+              {
+                "name": "tartaruga.png",
+                "path": "animali/tartaruga.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 113798
+              },
+              {
+                "name": "tigre.png",
+                "path": "animali/tigre.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 147802
+              },
+              {
+                "name": "volpe.png",
+                "path": "animali/volpe.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 105106
+              }
+            ],
+            "item_count": 26
+          },
+          {
+            "name": "armi",
+            "path": "armi",
+            "type": "directory",
+            "children": [
+              {
+                "name": "arco.png",
+                "path": "armi/arco.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 68561
+              },
+              {
+                "name": "badge.png",
+                "path": "armi/badge.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 63825
+              },
+              {
+                "name": "cerbottana.png",
+                "path": "armi/cerbottana.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 77098
+              },
+              {
+                "name": "fucile a pompa.png",
+                "path": "armi/fucile a pompa.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 86364
+              },
+              {
+                "name": "lanciagranate.png",
+                "path": "armi/lanciagranate.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 80163
+              },
+              {
+                "name": "pistola.png",
+                "path": "armi/pistola.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 88821
+              }
+            ],
+            "item_count": 6
+          },
+          {
+            "name": "bauli",
+            "path": "bauli",
+            "type": "directory",
+            "children": [
+              {
+                "name": "argento.png",
+                "path": "bauli/argento.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 126546
+              },
+              {
+                "name": "bauli.psb",
+                "path": "bauli/bauli.psb",
+                "type": "file",
+                "extension": ".psb",
+                "size_bytes": 3282478
+              },
+              {
+                "name": "bronzo.png",
+                "path": "bauli/bronzo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 173109
+              },
+              {
+                "name": "diamante.png",
+                "path": "bauli/diamante.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 169019
+              },
+              {
+                "name": "epico.png",
+                "path": "bauli/epico.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 142745
+              },
+              {
+                "name": "legno.png",
+                "path": "bauli/legno.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 85345
+              },
+              {
+                "name": "oro.png",
+                "path": "bauli/oro.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 217107
+              }
+            ],
+            "item_count": 7
+          },
+          {
+            "name": "casa",
+            "path": "casa",
+            "type": "directory",
+            "children": [
+              {
+                "name": "arredamento",
+                "path": "casa/arredamento",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "lampada_0.png",
+                    "path": "casa/arredamento/lampada_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 17179
+                  },
+                  {
+                    "name": "lampada_1.png",
+                    "path": "casa/arredamento/lampada_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "mensola_0.png",
+                    "path": "casa/arredamento/mensola_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 22068
+                  },
+                  {
+                    "name": "mensola_1.png",
+                    "path": "casa/arredamento/mensola_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 20956
+                  },
+                  {
+                    "name": "mensola_2.png",
+                    "path": "casa/arredamento/mensola_2.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 14250
+                  },
+                  {
+                    "name": "mensola_3.png",
+                    "path": "casa/arredamento/mensola_3.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 12382
+                  },
+                  {
+                    "name": "mensola_4.png",
+                    "path": "casa/arredamento/mensola_4.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "orologio_0.png",
+                    "path": "casa/arredamento/orologio_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 14241
+                  },
+                  {
+                    "name": "orologio_1.png",
+                    "path": "casa/arredamento/orologio_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "poltrona_0.png",
+                    "path": "casa/arredamento/poltrona_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 20274
+                  },
+                  {
+                    "name": "poltrona_1.png",
+                    "path": "casa/arredamento/poltrona_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "sedie_0.png",
+                    "path": "casa/arredamento/sedie_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 35393
+                  },
+                  {
+                    "name": "sedie_1.png",
+                    "path": "casa/arredamento/sedie_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 21248
+                  },
+                  {
+                    "name": "sedie_2.png",
+                    "path": "casa/arredamento/sedie_2.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "tappeto_0.png",
+                    "path": "casa/arredamento/tappeto_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 17010
+                  },
+                  {
+                    "name": "tappeto_1.png",
+                    "path": "casa/arredamento/tappeto_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "tavolino_0.png",
+                    "path": "casa/arredamento/tavolino_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 20071
+                  },
+                  {
+                    "name": "tavolino_1.png",
+                    "path": "casa/arredamento/tavolino_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 13588
+                  },
+                  {
+                    "name": "tavolino_2.png",
+                    "path": "casa/arredamento/tavolino_2.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 10487
+                  },
+                  {
+                    "name": "tavolino_3.png",
+                    "path": "casa/arredamento/tavolino_3.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 9395
+                  },
+                  {
+                    "name": "tavolo_0.png",
+                    "path": "casa/arredamento/tavolo_0.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 25746
+                  },
+                  {
+                    "name": "tavolo_1.png",
+                    "path": "casa/arredamento/tavolo_1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 25746
+                  }
+                ],
+                "item_count": 22
+              },
+              {
+                "name": "pulsanti",
+                "path": "casa/pulsanti",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "bacheca.json",
+                    "path": "casa/pulsanti/bacheca.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 84368,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "bacheca.png",
+                    "path": "casa/pulsanti/bacheca.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 122436
+                  },
+                  {
+                    "name": "bacheca_selected.png",
+                    "path": "casa/pulsanti/bacheca_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 109763
+                  },
+                  {
+                    "name": "incubatrice.json",
+                    "path": "casa/pulsanti/incubatrice.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 34972,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "incubatrice.png",
+                    "path": "casa/pulsanti/incubatrice.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 52252
+                  },
+                  {
+                    "name": "incubatrice_selected.png",
+                    "path": "casa/pulsanti/incubatrice_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 48665
+                  },
+                  {
+                    "name": "porta.json",
+                    "path": "casa/pulsanti/porta.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 78767,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "porta.png",
+                    "path": "casa/pulsanti/porta.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 172804
+                  },
+                  {
+                    "name": "porta_selected.png",
+                    "path": "casa/pulsanti/porta_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 151249
+                  }
+                ],
+                "item_count": 9
+              },
+              {
+                "name": "casa.psd",
+                "path": "casa/casa.psd",
+                "type": "file",
+                "extension": ".psd",
+                "size_bytes": 55230254
+              },
+              {
+                "name": "sfondo_casa.png",
+                "path": "casa/sfondo_casa.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1499385
+              }
+            ],
+            "item_count": 4
+          },
+          {
+            "name": "font",
+            "path": "font",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Bigbesty.otf",
+                "path": "font/Bigbesty.otf",
+                "type": "file",
+                "extension": ".otf",
+                "size_bytes": 30832
+              },
+              {
+                "name": "Bigbesty.ttf",
+                "path": "font/Bigbesty.ttf",
+                "type": "file",
+                "extension": ".ttf",
+                "size_bytes": 46984
+              }
+            ],
+            "item_count": 2
+          },
+          {
+            "name": "house",
+            "path": "house",
+            "type": "directory",
+            "children": [
+              {
+                "name": "object.json",
+                "path": "house/object.json",
+                "type": "file",
+                "extension": ".json",
+                "size_bytes": 158
+              }
+            ],
+            "item_count": 1
+          },
+          {
+            "name": "icons",
+            "path": "icons",
+            "type": "directory",
+            "children": [],
+            "item_count": 0
+          },
+          {
+            "name": "lobby",
+            "path": "lobby",
+            "type": "directory",
+            "children": [
+              {
+                "name": "pulsanti",
+                "path": "lobby/pulsanti",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "baule.json",
+                    "path": "lobby/pulsanti/baule.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 48310,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "baule.png",
+                    "path": "lobby/pulsanti/baule.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 102775
+                  },
+                  {
+                    "name": "baule_selected.png",
+                    "path": "lobby/pulsanti/baule_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 95302
+                  },
+                  {
+                    "name": "casa.json",
+                    "path": "lobby/pulsanti/casa.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 82783,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "casa.png",
+                    "path": "lobby/pulsanti/casa.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 90736
+                  },
+                  {
+                    "name": "casa_selected.png",
+                    "path": "lobby/pulsanti/casa_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 92784
+                  },
+                  {
+                    "name": "porta1.json",
+                    "path": "lobby/pulsanti/porta1.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 82167,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "porta1.png",
+                    "path": "lobby/pulsanti/porta1.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 185154
+                  },
+                  {
+                    "name": "porta1_selected.png",
+                    "path": "lobby/pulsanti/porta1_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 14143
+                  },
+                  {
+                    "name": "porta2.json",
+                    "path": "lobby/pulsanti/porta2.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 83669,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "porta2.png",
+                    "path": "lobby/pulsanti/porta2.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 185069
+                  },
+                  {
+                    "name": "porta2_selected.png",
+                    "path": "lobby/pulsanti/porta2_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 14183
+                  },
+                  {
+                    "name": "porta3.json",
+                    "path": "lobby/pulsanti/porta3.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 83807,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "porta3.png",
+                    "path": "lobby/pulsanti/porta3.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 185015
+                  },
+                  {
+                    "name": "porta3_selected.png",
+                    "path": "lobby/pulsanti/porta3_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 14121
+                  },
+                  {
+                    "name": "zaino.json",
+                    "path": "lobby/pulsanti/zaino.json",
+                    "type": "file",
+                    "extension": ".json",
+                    "size_bytes": 51366,
+                    "description": "Contiene il perimetro dell'immagine PNG corrispondente."
+                  },
+                  {
+                    "name": "zaino.png",
+                    "path": "lobby/pulsanti/zaino.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 72505
+                  },
+                  {
+                    "name": "zaino_selected.png",
+                    "path": "lobby/pulsanti/zaino_selected.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 78525
+                  }
+                ],
+                "item_count": 18
+              },
+              {
+                "name": "lobby.psd",
+                "path": "lobby/lobby.psd",
+                "type": "file",
+                "extension": ".psd",
+                "size_bytes": 29193386
+              },
+              {
+                "name": "sfondo_lobby.png",
+                "path": "lobby/sfondo_lobby.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 935854
+              }
+            ],
+            "item_count": 3
+          },
+          {
+            "name": "logo",
+            "path": "logo",
+            "type": "directory",
+            "children": [
+              {
+                "name": "logo_circolare.png",
+                "path": "logo/logo_circolare.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 180448
+              }
+            ],
+            "item_count": 1
+          },
+          {
+            "name": "medagliette",
+            "path": "medagliette",
+            "type": "directory",
+            "children": [
+              {
+                "name": "targhetta_nera.png",
+                "path": "medagliette/targhetta_nera.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 107598
+              }
+            ],
+            "item_count": 1
+          },
+          {
+            "name": "munizioni",
+            "path": "munizioni",
+            "type": "directory",
+            "children": [
+              {
+                "name": "cartucce.png",
+                "path": "munizioni/cartucce.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 66321
+              },
+              {
+                "name": "dardo.png",
+                "path": "munizioni/dardo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 41510
+              },
+              {
+                "name": "freccia.png",
+                "path": "munizioni/freccia.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 38770
+              },
+              {
+                "name": "granate.png",
+                "path": "munizioni/granate.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 71176
+              },
+              {
+                "name": "proiettili.png",
+                "path": "munizioni/proiettili.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 74251
+              }
+            ],
+            "item_count": 5
+          },
+          {
+            "name": "porte",
+            "path": "porte",
+            "type": "directory",
+            "children": [
+              {
+                "name": "arancione",
+                "path": "porte/arancione",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_arancione_base.png",
+                    "path": "porte/arancione/porta_arancione_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 64136
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "azzurro",
+                "path": "porte/azzurro",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_azzurro_base.png",
+                    "path": "porte/azzurro/porta_azzurro_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 87517
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "bianco",
+                "path": "porte/bianco",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_bianco_base.png",
+                    "path": "porte/bianco/porta_bianco_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 101691
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "blu",
+                "path": "porte/blu",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_blu_base.png",
+                    "path": "porte/blu/porta_blu_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 63445
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "giallo",
+                "path": "porte/giallo",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_giallo_base.png",
+                    "path": "porte/giallo/porta_giallo_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 66778
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "lime",
+                "path": "porte/lime",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_lime_base.png",
+                    "path": "porte/lime/porta_lime_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 74396
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "magenta",
+                "path": "porte/magenta",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_magenta_base.png",
+                    "path": "porte/magenta/porta_magenta_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 47644
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "marrone",
+                "path": "porte/marrone",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_marrone_base.png",
+                    "path": "porte/marrone/porta_marrone_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 47320
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "nero",
+                "path": "porte/nero",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_nero_base.png",
+                    "path": "porte/nero/porta_nero_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 55941
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "rosso",
+                "path": "porte/rosso",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_rosso_base.png",
+                    "path": "porte/rosso/porta_rosso_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 46079
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "verde",
+                "path": "porte/verde",
+                "type": "directory",
+                "children": [
+                  {
+                    "name": "porta_verde_base.png",
+                    "path": "porte/verde/porta_verde_base.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 64537
+                  }
+                ],
+                "item_count": 1
+              },
+              {
+                "name": "porta.psb",
+                "path": "porte/porta.psb",
+                "type": "file",
+                "extension": ".psb",
+                "size_bytes": 5082188
+              },
+              {
+                "name": "porta_base.png",
+                "path": "porte/porta_base.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 152058
+              }
+            ],
+            "item_count": 13
+          },
+          {
+            "name": "scenari",
+            "path": "scenari",
+            "type": "directory",
+            "children": [
+              {
+                "name": "Stanza_arancione.png",
+                "path": "scenari/Stanza_arancione.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1031117
+              },
+              {
+                "name": "Stanza_azzurra.png",
+                "path": "scenari/Stanza_azzurra.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1027765
+              },
+              {
+                "name": "Stanza_bianca.png",
+                "path": "scenari/Stanza_bianca.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1106225
+              },
+              {
+                "name": "Stanza_blu.png",
+                "path": "scenari/Stanza_blu.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1065863
+              },
+              {
+                "name": "Stanza_gialla.png",
+                "path": "scenari/Stanza_gialla.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 991254
+              },
+              {
+                "name": "Stanza_lime.png",
+                "path": "scenari/Stanza_lime.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1128407
+              },
+              {
+                "name": "Stanza_marrone.png",
+                "path": "scenari/Stanza_marrone.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1074551
+              },
+              {
+                "name": "Stanza_nera.png",
+                "path": "scenari/Stanza_nera.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 965949
+              },
+              {
+                "name": "Stanza_neutrale.png",
+                "path": "scenari/Stanza_neutrale.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 962721
+              },
+              {
+                "name": "Stanza_rosa.png",
+                "path": "scenari/Stanza_rosa.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1009088
+              },
+              {
+                "name": "Stanza_rossa.png",
+                "path": "scenari/Stanza_rossa.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 924566
+              },
+              {
+                "name": "Stanza_verde.png",
+                "path": "scenari/Stanza_verde.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 1021416
+              }
+            ],
+            "item_count": 12
+          },
+          {
+            "name": "config_animali.json",
+            "path": "config_animali.json",
+            "type": "file",
+            "extension": ".json",
+            "size_bytes": 11392
+          },
+          {
+            "name": "config_armi.json",
+            "path": "config_armi.json",
+            "type": "file",
+            "extension": ".json",
+            "size_bytes": 661
+          },
+          {
+            "name": "config_arredamento.json",
+            "path": "config_arredamento.json",
+            "type": "file",
+            "extension": ".json",
+            "size_bytes": 716
+          },
+          {
+            "name": "config_bauli.json",
+            "path": "config_bauli.json",
+            "type": "file",
+            "extension": ".json",
+            "size_bytes": 3330
+          },
+          {
+            "name": "door_loot_tables.json",
+            "path": "door_loot_tables.json",
+            "type": "file",
+            "extension": ".json",
+            "size_bytes": 3585
+          },
+          {
+            "name": "file_structure.json",
+            "path": "file_structure.json",
+            "type": "file",
+            "extension": ".json",
+            "size_bytes": 45535
+          },
+          {
+            "name": "generate_hitbox.py",
+            "path": "generate_hitbox.py",
+            "type": "file",
+            "extension": ".py",
+            "size_bytes": 6909
+          },
+          {
+            "name": "generate_structure.py",
+            "path": "generate_structure.py",
+            "type": "file",
+            "extension": ".py",
+            "size_bytes": 4573
+          }
+        ],
+        "item_count": 21
+      }
+    }
+  ]
+}

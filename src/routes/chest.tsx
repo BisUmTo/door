@@ -270,15 +270,15 @@ const ChestRoute = () => {
                       <button
                         type="button"
                         onClick={handleOpenAnother}
-                        disabled={(inventory[selected] ?? 0) <= 0}
+                        disabled={(selected && inventory[selected] ? inventory[selected] : 0) <= 0}
                         className={clsx(
                           "flex-1 rounded-full border px-6 py-3 font-semibold uppercase tracking-[0.35em] transition-all duration-300",
-                          (inventory[selected] ?? 0) > 0
+                          (selected && inventory[selected] ? inventory[selected] : 0) > 0
                             ? "border-yellow-400/60 bg-yellow-400/10 text-yellow-200 hover:scale-105 hover:bg-yellow-400/20 hover:shadow-lg hover:shadow-yellow-400/30"
                             : "cursor-not-allowed border-white/10 bg-white/5 text-white/30"
                         )}
                       >
-                        Apri Altro ({inventory[selected] ?? 0})
+                        Apri Altro ({selected && inventory[selected] ? inventory[selected] : 0})
                       </button>
                       
                     </div>

@@ -1,0 +1,44 @@
+{
+  "arredamento": [
+    {
+      "id": 1,
+      "nome": "Poltrona",
+      "pezzi": 3,
+      "bonus": {
+        "tipo": "Mixed",
+        "quantita": [3, 1, 1],
+        "cooldown": 5
+      }
+    },
+    {
+      "id": 2,
+      "nome": "Mensola",
+      "pezzi": 4,
+      "bonus": {
+        "tipo": "Cibo",
+        "quantita": 4,
+        "cooldown": 4
+      }
+    },
+    {
+      "id": 3,
+      "nome": "Tavolino",
+      "pezzi": 5,
+      "bonus": {
+        "tipo": "Munizioni",
+        "quantita": [2, 1, 1, 0, 0],
+        "cooldown": 6
+      }
+    },
+    {
+      "id": 4,
+      "nome": "sedie",
+      "pezzi": 2,
+      "bonus": {
+        "tipo": "Monete",
+        "quantita": 6,
+        "cooldown": 3
+      }
+    }
+  ]
+}

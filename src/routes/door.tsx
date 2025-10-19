@@ -145,7 +145,7 @@ const DoorRoute = () => {
         <div className="absolute inset-0 bg-black/70" />
       </div>
 
-      {battleResult === "victory" && pendingReward ? (
+      {battleResult === "victory" && pendingReward && save ? (
         <VictoryModal
           open
           loot={pendingReward.loot}
@@ -154,6 +154,7 @@ const DoorRoute = () => {
           animalConfigs={animalConfigs}
           weaponConfigs={weaponConfigs}
           medalUnlocked={pendingReward.medalUnlocked ?? null}
+          houseObjects={save.house.objects}
           onContinue={handleVictoryContinue}
         />
       ) : null}
