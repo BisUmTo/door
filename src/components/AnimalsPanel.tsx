@@ -1,6 +1,12 @@
 import clsx from "clsx";
 import type { AnimalConfig, SaveGame } from "@/game/types";
-import { getLifeCap, getStaminaCap } from "@/game/animals";
+import {
+  AnimalBattleStats,
+  AnimalReadiness,
+  computeBattleStats,
+  getAnimalReadiness,
+  getMissingStamina
+} from "@/game/animals";
 
 interface AnimalsPanelProps {
   open: boolean;
@@ -13,6 +19,17 @@ interface AnimalsPanelProps {
 const findAnimalConfig = (configs: AnimalConfig[], id: number) =>
   configs.find((animal) => animal.id === id);
 
+interface DecoratedAnimal {
+  index: number;
+  config: AnimalConfig;
+  instance: SaveGame["animals"]["owned"][number];
+  stats: AnimalBattleStats;
+  readiness: AnimalReadiness;
+  missingStamina: number;
+  staminaPercent: number;
+  lifePercent: number;
+}
+
 export const AnimalsPanel = ({
   open,
   animals,
@@ -21,6 +38,71 @@ export const AnimalsPanel = ({
   onDeploy
 }: AnimalsPanelProps) => {
   if (!open) return null;
+
+  const decoratedAnimals = animals.reduce<DecoratedAnimal[]>((acc, instance, index) => {
+    const config = findAnimalConfig(configs, instance.configId);
+    if (!config) return acc;
+    const stats = computeBattleStats(config, instance);
+    const readiness = getAnimalReadiness(config, instance);
+    const missingStamina = getMissingStamina(config, instance);
+    const staminaPercent =
+      stats.staminaCap > 0
+        ? Math.round((Math.max(0, instance.stamina) / stats.staminaCap) * 100)
+        : 0;
+    const lifePercent =
+      stats.lifeCap > 0 ? Math.round((Math.max(0, instance.life) / stats.lifeCap) * 100) : 0;
+    acc.push({
+      index,
+      config,
+      instance,
+      stats,
+      readiness,
+      missingStamina,
+      staminaPercent,
+      lifePercent
+    });
+    return acc;
+  }, []);
+
+  const grouped = decoratedAnimals.reduce(
+    (acc, entry) => {
+      acc[entry.readiness].push(entry);
+      return acc;
+    },
+    {
+      ready: [] as DecoratedAnimal[],
+      recovering: [] as DecoratedAnimal[],
+      fallen: [] as DecoratedAnimal[]
+    }
+  );
+
+  const readinessMeta: Record<
+    AnimalReadiness,
+    { label: string; tone: string; helper(entry: DecoratedAnimal): string; action: string; disabled: boolean }
+  > = {
+    ready: {
+      label: "Pronto",
+      tone: "border-emerald-400/40 bg-emerald-500/10 text-emerald-200",
+      helper: () => "Stamina al massimo.",
+      action: "Schiera",
+      disabled: false
+    },
+    recovering: {
+      label: "In recupero",
+      tone: "border-amber-300/40 bg-amber-400/10 text-amber-200",
+      helper: (entry) =>
+        `Mancano ${entry.missingStamina} stamina · costo cibo ${entry.missingStamina}`,
+      action: "Non pronto",
+      disabled: true
+    },
+    fallen: {
+      label: "Ko",
+      tone: "border-rose-400/40 bg-rose-500/10 text-rose-200",
+      helper: () => "Torni disponibile dopo il prossimo riposo.",
+      action: "Non disponibile",
+      disabled: true
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/75 p-6">
@@ -36,75 +118,117 @@ export const AnimalsPanel = ({
           </button>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          {animals.map((animal, index) => {
-            const config = findAnimalConfig(configs, animal.configId);
-            if (!config) return null;
-            const lifeCap = getLifeCap(config, animal.size);
-            const staminaCap = getStaminaCap(config, animal.size);
-            const staminaReady = animal.stamina >= staminaCap;
-            const lifePercent = lifeCap > 0 ? Math.round((animal.life / lifeCap) * 100) : 0;
-            const staminaPercent = staminaCap > 0 ? Math.round((animal.stamina / staminaCap) * 100) : 0;
+        <div className="mt-4 space-y-6">
+          {(
+            [
+              { key: "ready", title: "Pronti a combattere" },
+              { key: "recovering", title: "In recupero" },
+              { key: "fallen", title: "Ko" }
+            ] as const
+          ).map(({ key, title }) => {
+            const list = grouped[key];
             return (
-              <div
-                key={`${animal.configId}-${index}`}
-                className={clsx(
-                  "rounded-xl border border-white/10 bg-white/5 p-4",
-                  !animal.alive && "opacity-50"
+              <div key={key}>
+                <h3 className="text-xs uppercase tracking-[0.3em] text-white/50">{title}</h3>
+                {list.length === 0 ? (
+                  <p className="mt-2 text-xs text-white/50">
+                    {key === "ready"
+                      ? "Nessun animale pronto."
+                      : key === "recovering"
+                        ? "Nessun animale sta recuperando stamina."
+                        : "Nessun animale è caduto."}
+                  </p>
+                ) : (
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {list.map((entry) => {
+                      const meta = readinessMeta[entry.readiness];
+                      return (
+                        <div
+                          key={`${entry.config.id}-${entry.index}`}
+                          className={clsx(
+                            "rounded-xl border border-white/10 bg-white/5 p-4",
+                            entry.readiness === "fallen" && "opacity-60"
+                          )}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <span className="text-lg font-semibold text-white">
+                                {entry.config.kind}
+                              </span>
+                              <p className="text-xs uppercase text-white/50">{entry.instance.size}</p>
+                            </div>
+                            <span
+                              className={clsx(
+                                "rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.2em]",
+                                meta.tone
+                              )}
+                            >
+                              {meta.label}
+                            </span>
+                          </div>
+                          <dl className="mt-3 space-y-1 text-sm text-white/80">
+                            <div className="flex justify-between">
+                              <dt>Vita</dt>
+                              <dd>
+                                {entry.instance.life}/{entry.stats.lifeCap}
+                              </dd>
+                            </div>
+                            <div className="flex justify-between">
+                              <dt>Danno</dt>
+                              <dd>{entry.stats.damage}</dd>
+                            </div>
+                            <div className="flex justify-between">
+                              <dt>Velocità</dt>
+                              <dd>{entry.stats.attackSpeed}</dd>
+                            </div>
+                            <div className="flex justify-between">
+                              <dt>Armatura</dt>
+                              <dd>{entry.instance.armor ?? 0}</dd>
+                            </div>
+                          </dl>
+                          <div className="mt-3 space-y-2 text-xs uppercase text-white/60">
+                            <div>
+                              <span>Stamina</span>
+                              <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
+                                <div
+                                  className="h-full rounded bg-emerald-400"
+                                  style={{
+                                    width: `${Math.min(100, Math.max(0, entry.staminaPercent))}%`
+                                  }}
+                                />
+                              </div>
+                            </div>
+                            <div>
+                              <span>Resistenza</span>
+                              <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
+                                <div
+                                  className="h-full rounded bg-sky-400"
+                                  style={{
+                                    width: `${Math.min(100, Math.max(0, entry.lifePercent))}%`
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <p className="mt-3 text-xs text-white/60">{meta.helper(entry)}</p>
+                          <button
+                            type="button"
+                            disabled={meta.disabled}
+                            onClick={() => onDeploy(entry.index)}
+                            className={clsx(
+                              "mt-4 w-full rounded px-4 py-2 text-sm uppercase tracking-[0.3em]",
+                              meta.disabled
+                                ? "border border-white/20 text-white/40"
+                                : "border border-emerald-400 bg-emerald-500 text-black hover:bg-emerald-400"
+                            )}
+                          >
+                            {meta.action}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-lg font-semibold text-white">{config.kind}</span>
-                  <span className="text-xs uppercase text-white/50">{animal.size}</span>
-                </div>
-                <dl className="mt-3 space-y-1 text-sm text-white/80">
-                  <div className="flex justify-between">
-                    <dt>Vita</dt>
-                    <dd>
-                      {animal.life}/{lifeCap}
-                    </dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>Danno</dt>
-                    <dd>{config.damage}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>Velocità</dt>
-                    <dd>{config.attackSpeed}</dd>
-                  </div>
-                  <div className="flex justify-between">
-                    <dt>Armatura</dt>
-                    <dd>{animal.armor ?? 0}</dd>
-                  </div>
-                </dl>
-                <div className="mt-3 space-y-2 text-xs uppercase text-white/60">
-                  <div>
-                    <span>Stamina</span>
-                    <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
-                      <div
-                        className="h-full rounded bg-emerald-400"
-                        style={{ width: `${Math.min(100, Math.max(0, staminaPercent))}%` }}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <span>Resistenza</span>
-                    <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
-                      <div
-                        className="h-full rounded bg-sky-400"
-                        style={{ width: `${Math.min(100, Math.max(0, lifePercent))}%` }}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  disabled={!animal.alive || !staminaReady}
-                  onClick={() => onDeploy(index)}
-                  className="mt-4 w-full rounded bg-emerald-500 px-4 py-2 text-sm uppercase text-black hover:bg-emerald-400 disabled:cursor-not-allowed disabled:bg-emerald-900 disabled:text-white/40"
-                >
-                  {staminaReady ? "Lotta" : "Stamina Bassa"}
-                </button>
               </div>
             );
           })}

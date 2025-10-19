@@ -1,12 +1,29 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useGameStore } from "@/state/store";
-import { getLifeCap, getStaminaCap } from "@/game/animals";
+import {
+  AnimalBattleStats,
+  AnimalReadiness,
+  computeBattleStats,
+  getAnimalReadiness,
+  getMissingStamina
+} from "@/game/animals";
 import type { AnimalConfig, AnimalInstance, WeaponConfig } from "@/game/types";
 
 type InventoryTab = "animals" | "weapons";
 
 const formatSize = (size: AnimalInstance["size"]) => (size === "Small" ? "Piccolo" : "Grande");
+
+interface DecoratedAnimal {
+  index: number;
+  instance: AnimalInstance;
+  config: AnimalConfig;
+  stats: AnimalBattleStats;
+  readiness: AnimalReadiness;
+  missingStamina: number;
+  staminaPercent: number;
+  lifePercent: number;
+}
 
 const InventoryRoute = () => {
   const {
@@ -36,16 +53,64 @@ const InventoryRoute = () => {
   const weapons = save?.weapons ?? [];
   const foodAvailable = save?.inventory.food ?? 0;
 
+  const decoratedAnimals = useMemo(() => {
+    const entries: DecoratedAnimal[] = [];
+    animals.forEach((instance, index) => {
+      const config = animalConfigs.find((entry) => entry.id === instance.configId);
+      if (!config) return;
+      const stats = computeBattleStats(config, instance);
+      const readiness = getAnimalReadiness(config, instance);
+      const missingStamina = getMissingStamina(config, instance);
+      const staminaPercent =
+        stats.staminaCap > 0
+          ? Math.round((Math.max(0, instance.stamina) / stats.staminaCap) * 100)
+          : 0;
+      const lifePercent =
+        stats.lifeCap > 0 ? Math.round((Math.max(0, instance.life) / stats.lifeCap) * 100) : 0;
+      entries.push({
+        index,
+        instance,
+        config,
+        stats,
+        readiness,
+        missingStamina,
+        staminaPercent,
+        lifePercent
+      });
+    });
+    return entries;
+  }, [animals, animalConfigs]);
+
+  const groupedAnimals = useMemo(() => {
+    return decoratedAnimals.reduce(
+      (acc, entry) => {
+        acc[entry.readiness].push(entry);
+        return acc;
+      },
+      {
+        ready: [] as DecoratedAnimal[],
+        recovering: [] as DecoratedAnimal[],
+        fallen: [] as DecoratedAnimal[]
+      }
+    );
+  }, [decoratedAnimals]);
+
   const selectedAnimalData = useMemo(() => {
     if (selectedAnimal === null) return null;
-    const instance = animals[selectedAnimal];
-    if (!instance) return null;
-    const config = animalConfigs.find((entry) => entry.id === instance.configId);
-    if (!config) return null;
-    const lifeCap = getLifeCap(config, instance.size);
-    const staminaCap = getStaminaCap(config, instance.size);
-    return { instance, config, lifeCap, staminaCap, index: selectedAnimal };
-  }, [selectedAnimal, animals, animalConfigs]);
+    return decoratedAnimals.find((entry) => entry.index === selectedAnimal) ?? null;
+  }, [selectedAnimal, decoratedAnimals]);
+
+  const selectedGrowthPreview = useMemo(() => {
+    if (!selectedAnimalData) return null;
+    if (selectedAnimalData.instance.size !== "Small") return null;
+    const grownInstance: AnimalInstance = {
+      ...selectedAnimalData.instance,
+      size: "Large",
+      life: selectedAnimalData.config.life,
+      stamina: selectedAnimalData.config.staminaMax
+    };
+    return computeBattleStats(selectedAnimalData.config, grownInstance);
+  }, [selectedAnimalData]);
 
   const selectedWeaponData = useMemo(() => {
     if (selectedWeapon === null) return null;
@@ -136,42 +201,99 @@ const InventoryRoute = () => {
 
           {activeTab === "animals" ? (
             <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-              <div className="space-y-3 overflow-y-auto rounded-2xl border border-white/10 bg-black/30 p-4 max-h-[420px]">
-                {animals.length === 0 ? (
+              <div className="space-y-5 overflow-y-auto rounded-2xl border border-white/10 bg-black/30 p-4 max-h-[420px]">
+                {decoratedAnimals.length === 0 ? (
                   <p className="text-sm text-white/60">
                     Non hai ancora trovato animali. Esplora nuove porte per ampliare la squadra.
                   </p>
                 ) : (
-                  animals.map((animal, index) => {
-                    const config = animalConfigs.find((entry) => entry.id === animal.configId);
-                    if (!config) return null;
-                    const selected = selectedAnimal === index;
-                    const staminaCap = getStaminaCap(config, animal.size);
-                    const staminaPercent = staminaCap > 0 ? Math.round((animal.stamina / staminaCap) * 100) : 0;
-                    return (
-                      <button
-                        key={`${animal.configId}-${index}`}
-                        type="button"
-                        onClick={() => setSelectedAnimal(index)}
-                        className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
-                          selected
-                            ? "border-[#a67c52] bg-[#a67c52]/10"
-                            : "border-white/10 bg-white/5 hover:border-[#a67c52]/60"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between text-sm text-white/80">
-                          <span className="font-semibold text-white">{config.kind}</span>
-                          <span className="text-xs uppercase text-white/50">{formatSize(animal.size)}</span>
+                  <>
+                    {(
+                      [
+                        { key: "ready", title: "Pronti a combattere" },
+                        { key: "recovering", title: "In recupero" },
+                        { key: "fallen", title: "Ko" }
+                      ] as const
+                    ).map(({ key, title }) => {
+                      const list = groupedAnimals[key];
+                      if (!list.length) {
+                        if (key === "ready") return null;
+                        return (
+                          <div key={key}>
+                            <h3 className="text-xs uppercase tracking-[0.3em] text-white/50">{title}</h3>
+                            <p className="mt-1 text-xs text-white/50">
+                              {key === "recovering"
+                                ? "Nessun animale sta recuperando stamina."
+                                : "Nessun animale è caduto."}
+                            </p>
+                          </div>
+                        );
+                      }
+                      return (
+                        <div key={key}>
+                          <h3 className="text-xs uppercase tracking-[0.3em] text-white/50">{title}</h3>
+                          <div className="mt-2 space-y-3">
+                            {list.map((entry) => {
+                              const selected = selectedAnimal === entry.index;
+                              const readinessLabel =
+                                entry.readiness === "ready"
+                                  ? "Pronto"
+                                  : entry.readiness === "recovering"
+                                    ? "In recupero"
+                                    : "Ko";
+                              const readinessTone =
+                                entry.readiness === "ready"
+                                  ? "border-emerald-400/40 bg-emerald-500/10 text-emerald-200"
+                                  : entry.readiness === "recovering"
+                                    ? "border-amber-300/40 bg-amber-400/10 text-amber-200"
+                                    : "border-rose-400/40 bg-rose-500/10 text-rose-200";
+                              const helperText =
+                                entry.readiness === "ready"
+                                  ? "Stamina al massimo."
+                                  : entry.readiness === "recovering"
+                                    ? `Mancano ${entry.missingStamina} stamina • Costo cibo ${entry.missingStamina}`
+                                    : "Rientrerà disponibile dopo il prossimo riposo.";
+                              return (
+                                <button
+                                  key={`${entry.config.id}-${entry.index}`}
+                                  type="button"
+                                  onClick={() => setSelectedAnimal(entry.index)}
+                                  className={`w-full rounded-2xl border px-4 py-3 text-left transition ${
+                                    selected
+                                      ? "border-[#a67c52] bg-[#a67c52]/10"
+                                      : "border-white/10 bg-white/5 hover:border-[#a67c52]/60"
+                                  }`}
+                                >
+                                  <div className="flex items-start justify-between text-sm text-white/80">
+                                    <div>
+                                      <span className="font-semibold text-white">{entry.config.kind}</span>
+                                      <span className="ml-3 text-xs uppercase text-white/50">
+                                        {formatSize(entry.instance.size)}
+                                      </span>
+                                    </div>
+                                    <span
+                                      className={`rounded-full border px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] ${readinessTone}`}
+                                    >
+                                      {readinessLabel}
+                                    </span>
+                                  </div>
+                                  <div className="mt-3 h-2 w-full overflow-hidden rounded bg-white/10">
+                                    <div
+                                      className="h-full bg-emerald-400"
+                                      style={{
+                                        width: `${Math.min(100, Math.max(0, entry.staminaPercent))}%`
+                                      }}
+                                    />
+                                  </div>
+                                  <p className="mt-2 text-xs text-white/60">{helperText}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
                         </div>
-                        <div className="mt-3 h-2 w-full overflow-hidden rounded bg-white/10">
-                          <div
-                            className="h-full bg-emerald-400"
-                            style={{ width: `${Math.min(100, Math.max(0, staminaPercent))}%` }}
-                          />
-                        </div>
-                      </button>
-                    );
-                  })
+                      );
+                    })}
+                  </>
                 )}
               </div>
 
@@ -183,10 +305,15 @@ const InventoryRoute = () => {
                         {selectedAnimalData.config.kind}
                       </h2>
                       <p className="text-xs uppercase text-white/50">
-                        {formatSize(selectedAnimalData.instance.size)}
+                        {formatSize(selectedAnimalData.instance.size)} ·{" "}
+                        {selectedAnimalData.readiness === "ready"
+                          ? "Pronto"
+                          : selectedAnimalData.readiness === "recovering"
+                            ? "In recupero"
+                            : "Ko"}
                       </p>
                     </div>
-                    <div className="space-y-2 text-xs uppercase text-white/60">
+                    <div className="space-y-3 text-xs uppercase text-white/60">
                       <div>
                         <span>Stamina</span>
                         <div className="mt-1 h-2 w-full overflow-hidden rounded bg-white/10">
@@ -198,7 +325,9 @@ const InventoryRoute = () => {
                                 Math.max(
                                   0,
                                   Math.round(
-                                    (selectedAnimalData.instance.stamina / selectedAnimalData.staminaCap) * 100
+                                    (selectedAnimalData.instance.stamina /
+                                      selectedAnimalData.stats.staminaCap) *
+                                      100
                                   )
                                 )
                               )}%`
@@ -206,7 +335,7 @@ const InventoryRoute = () => {
                           />
                         </div>
                         <span className="mt-1 block text-white/50">
-                          {selectedAnimalData.instance.stamina}/{selectedAnimalData.staminaCap}
+                          {selectedAnimalData.instance.stamina}/{selectedAnimalData.stats.staminaCap}
                         </span>
                       </div>
                       <div>
@@ -220,7 +349,9 @@ const InventoryRoute = () => {
                                 Math.max(
                                   0,
                                   Math.round(
-                                    (selectedAnimalData.instance.life / selectedAnimalData.lifeCap) * 100
+                                    (selectedAnimalData.instance.life /
+                                      selectedAnimalData.stats.lifeCap) *
+                                      100
                                   )
                                 )
                               )}%`
@@ -228,7 +359,7 @@ const InventoryRoute = () => {
                           />
                         </div>
                         <span className="mt-1 block text-white/50">
-                          {selectedAnimalData.instance.life}/{selectedAnimalData.lifeCap}
+                          {selectedAnimalData.instance.life}/{selectedAnimalData.stats.lifeCap}
                         </span>
                       </div>
                     </div>
@@ -236,13 +367,13 @@ const InventoryRoute = () => {
                       <div className="rounded-lg border border-white/10 bg-white/5 p-3">
                         <p className="uppercase text-white/40">Danno</p>
                         <p className="text-lg font-semibold text-white">
-                          {selectedAnimalData.config.damage}
+                          {selectedAnimalData.stats.damage}
                         </p>
                       </div>
                       <div className="rounded-lg border border-white/10 bg-white/5 p-3">
                         <p className="uppercase text-white/40">Velocità</p>
                         <p className="text-lg font-semibold text-white">
-                          {selectedAnimalData.config.attackSpeed}
+                          {selectedAnimalData.stats.attackSpeed}
                         </p>
                       </div>
                       <div className="rounded-lg border border-white/10 bg-white/5 p-3">
@@ -251,17 +382,70 @@ const InventoryRoute = () => {
                           {selectedAnimalData.instance.armor ?? 0}
                         </p>
                       </div>
-                      <div className="rounded-lg border border-white/10 bg-white/5 p-3">
-                        <p className="uppercase text-white/40">Stato</p>
-                        <p className="text-lg font-semibold text-white">
-                          {selectedAnimalData.instance.alive ? "Disponibile" : "Ko"}
-                        </p>
-                      </div>
                     </div>
 
-                    {selectedAnimalData.instance.size === "Small" ? (
-                      <p className="text-xs uppercase text-white/50">
-                        Costo crescita: {selectedAnimalData.config.growthFoodCost} cibo
+                    <div className="rounded-lg border border-white/10 bg-white/5 p-3 text-xs text-white/70">
+                      <p className="uppercase text-white/40">Recupero</p>
+                      {selectedAnimalData.readiness === "recovering" ? (
+                        <p className="mt-1">
+                          Mancano{" "}
+                          <span className="font-semibold text-white">
+                            {selectedAnimalData.missingStamina}
+                          </span>{" "}
+                          stamina · costo cibo{" "}
+                          <span className="font-semibold text-white">
+                            {selectedAnimalData.missingStamina}
+                          </span>
+                        </p>
+                      ) : selectedAnimalData.readiness === "ready" ? (
+                        <p className="mt-1 text-white/60">Pronto a combattere.</p>
+                      ) : (
+                        <p className="mt-1 text-white/60">
+                          Dibattimento terminato: aspetta la prossima porta per recuperare.
+                        </p>
+                      )}
+                      <p className="mt-2 text-[10px] uppercase tracking-[0.25em] text-white/40">
+                        1 cibo = 1 stamina
+                      </p>
+                    </div>
+
+                    {selectedAnimalData.instance.size === "Small" && selectedGrowthPreview ? (
+                      <div className="space-y-2 text-xs text-white/70">
+                        <h3 className="text-xs uppercase tracking-[0.3em] text-white/50">
+                          Crescita a adulto
+                        </h3>
+                        <p className="text-white/60">
+                          Costo crescita:{" "}
+                          <span className="font-semibold text-white">
+                            {selectedAnimalData.config.growthFoodCost} cibo
+                          </span>
+                        </p>
+                        <div className="grid grid-cols-2 gap-2 text-[11px]">
+                          <div className="rounded-lg border border-white/10 bg-black/30 p-3">
+                            <p className="uppercase text-white/40">Statistiche attuali</p>
+                            <ul className="mt-1 space-y-1 text-white/70">
+                              <li>Vita {selectedAnimalData.stats.lifeCap}</li>
+                              <li>Danno {selectedAnimalData.stats.damage}</li>
+                              <li>Velocità {selectedAnimalData.stats.attackSpeed}</li>
+                              <li>Stamina {selectedAnimalData.stats.staminaCap}</li>
+                            </ul>
+                          </div>
+                          <div className="rounded-lg border border-amber-300/40 bg-amber-400/10 p-3">
+                            <p className="uppercase text-amber-200">Forma adulta</p>
+                            <ul className="mt-1 space-y-1 text-amber-100">
+                              <li>Vita {selectedGrowthPreview.lifeCap}</li>
+                              <li>Danno {selectedGrowthPreview.damage}</li>
+                              <li>Velocità {selectedGrowthPreview.attackSpeed}</li>
+                              <li>Stamina {selectedGrowthPreview.staminaCap}</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {selectedAnimalData.config.upgradableArmor ? (
+                      <p className="text-[11px] uppercase tracking-[0.25em] text-white/40">
+                        Può equipaggiare armature quando disponibili.
                       </p>
                     ) : null}
 
@@ -269,7 +453,7 @@ const InventoryRoute = () => {
                       <button
                         type="button"
                         disabled={
-                          selectedAnimalData.instance.stamina >= selectedAnimalData.staminaCap ||
+                          selectedAnimalData.instance.stamina >= selectedAnimalData.stats.staminaCap ||
                           foodAvailable <= 0
                         }
                         onClick={() => handleFeed(selectedAnimalData.index)}

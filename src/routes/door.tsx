@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { AmmoKind, WeaponName } from "@/game/types";
+import type { AmmoKind, AnimalConfig, WeaponName } from "@/game/types";
 import WeaponsPanel from "@/components/WeaponsPanel";
 import AnimalsPanel from "@/components/AnimalsPanel";
 import VictoryModal from "@/components/VictoryModal";
 import DefeatModal from "@/components/DefeatModal";
 import { useGameStore } from "@/state/store";
+import { computeBattleStats, getAnimalReadiness } from "@/game/animals";
 
 const EMPTY_AMMO: Record<AmmoKind, number> = {
   bullets: 0,
@@ -78,15 +79,46 @@ const DoorRoute = () => {
   const animalConfigs = configs?.animals ?? [];
   const weaponConfigs = configs?.weapons ?? [];
 
+  const animalConfigMap = useMemo(() => {
+    const map = new Map<number, AnimalConfig>();
+    for (const config of animalConfigs) {
+      map.set(config.id, config);
+    }
+    return map;
+  }, [animalConfigs]);
+
   const currentEnemyConfig = useMemo(() => {
     if (!activeEnemy) return null;
-    return animalConfigs.find((animal) => animal.id === activeEnemy.configId) ?? null;
-  }, [animalConfigs, activeEnemy]);
+    return animalConfigMap.get(activeEnemy.configId) ?? null;
+  }, [animalConfigMap, activeEnemy]);
 
   const enemyImageSrc = useMemo(
     () => resolveEnemyImage(currentEnemyConfig),
     [currentEnemyConfig]
   );
+
+  const squadSummary = useMemo(() => {
+    if (!save) {
+      return { ready: 0, recovering: 0, fallen: 0, totalDamage: 0 };
+    }
+    return save.animals.owned.reduce(
+      (acc, instance) => {
+        const config = animalConfigMap.get(instance.configId);
+        if (!config) return acc;
+        const readiness = getAnimalReadiness(config, instance);
+        if (readiness === "ready") {
+          acc.ready += 1;
+          acc.totalDamage += computeBattleStats(config, instance).damage;
+        } else if (readiness === "recovering") {
+          acc.recovering += 1;
+        } else {
+          acc.fallen += 1;
+        }
+        return acc;
+      },
+      { ready: 0, recovering: 0, fallen: 0, totalDamage: 0 }
+    );
+  }, [save, animalConfigMap]);
 
   const handleWeaponConfirm = (weaponName: WeaponName, ammoToSpend: number) => {
     resolveWeaponAttack(weaponName as any, ammoToSpend);
@@ -246,6 +278,27 @@ const DoorRoute = () => {
               >
                 Animali
               </button>
+            </div>
+
+            <div className="mt-8 rounded-2xl border border-white/10 bg-black/40 p-4">
+              <h3 className="text-xs uppercase tracking-[0.3em] text-white/50">Squadra</h3>
+              <div className="mt-3 flex flex-wrap gap-4 text-sm text-white/70">
+                <span className="rounded-full border border-emerald-400/40 bg-emerald-500/10 px-4 py-1 text-emerald-100">
+                  Pronti: {squadSummary.ready}
+                </span>
+                <span className="rounded-full border border-amber-300/40 bg-amber-400/10 px-4 py-1 text-amber-100">
+                  Recupero: {squadSummary.recovering}
+                </span>
+                <span className="rounded-full border border-rose-400/40 bg-rose-500/10 px-4 py-1 text-rose-100">
+                  Ko: {squadSummary.fallen}
+                </span>
+                <span className="ml-auto rounded-full border border-white/20 px-4 py-1 text-white/70">
+                  Danno combinato pronto: {squadSummary.totalDamage}
+                </span>
+              </div>
+              <p className="mt-2 text-xs text-white/50">
+                Gli animali possono essere schierati solo quando la stamina è al massimo.
+              </p>
             </div>
           </section>
         ) : (
