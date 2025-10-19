@@ -206,7 +206,7 @@ const ammoMap = new Map<WeaponName, AmmoKind>([
   ["shotgun", "shells"],
   ["blowgun", "darts"],
   ["grenadeLauncher", "grenades"],
-  ["simpleBow", "arrows"],
+  ["Bow", "arrows"],
   ["pistol", "bullets"]
 ]);
 

@@ -10,6 +10,15 @@ import {
 } from "@/game/animals";
 import type { AnimalConfig, AnimalInstance, WeaponConfig } from "@/game/types";
 import { resolveAnimalIconImage, handleImageError } from "@/utils/animalImages";
+// Icona arma in base al displayName (i file stanno in /assets/armi e hanno il nome in minuscolo)
+const resolveWeaponIcon = (displayName: string) => {
+  // es: "Fucile a pompa" -> "/assets/armi/fucile%20a%20pompa.png"
+  const file = `${encodeURIComponent(displayName.toLowerCase())}.png`;
+  return `/assets/armi/${file}`;
+};
+
+// opzionale: fallback generico se l’immagine non esiste
+const WEAPON_FALLBACK_ICON = "/assets/armi/placeholder.png"; // metti un placeholder in /public o assets
 
 type InventoryTab = "animals" | "weapons";
 

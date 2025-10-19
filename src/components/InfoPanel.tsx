@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import type { BlockedDoor, DoorType } from "@/game/types";
+import { getDoorBadgeStyles } from "@/theme/doorColors";
 
 const doorShortLabel: Record<DoorType, string> = {
   white: "Bianca",
@@ -46,7 +47,12 @@ export const InfoPanel = ({ doorsOpened, turn, blockedDoors }: InfoPanelProps) =
               {blockedDoors.map((door) => (
                 <li
                   key={`${door.type}-${door.turnsLeft}`}
-                  className="flex items-center justify-between rounded bg-white/10 px-2 py-1 text-[10px]"
+                  className="flex items-center justify-between rounded border px-2 py-1 text-[10px] uppercase tracking-[0.25em] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:brightness-105"
+                  style={getDoorBadgeStyles(door.type, {
+                    backgroundShift: 0.18,
+                    borderShift: -0.4,
+                    includeShadow: false
+                  })}
                 >
                   <span>{doorShortLabel[door.type]}</span>
                   <span>{door.turnsLeft} turni</span>
