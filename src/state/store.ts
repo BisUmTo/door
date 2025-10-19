@@ -300,13 +300,13 @@ const buildWeaponsState = (configs: WeaponConfig[], existing?: WeaponState[]): W
       return {
         name: weapon.name,
         ammo: Math.max(0, stored.ammo ?? 0),
-        unlocked: stored.unlocked ?? weapon.name === "pistol"
+        unlocked: stored.unlocked ?? weapon.name === "blowgun"
       };
     }
     return {
       name: weapon.name,
-      ammo: 0,
-      unlocked: weapon.name === "pistol"
+      ammo: 100,
+      unlocked: weapon.name === "blowgun"
     };
   });
 };

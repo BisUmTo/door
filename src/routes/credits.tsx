@@ -36,7 +36,7 @@ const CreditsRoute = () => {
             B8 Studios
           </h1>
           <p className="max-w-lg text-sm text-white/60">
-            Un progetto creato con passione dal team B8 Studios. Grazie per aver aperto le nostre porte.
+            Un progetto creato con passione e dedizione dal team B8 Studios. Grazie per aver aperto le nostre porte.
           </p>
         </div>
 
