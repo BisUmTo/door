@@ -79,7 +79,7 @@ const definitions: DoorTypeDefinition[] = [
     type: "neutral",
     summary: "Loot generico utile per completare set mancanti e materiali di supporto.",
     uniqueRewards: ["Materiali vari", "Loot casuale"],
-    conflicts: "Non genera conflitti, ma ha drop limitati."
+    conflicts: "Non genera Contrasti, ma ha drop limitati."
   }
 ];
 
@@ -88,3 +88,5 @@ export const getDoorTypeDefinitions = () =>
     ...definition,
     name: doorLabels[definition.type]
   }));
+
+  

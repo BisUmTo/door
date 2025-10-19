@@ -53,7 +53,7 @@ export const getChestDefinition = (rarity: ChestRarity): ChestDefinition => {
       id: rarity,
       name: `Baule ${rarity}`,
       image: "/assets/bauli/legno.png",
-      accent: "#f59e0b",
+      accent: "#a67c52",
       description: "Contiene una selezione casuale di ricompense."
     }
   );

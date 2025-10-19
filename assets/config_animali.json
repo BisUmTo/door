@@ -440,28 +440,7 @@
       "upgradable_armature": true,
       "costo_crescita_cibo": 0
     },
-    {
-      "id": 41,
-      "animale": "Iena",
-      "vita": 110,
-      "danno": 22,
-      "velocita_di_attacco": 1.7,
-      "taglia": "Piccolo",
-      "stamina_max": 60,
-      "upgradable_armature": false,
-      "costo_crescita_cibo": 80
-    },
-    {
-      "id": 42,
-      "animale": "Iena",
-      "vita": 170,
-      "danno": 30,
-      "velocita_di_attacco": 1.4,
-      "taglia": "Grande",
-      "stamina_max": 90,
-      "upgradable_armature": true,
-      "costo_crescita_cibo": 0
-    },
+    
     {
       "id": 43,
       "animale": "Puma",

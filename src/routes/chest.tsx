@@ -2,9 +2,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import { CHEST_DEFINITIONS } from "@/game/chests";
-import type { ChestRarity } from "@/game/types";
+import type { ChestRarity, LootEntry } from "@/game/types";
 import { doorLabels } from "@/components/Door";
 import { isMedalResource, medalResourceToDoorType } from "@/game/medals";
+import {
+  findFurnitureObjectName,
+  getFurnitureResourceTargetId,
+  isFurnitureResource
+} from "@/game/furniture";
 import { useGameStore } from "@/state/store";
 
 type OpeningStage = "idle" | "preview" | "opening" | "opened";
@@ -33,29 +38,60 @@ const ChestRoute = () => {
   };
 
   const history = save?.chests.unlockedHistory ?? [];
+  const houseObjects = save?.house.objects ?? [];
 
-  const handleChestClick = (rarity: ChestRarity) => {
+  const resolveResourceLabel = (loot: LootEntry): string => {
+    if (isFurnitureResource(loot.type)) {
+      const targetId = getFurnitureResourceTargetId(loot.type);
+      const targetName = findFurnitureObjectName(houseObjects, targetId);
+      return targetName ? `Pezzi arredamento (${targetName})` : "Pezzi arredamento";
+    }
+    return loot.type;
+  };
+
+  const formatLootText = (loot: LootEntry | null): string => {
+    if (!loot) {
+      return "Nessun bottino";
+    }
+    if (isMedalResource(loot.type)) {
+      const doorType = medalResourceToDoorType(loot.type);
+      return `Medaglietta ${doorLabels[doorType]}`;
+    }
+    return `+${loot.qty} ${resolveResourceLabel(loot)}`;
+  };
+
+  const handleChestSelect = (rarity: ChestRarity) => {
     setMessage(null);
     if (selected !== rarity) {
       setSelected(rarity);
       setStage("preview");
       setReward(null);
+    }
+  };
+
+  const handleOpenChest = () => {
+    if (!selected) return;
+
+    const available = inventory[selected] ?? 0;
+    if (available <= 0) {
+      setMessage("Nessun baule di questa rarità disponibile.");
       return;
     }
 
-    if (stage === "preview") {
-      const available = inventory[rarity] ?? 0;
-      if (available <= 0) {
-        setMessage("Nessun baule di questa rarità disponibile.");
-        return;
-      }
-      setStage("opening");
-      window.setTimeout(() => {
-        const result = openChest(rarity);
-        setReward(result);
-        setStage("opened");
-      }, 700);
-    }
+    setStage("opening");
+    setMessage(null);
+
+    window.setTimeout(() => {
+      const result = openChest(selected);
+      setReward(result);
+      setStage("opened");
+    }, 1200);
+  };
+
+  const handleOpenAnother = () => {
+    setStage("preview");
+    setReward(null);
+    setMessage(null);
   };
 
   const focusedDefinition = selected
@@ -90,12 +126,14 @@ const ChestRoute = () => {
                   <li key={definition.id}>
                     <button
                       type="button"
-                      onClick={() => handleChestClick(definition.id)}
+                      onClick={() => handleChestSelect(definition.id)}
+                      disabled={stage === "opening"}
                       className={clsx(
-                        "flex w-full items-center justify-between gap-4 rounded-3xl border px-4 py-3 text-left transition",
+                        "flex w-full items-center justify-between gap-4 rounded-3xl border px-4 py-3 text-left transition-all duration-300",
                         active
-                          ? "border-yellow-400 bg-yellow-400/15 text-yellow-200"
-                          : "border-white/10 bg-white/5 text-white/80 hover:border-yellow-300/60"
+                          ? "border-yellow-400 bg-yellow-400/15 text-yellow-200 shadow-lg shadow-yellow-400/20 scale-[1.02]"
+                          : "border-white/10 bg-white/5 text-white/80 hover:border-yellow-300/60 hover:scale-[1.01]",
+                        stage === "opening" && "opacity-50 cursor-not-allowed"
                       )}
                     >
                       <div className="flex items-center gap-4">
@@ -138,55 +176,103 @@ const ChestRoute = () => {
                 </p>
                 <div
                   className={clsx(
-                    "mt-8 flex h-64 w-64 items-center justify-center rounded-full bg-black/30 shadow-2xl",
-                    stage === "opening" && "animate-pulse"
+                    "relative mt-8 flex h-64 w-64 items-center justify-center rounded-full shadow-2xl transition-all duration-500",
+                    stage === "preview" && "bg-black/30",
+                    stage === "opening" && "bg-gradient-to-br from-yellow-500/20 to-orange-500/20 animate-pulse scale-110",
+                    stage === "opened" && "bg-gradient-to-br from-green-500/10 to-emerald-500/10"
                   )}
+                  style={{
+                    boxShadow: stage === "opening"
+                      ? `0 0 60px ${focusedDefinition.accent}40`
+                      : stage === "opened"
+                      ? "0 0 40px rgba(34, 197, 94, 0.3)"
+                      : "none"
+                  }}
                 >
+                  {stage === "opening" && (
+                    <div className="absolute inset-0 rounded-full border-4 border-yellow-400/50 animate-ping" />
+                  )}
                   <img
                     src={focusedDefinition.image}
                     alt={focusedDefinition.name}
                     className={clsx(
-                      "h-48 w-48 object-contain transition",
-                      stage === "opening" && "scale-90",
-                      stage === "opened" && "scale-95 opacity-80"
+                      "h-48 w-48 object-contain transition-all duration-500",
+                      stage === "opening" && "scale-90 blur-sm",
+                      stage === "opened" && "scale-105"
                     )}
                   />
                 </div>
 
                 {stage === "preview" ? (
-                  <p className="mt-6 text-sm text-white/70">
-                    Clicca di nuovo per aprire il baule.
-                  </p>
+                  <button
+                    type="button"
+                    onClick={handleOpenChest}
+                    className="mt-8 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 px-8 py-3 font-semibold uppercase tracking-[0.35em] text-white shadow-lg shadow-yellow-500/30 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-yellow-500/40"
+                  >
+                    Apri Baule
+                  </button>
                 ) : null}
 
                 {stage === "opening" ? (
-                  <p className="mt-6 text-sm text-yellow-200">Apertura in corso...</p>
+                  <div className="mt-8 flex flex-col items-center gap-2">
+                    <div className="flex gap-2">
+                      <div className="h-3 w-3 animate-bounce rounded-full bg-yellow-400" style={{ animationDelay: "0ms" }} />
+                      <div className="h-3 w-3 animate-bounce rounded-full bg-yellow-400" style={{ animationDelay: "150ms" }} />
+                      <div className="h-3 w-3 animate-bounce rounded-full bg-yellow-400" style={{ animationDelay: "300ms" }} />
+                    </div>
+                    <p className="text-sm font-semibold uppercase tracking-[0.35em] text-yellow-200">
+                      Apertura in corso...
+                    </p>
+                  </div>
                 ) : null}
 
                 {stage === "opened" ? (
-                  <div className="mt-6 w-full max-w-md rounded-3xl border border-yellow-300/40 bg-yellow-300/10 p-5 text-sm text-yellow-100">
-                    {reward?.loot ? (
-                      <div>
-                        <p className="text-xs uppercase tracking-[0.35em] text-yellow-200/70">
-                          Ricompensa
+                  <div className="mt-6 flex w-full max-w-md flex-col gap-4">
+                    <div className="animate-fade-in rounded-3xl border-2 border-emerald-400/60 bg-gradient-to-br from-emerald-500/20 to-green-500/10 p-6 shadow-xl shadow-emerald-500/20">
+                      {reward?.loot ? (
+                        <div className="text-center">
+                          <p className="text-xs uppercase tracking-[0.35em] text-emerald-300/80">
+                            🎁 Ricompensa Ottenuta
+                          </p>
+                          <p className="mt-3 text-2xl font-bold text-emerald-100">
+                            {formatLootText(reward.loot)}
+                          </p>
+                          {reward?.medalUnlocked ? (
+                            <div className="mt-4 rounded-full border border-yellow-400/40 bg-yellow-400/10 px-4 py-2">
+                              <p className="text-xs font-semibold uppercase tracking-[0.35em] text-yellow-300">
+                                ✨ Nuova medaglietta ottenuta!
+                              </p>
+                            </div>
+                          ) : null}
+                        </div>
+                      ) : (
+                        <p className="text-center text-sm text-emerald-100/70">
+                          Nessun bottino trovato questa volta.
                         </p>
-                        <p className="mt-2 text-lg font-semibold text-yellow-200">
-                          {isMedalResource(reward.loot.type)
-                            ? `Medaglietta ${doorLabels[medalResourceToDoorType(reward.loot.type)]}`
-                            : `+${reward.loot.qty} ${reward.loot.type}`}
-                        </p>
-                      </div>
-                    ) : (
-                      <p className="text-sm text-yellow-100/70">
-                        Nessun bottino trovato questa volta.
-                      </p>
-                    )}
+                      )}
+                    </div>
 
-                    {reward?.medalUnlocked ? (
-                      <p className="mt-3 text-xs uppercase tracking-[0.35em] text-yellow-200">
-                        Nuova medaglietta ottenuta!
-                      </p>
-                    ) : null}
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={handleOpenAnother}
+                        disabled={(inventory[selected] ?? 0) <= 0}
+                        className={clsx(
+                          "flex-1 rounded-full border px-6 py-3 font-semibold uppercase tracking-[0.35em] transition-all duration-300",
+                          (inventory[selected] ?? 0) > 0
+                            ? "border-yellow-400/60 bg-yellow-400/10 text-yellow-200 hover:scale-105 hover:bg-yellow-400/20 hover:shadow-lg hover:shadow-yellow-400/30"
+                            : "cursor-not-allowed border-white/10 bg-white/5 text-white/30"
+                        )}
+                      >
+                        Apri Altro ({inventory[selected] ?? 0})
+                      </button>
+                      <Link
+                        to="/lobby"
+                        className="flex-1 rounded-full border border-white/30 bg-white/5 px-6 py-3 text-center font-semibold uppercase tracking-[0.35em] text-white/80 transition-all duration-300 hover:scale-105 hover:border-white/50 hover:bg-white/10"
+                      >
+                        Torna
+                      </Link>
+                    </div>
                   </div>
                 ) : null}
               </div>
@@ -219,7 +305,7 @@ const ChestRoute = () => {
                       </p>
                     </div>
                     <span className="text-sm text-yellow-200">
-                      {entry.loot ? `+${entry.loot.qty} ${entry.loot.type}` : "Nessun bottino"}
+                      {formatLootText(entry.loot ?? null)}
                     </span>
                   </li>
                 ))}

@@ -38,7 +38,7 @@ export const InfoPanel = ({ doorsOpened, turn, blockedDoors }: InfoPanelProps) =
           <dd className="font-semibold text-[#a67c52]">{doorsOpened}</dd>
         </div>
         <div>
-          <dt className="uppercase text-[10px] text-white/50">Conflitti attivi</dt>
+          <dt className="uppercase text-[10px] text-white/50">Contrasti attivi</dt>
           {blockedDoors.length === 0 ? (
             <p className="text-[11px] text-white/60">Nessuna porta bloccata.</p>
           ) : (

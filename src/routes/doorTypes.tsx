@@ -49,7 +49,7 @@ const DoorTypesRoute = () => {
               </div>
               <div className="mt-auto rounded-2xl border border-white/10 bg-white/5 p-3 text-xs text-white/60">
                 <span className="block uppercase tracking-[0.35em] text-white/40">
-                  Conflitto
+                  Contrasti
                 </span>
                 <p className="mt-1 text-sm text-white/70">{definition.conflicts}</p>
               </div>

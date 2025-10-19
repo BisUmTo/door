@@ -14,6 +14,78 @@ const sanitize = (value: string) =>
     .trim()
     .replace(/\s+/g, " ");
 
+const normalizeFurnitureName = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+
+const furnitureAliasDefinitions: Array<{ id: number; names: string[] }> = [
+  { id: 1, names: ["poltrona", "poltrone"] },
+  { id: 2, names: ["mensola", "mensole"] },
+  { id: 3, names: ["tavolino", "tavolini"] },
+  { id: 4, names: ["sedia", "sedie"] }
+];
+
+const furnitureNameToId = (() => {
+  const map = new Map<string, number>();
+  for (const { id, names } of furnitureAliasDefinitions) {
+    for (const name of names) {
+      const key = normalizeFurnitureName(name);
+      if (key.length > 0 && !map.has(key)) {
+        map.set(key, id);
+      }
+    }
+  }
+  return map;
+})();
+
+const furniturePrefixes = [
+  "pezzi arredamento",
+  "pezzi di arredamento",
+  "pezzo arredamento",
+  "pezzo di arredamento",
+  "pezzi arredamento della casa",
+  "pezzo arredamento della casa",
+  "arredamento"
+];
+
+const stripFurnitureArticles = (value: string) => {
+  return value.replace(/^(di|del|della|dell'|dei|degli|delle|la|il|lo|le|gli|i)\s+/u, "");
+};
+
+const normalizeFurnitureLoot = (raw: string): Resource | null => {
+  const base = sanitize(raw);
+  const remainderToKey = (value: string) => {
+    const trimmed = value.trim().replace(/^[-:]+/, "").trim();
+    if (!trimmed) return "";
+    const withoutArticles = stripFurnitureArticles(trimmed);
+    return normalizeFurnitureName(withoutArticles);
+  };
+
+  for (const prefix of furniturePrefixes) {
+    if (base.startsWith(prefix)) {
+      const remainder = remainderToKey(base.slice(prefix.length));
+      if (!remainder) {
+        return "housePiece:any";
+      }
+      const targetId = furnitureNameToId.get(remainder);
+      if (typeof targetId === "number") {
+        return `housePiece:${targetId}`;
+      }
+      return "housePiece:any";
+    }
+  }
+
+  const direct = furnitureNameToId.get(normalizeFurnitureName(raw));
+  if (typeof direct === "number") {
+    return `housePiece:${direct}`;
+  }
+
+  return null;
+};
+
 const doorAliasPairs: Array<[string, DoorType]> = [
   ["\u26aa bianca", "white"],
   ["bianca", "white"],
@@ -83,6 +155,11 @@ const lootAliasPairs: Array<[string, Resource]> = [
   ["oggetto speciale", "specialItem"],
   ["speciale", "specialItem"],
   ["special item", "specialItem"],
+  ["pezzi arredamento", "housePiece:any"],
+  ["pezzi di arredamento", "housePiece:any"],
+  ["pezzo arredamento", "housePiece:any"],
+  ["pezzo di arredamento", "housePiece:any"],
+  ["arredamento", "housePiece:any"],
   ["nessuno", "none"],
   ["null", "none"],
   ["nessuna ricompensa", "none"],
@@ -168,6 +245,10 @@ export const normalizeDoorKey = (raw: string): DoorType => {
 };
 
 export const normalizeLootKey = (raw: string): Resource => {
+  const furniture = normalizeFurnitureLoot(raw);
+  if (furniture) {
+    return furniture;
+  }
   const canonical = lootAliasMap.get(sanitize(raw));
   if (!canonical) {
     throw new Error(`Unknown loot alias: ${raw}`);

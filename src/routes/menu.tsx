@@ -27,12 +27,6 @@ const MenuRoute = () => {
 
         {/* MENU */}
         <nav className="flex w-full max-w-xs flex-col gap-4">
-          <Link
-            to="/settings"
-            className="rounded-full border border-white/30 px-6 py-3 text-lg font-semibold uppercase tracking-widest transition hover:-translate-y-1 hover:border-[#a67c52] hover:text-[#a67c52]"
-          >
-            {t("menu.settings")}
-          </Link>
 
           {/* GIOCA DEMO - Marrone con testo bianco */}
           <Link
@@ -47,6 +41,13 @@ const MenuRoute = () => {
             className="rounded-full border border-white/30 px-6 py-3 text-lg font-semibold uppercase tracking-widest transition hover:-translate-y-1 hover:border-[#a67c52] hover:text-[#a67c52]"
           >
             {t("menu.saves")}
+          </Link>
+          <br></br>
+          <Link
+            to="/settings"
+            className="rounded-full border border-white/30 px-6 py-3 text-lg font-semibold uppercase tracking-widest transition hover:-translate-y-1 hover:border-[#a67c52] hover:text-[#a67c52]"
+          >
+            {t("menu.settings")}
           </Link>
 
           <Link

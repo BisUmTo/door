@@ -16,6 +16,8 @@ export type AmmoKind = "bullets" | "shells" | "arrows" | "darts" | "grenades";
 
 export type MedalResource = `medal_${DoorType}`;
 
+export type FurniturePieceResource = "housePiece:any" | `housePiece:${number}`;
+
 export type Resource =
   | "coins"
   | "food"
@@ -23,6 +25,7 @@ export type Resource =
   | AmmoKind
   | "specialItem"
   | MedalResource
+  | FurniturePieceResource
   | "none";
 
 export type ChestRarity = "common" | "uncommon" | "rare" | "epic" | "legendary";

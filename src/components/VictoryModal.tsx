@@ -1,6 +1,18 @@
-import type { AnimalConfig, DoorType, LootEntry, WeaponConfig, WeaponName } from "@/game/types";
+import type {
+  AnimalConfig,
+  DoorType,
+  LootEntry,
+  SaveGame,
+  WeaponConfig,
+  WeaponName
+} from "@/game/types";
 import { doorLabels } from "@/components/Door";
 import { isMedalResource, medalResourceToDoorType } from "@/game/medals";
+import {
+  findFurnitureObjectName,
+  getFurnitureResourceTargetId,
+  isFurnitureResource
+} from "@/game/furniture";
 
 interface VictoryModalProps {
   open: boolean;
@@ -10,6 +22,7 @@ interface VictoryModalProps {
   animalConfigs: AnimalConfig[];
   weaponConfigs: WeaponConfig[];
   medalUnlocked?: DoorType | null;
+  houseObjects: SaveGame["house"]["objects"];
   onContinue: () => void;
 }
 
@@ -29,6 +42,7 @@ export const VictoryModal = ({
   animalConfigs,
   weaponConfigs,
   medalUnlocked,
+  houseObjects,
   onContinue
 }: VictoryModalProps) => {
   if (!open) return null;
@@ -43,6 +57,17 @@ export const VictoryModal = ({
       return (
         <p className="mt-2 text-lg font-semibold" style={{ color: ACCENT }}>
           {`Medaglietta ${doorLabels[doorType]}`}
+        </p>
+      );
+    }
+
+    if (isFurnitureResource(loot.type)) {
+      const targetId = getFurnitureResourceTargetId(loot.type);
+      const targetName = findFurnitureObjectName(houseObjects, targetId);
+      const label = targetName ? `Pezzi arredamento (${targetName})` : "Pezzi arredamento";
+      return (
+        <p className="mt-2 text-lg font-semibold" style={{ color: ACCENT }}>
+          +{loot.qty} {label}
         </p>
       );
     }

@@ -126,6 +126,7 @@ const DoorRoute = () => {
           animalConfigs={animalConfigs}
           weaponConfigs={weaponConfigs}
           medalUnlocked={pendingReward.medalUnlocked ?? null}
+          houseObjects={save?.house.objects ?? []}
           onContinue={handleVictoryContinue}
         />
       ) : null}
@@ -223,7 +224,7 @@ const DoorRoute = () => {
     <div className="w-40 rounded-xl border border-white/10 bg-black/50 p-3 text-center">
       <dt className="text-sm uppercase text-white/60">Età</dt>
       <dd className="text-xl font-semibold text-white leading-tight">
-        {activeEnemy.size}
+        {activeEnemy.size === "Smmlll" ? "Baby" : "Adulto"}
       </dd>
     </div>
   </dl>

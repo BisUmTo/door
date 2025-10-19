@@ -40,7 +40,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/casa.png",
     selectedImage: "/assets/lobby/pulsanti/casa_selected.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 155, y: 250 },
+    labelPosition: { x: 155, y: 240 },
     zIndex: 10,
     route: "/house"
   },
@@ -51,7 +51,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/baule.png",
     selectedImage: "/assets/lobby/pulsanti/baule_selected.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 1700, y: 700 },
+    labelPosition: { x: 1700, y: 680 },
     zIndex: 12,
     route: "/chest"
   },
@@ -62,7 +62,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/zaino.png",
     selectedImage: "/assets/lobby/pulsanti/zaino_selected.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 760, y: 760 },
+    labelPosition: { x: 760, y: 735 },
     zIndex: 14,
     route: "/inventory"
   },
@@ -73,7 +73,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/porta1.png",
     selectedImage: "/assets/lobby/pulsanti/porta1.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 535, y: 380 },
+    labelPosition: { x: 535, y: 365 },
     zIndex: 20,
     isDoor: true
   },
@@ -84,7 +84,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/porta2.png",
     selectedImage: "/assets/lobby/pulsanti/porta2.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 986.5, y: 380 },
+    labelPosition: { x: 986.5, y: 365 },
     zIndex: 22,
     isDoor: true
   },
@@ -95,7 +95,7 @@ const lobbyAreas: LobbyAreaConfig[] = [
     image: "/assets/lobby/pulsanti/porta3.png",
     selectedImage: "/assets/lobby/pulsanti/porta3.png",
     layout: { x: 0, y: 0, width: LOBBY_IMAGE_WIDTH, height: LOBBY_IMAGE_HEIGHT },
-    labelPosition: { x: 1428.5, y: 380 },
+    labelPosition: { x: 1428.5, y: 365 },
     zIndex: 24,
     isDoor: true
   }

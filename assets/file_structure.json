@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-10-19T01:17:57Z",
+  "generated_at": "2025-10-19T03:18:09Z",
   "entries": [
     {
       "root": "/Users/delugan/Library/CloudStorage/GoogleDrive-kevin.delugan@juvenes.it/.shortcut-targets-by-id/1BGP7ik13prJr-3oY_ClP2i8r5Z1m4pVP/Door/Demo - Door/assets",
@@ -138,6 +138,27 @@
                     "size_bytes": 89251
                   },
                   {
+                    "name": "pantera.png",
+                    "path": "animali/icona/pantera.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 65395
+                  },
+                  {
+                    "name": "puma.png",
+                    "path": "animali/icona/puma.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 69529
+                  },
+                  {
+                    "name": "serpente.png",
+                    "path": "animali/icona/serpente.png",
+                    "type": "file",
+                    "extension": ".png",
+                    "size_bytes": 92793
+                  },
+                  {
                     "name": "tartaruga.png",
                     "path": "animali/icona/tartaruga.png",
                     "type": "file",
@@ -159,7 +180,7 @@
                     "size_bytes": 84456
                   }
                 ],
-                "item_count": 20
+                "item_count": 23
               },
               {
                 "name": "animali.psb",
@@ -281,11 +302,39 @@
                 "size_bytes": 115061
               },
               {
+                "name": "lupo.png",
+                "path": "animali/lupo.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 234757
+              },
+              {
                 "name": "orso.png",
                 "path": "animali/orso.png",
                 "type": "file",
                 "extension": ".png",
                 "size_bytes": 271404
+              },
+              {
+                "name": "pantera.png",
+                "path": "animali/pantera.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 67616
+              },
+              {
+                "name": "puma.png",
+                "path": "animali/puma.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 73611
+              },
+              {
+                "name": "serpente.png",
+                "path": "animali/serpente.png",
+                "type": "file",
+                "extension": ".png",
+                "size_bytes": 92793
               },
               {
                 "name": "tartaruga.png",
@@ -309,7 +358,7 @@
                 "size_bytes": 105106
               }
             ],
-            "item_count": 22
+            "item_count": 26
           },
           {
             "name": "armi",
@@ -700,7 +749,7 @@
                 "path": "casa/casa.psd",
                 "type": "file",
                 "extension": ".psd",
-                "size_bytes": 54315640
+                "size_bytes": 55230254
               },
               {
                 "name": "sfondo_casa.png",
@@ -906,7 +955,7 @@
                 "path": "lobby/lobby.psd",
                 "type": "file",
                 "extension": ".psd",
-                "size_bytes": 20131396
+                "size_bytes": 29193386
               },
               {
                 "name": "sfondo_lobby.png",
@@ -1232,7 +1281,7 @@
             "path": "config_animali.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 986
+            "size_bytes": 11876
           },
           {
             "name": "config_armi.json",
@@ -1253,7 +1302,7 @@
             "path": "config_bauli.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 799
+            "size_bytes": 1998
           },
           {
             "name": "door_loot_tables.json",
@@ -1267,7 +1316,7 @@
             "path": "file_structure.json",
             "type": "file",
             "extension": ".json",
-            "size_bytes": 34607
+            "size_bytes": 43875
           },
           {
             "name": "generate_hitbox.py",

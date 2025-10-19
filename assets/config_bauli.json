@@ -17,7 +17,7 @@
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "20–40" },
         { "loot": "Cibo", "peso": 1, "quantita": "10–20" },
-        { "loot": "Pezzi oggetti casa", "peso": 1, "quantita": "1" },
+        { "loot": "Pezzi arredamento", "peso": 1, "quantita": "1" },
         { "loot": "Munizioni", "peso": 1, "quantita": "5–10" }
       ]
     },
@@ -28,7 +28,7 @@
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "40–70" },
         { "loot": "Cibo", "peso": 1, "quantita": "20–30" },
-        { "loot": "Pezzi oggetti casa", "peso": 1, "quantita": "1–2" },
+        { "loot": "Pezzi arredamento", "peso": 1, "quantita": "1–2" },
         { "loot": "Munizioni", "peso": 1, "quantita": "10–15" }
       ]
     },
@@ -39,7 +39,7 @@
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "70–120" },
         { "loot": "Cibo", "peso": 1, "quantita": "30–50" },
-        { "loot": "Pezzi oggetti casa", "peso": 1, "quantita": "2–3" },
+        { "loot": "Pezzi arredamento", "peso": 1, "quantita": "2–3" },
         { "loot": "Munizioni", "peso": 1, "quantita": "15–25" }
       ]
     },
@@ -50,7 +50,7 @@
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "120–200" },
         { "loot": "Cibo", "peso": 1, "quantita": "40–75" },
-        { "loot": "Pezzi oggetti casa", "peso": 1, "quantita": "3–4" },
+        { "loot": "Pezzi arredamento", "peso": 1, "quantita": "3–4" },
         { "loot": "Munizioni", "peso": 1, "quantita": "20–40" },
         { "loot": "Oggetto speciale", "peso": 1, "quantita": "1" },
         { "loot": "Oggetto speciale", "peso": 1, "quantita": "1" } 

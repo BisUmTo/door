@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import P5Scene, { type SceneConfig, type SceneElementConfig } from "@/components/P5Scene";
 import Tooltip from "@/components/Tooltip";
 import { useGameStore } from "@/state/store";
@@ -211,16 +211,23 @@ const HouseRoute = () => {
 
   return (
     <div className="relative min-h-screen flex flex-col bg-[#080910] text-white">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 uppercase tracking-[0.4em] text-white/70">
-        <span>Casa</span>
-        <Link
-          to="/lobby"
-          className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-[#a67c52] hover:text-[#a67c52]"
-        >
-          Lobby
-        </Link>
-      </header>
+      {/* Header overlay */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-50">
+        <div className="group/header relative h-8 w-full pointer-events-auto">
+          <div
+            className="absolute inset-x-0 top-0 flex items-center justify-between px-6 py-3 bg-[#0b3a6f]/90 text-whit border-b border-white/10 backdrop-blur transition-all duration-300 ease-out  opacity-0 -translate-y-full  group-hover/header:opacity-100 group-hover/header:translate-y-0  pointer-events-auto"
+          >
+            <span className="text-xs uppercase tracking-[0.4em]">Casa</span>
+            <button
+              type="button"
+              onClick={() => navigate("/lobby")}
+              className="rounded-full border border-white/30 px-4 py-1 text-xs uppercase tracking-widest transition hover:border-[#a67c52] hover:text-[#a67c52]"
+            >
+              Lobby
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Scena FULL SCREEN (riempie tutto lo spazio rimanente) */}
       <main className="relative flex-1">
