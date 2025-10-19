@@ -3,81 +3,81 @@
     {
       "id": "none",
       "rarita": "Nessuno",
-      "peso_baule": 0.2,
+      "peso_baule": 84,
       "loot": []
     },
     {
       "id": "common",
       "rarita": "Comune",
-      "peso_baule": 0.5,
+      "peso_baule": 6.25,
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "10–20" },
         { "loot": "Cibo", "peso": 1, "quantita": "5–10" },
-        { "loot": "Dardi", "peso": 1, "quantita": "2–5" },
-        { "loot": "Frecce", "peso": 1, "quantita": "2–4" },
-        { "loot": "Proiettili", "peso": 1, "quantita": "1–3" },
-        { "loot": "Cartucce", "peso": 1, "quantita": "1-3" },
-        { "loot": "Granate", "peso": 1, "quantita": "1–2" }
+        { "loot": "Dardi", "peso": 1, "quantita": "4–10" },
+        { "loot": "Frecce", "peso": 1, "quantita": "2–10" },
+        { "loot": "Proiettili", "peso": 1, "quantita": "1–5" },
+        { "loot": "Cartucce", "peso": 1, "quantita": "1-4" },
+        { "loot": "Granate", "peso": 1, "quantita": "1–3" }
       ]
     },
     {
       "id": "uncommon",
       "rarita": "Non Comune",
-      "peso_baule": 0.2,
+      "peso_baule": 2.25,
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "20–40" },
         { "loot": "Cibo", "peso": 1, "quantita": "10–20" },
         { "loot": "Pezzi arredamento", "peso": 1, "quantita": "1" },
-        { "loot": "Dardi", "peso": 1, "quantita": "3–10" },
-        { "loot": "Frecce", "peso": 1, "quantita": "4–7" },
-        { "loot": "Proiettili", "peso": 1, "quantita": "–10" },
-        { "loot": "Cartucce", "peso": 1, "quantita": "5–10" },
-        { "loot": "Granate", "peso": 1, "quantita": "2–5" }
+        { "loot": "Dardi", "peso": 1, "quantita": "7–15" },
+        { "loot": "Frecce", "peso": 1, "quantita": "6–13" },
+        { "loot": "Proiettili", "peso": 1, "quantita": "3–7" },
+        { "loot": "Cartucce", "peso": 1, "quantita": "2–5" },
+        { "loot": "Granate", "peso": 1, "quantita": "1–3" }
       ]
     },
     {
       "id": "rare",
       "rarita": "Raro",
-      "peso_baule": 0.15,
+      "peso_baule": 2,
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "40–70" },
         { "loot": "Cibo", "peso": 1, "quantita": "20–30" },
         { "loot": "Pezzi arredamento", "peso": 1, "quantita": "1–2" },
-        { "loot": "Dardi", "peso": 1, "quantita": "10–15" },
-        { "loot": "Frecce", "peso": 1, "quantita": "10–15" },
-        { "loot": "Proiettili", "peso": 1, "quantita": "10–15" },
-        { "loot": "Cartucce", "peso": 1, "quantita": "10–15" },
+        { "loot": "Dardi", "peso": 1, "quantita": "10–20" },
+        { "loot": "Frecce", "peso": 1, "quantita": "10–18" },
+        { "loot": "Proiettili", "peso": 1, "quantita": "7–14" },
+        { "loot": "Cartucce", "peso": 1, "quantita": "4–8" },
         { "loot": "Granate", "peso": 1, "quantita": "3–6" }
       ]
     },
     {
       "id": "epic",
       "rarita": "Epico",
-      "peso_baule": 0.1,
+      "peso_baule": 1.25,
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "70–120" },
         { "loot": "Cibo", "peso": 1, "quantita": "30–50" },
         { "loot": "Pezzi arredamento", "peso": 1, "quantita": "2–3" },
         { "loot": "Dardi", "peso": 1, "quantita": "15–25" },
         { "loot": "Frecce", "peso": 1, "quantita": "15–25" },
-        { "loot": "Proiettili", "peso": 1, "quantita": "15–25" },
-        { "loot": "Cartucce", "peso": 1, "quantita": "15–25" },
-        { "loot": "Granate", "peso": 1, "quantita": "5–10" }
+        { "loot": "Proiettili", "peso": 1, "quantita": "10-17" },
+        { "loot": "Cartucce", "peso": 1, "quantita": "8–13" },
+        { "loot": "Granate", "peso": 1, "quantita": "5–9" }
       ]
     },
     {
       "id": "legendary",
       "rarita": "Leggendario",
-      "peso_baule": 0.05,
+      "peso_baule": 0.75,
       "loot": [
         { "loot": "Monete", "peso": 1, "quantita": "120–200" },
         { "loot": "Cibo", "peso": 1, "quantita": "40–75" },
         { "loot": "Pezzi arredamento", "peso": 1, "quantita": "3–4" },
         { "loot": "Dardi", "peso": 1, "quantita": "20–40" },
         { "loot": "Frecce", "peso": 1, "quantita": "20–40" },
-        { "loot": "Proiettili", "peso": 1, "quantita": "20–40" },
-        { "loot": "Cartucce", "peso": 1, "quantita": "20–40" },
-        { "loot": "Granate", "peso": 1, "quantita": "10–15" },
+        { "loot": "Proiettili", "peso": 1, "quantita": "15-25" },
+        { "loot": "Cartucce", "peso": 1, "quantita": "10–20" },
+        { "loot": "Granate", "peso": 1, "quantita": "8–15" },
         { "loot": "Oggetto speciale", "peso": 1, "quantita": "1" },
         { "loot": "Oggetto speciale", "peso": 1, "quantita": "1" }
       ]
