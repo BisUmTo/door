@@ -22,6 +22,8 @@ describe("battle mechanics", () => {
     );
     expect(duel.winner).toBe("player");
     expect(duel.enemyLifeLeft).toBe(0);
+    expect(duel.log.length).toBeGreaterThan(0);
+    expect(duel.log[0].attacker).toBe("player");
   });
 
   it("animal duel can result in defeat", () => {
@@ -31,5 +33,6 @@ describe("battle mechanics", () => {
     );
     expect(duel.winner).toBe("enemy");
     expect(duel.playerLifeLeft).toBe(0);
+    expect(duel.log.at(-1)?.attacker).toBe("enemy");
   });
 });

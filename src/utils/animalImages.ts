@@ -7,7 +7,7 @@ const FALLBACK_ANIMAL_IMG = "/assets/animali/icona/gatto.png";
 /**
  * Converte una stringa in formato slug (lowercase, no spazi, no caratteri speciali)
  * Es: "Lupo Grigio" -> "lupo_grigio"
- * Es: "Orso bruno" -> "orso" (prende solo la prima parola)
+ * Es: "Orso" -> "orso" (prende solo la prima parola)
  */
 export const toSlug = (s: string): string => {
   const normalized = s

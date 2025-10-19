@@ -24,7 +24,7 @@
     },
     {
       "id": 3,
-      "animale": "Orso bruno",
+      "animale": "Orso",
       "vita": 220,
       "danno": 35,
       "velocita_di_attacco": 1.0,
@@ -35,7 +35,7 @@
     },
     {
       "id": 4,
-      "animale": "Orso bruno",
+      "animale": "Orso",
       "vita": 320,
       "danno": 45,
       "velocita_di_attacco": 0.8,

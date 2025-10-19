@@ -3,6 +3,7 @@ import { immer } from "zustand/middleware/immer";
 import type {
   SaveGame,
   EnemyInstance,
+  AnimalInstance,
   DoorType,
   LootEntry,
   AnimalConfig,
@@ -62,7 +63,7 @@ import {
 } from "@/save/saves";
 import type { SaveSlotMeta, SavesExportPayload } from "@/save/saves";
 import { runMigrations } from "@/save/migrations";
-import { simulateAnimalDuel, simulateWeaponAttack } from "@/game/battle";
+import { simulateAnimalDuel, simulateWeaponAttack, type DuelEvent } from "@/game/battle";
 import type { DoorLootTablesRegistry } from "@/game/loot";
 
 type Status = "idle" | "loading" | "ready" | "error";
@@ -108,6 +109,21 @@ interface ChestOpenResult {
   medalUnlocked: DoorType | null;
 }
 
+export interface CurrentDuelSummary {
+  playerAnimalIndex: number;
+  playerConfigId: number;
+  enemyIndex: number;
+  enemyConfigId: number;
+  playerSize: AnimalInstance["size"];
+  enemySize: EnemyInstance["size"];
+  playerLifeStart: number;
+  enemyLifeStart: number;
+  playerLifeEnd: number;
+  enemyLifeEnd: number;
+  winner: "player" | "enemy";
+  log: DuelEvent[];
+}
+
 interface GameStoreState {
   status: Status;
   onlineStatus: OnlineStatus;
@@ -119,6 +135,7 @@ interface GameStoreState {
   pendingReward: PendingReward | null;
   battleResult: "victory" | "defeat" | null;
   weaponsPhaseLocked: boolean;
+  currentDuel: CurrentDuelSummary | null;
   bootstrap: () => Promise<void>;
   refreshSlots: () => void;
   createSlot: (name?: string) => Promise<void>;
@@ -139,6 +156,7 @@ interface GameStoreState {
   setOnlineStatus: (status: OnlineStatus) => void;
   resetBattleResult: () => void;
   acknowledgeMedalHighlight: () => void;
+  clearCurrentDuel: () => void;
 }
 
 const sleep = (ms: number) =>
@@ -624,6 +642,7 @@ export const useGameStore = create<GameStoreState>()(
     pendingReward: null,
     battleResult: null,
     weaponsPhaseLocked: false,
+    currentDuel: null,
 
     setOnlineStatus: (status) => {
       set({ onlineStatus: status });
@@ -631,6 +650,10 @@ export const useGameStore = create<GameStoreState>()(
 
     resetBattleResult: () => {
       set({ battleResult: null });
+    },
+
+    clearCurrentDuel: () => {
+      set({ currentDuel: null });
     },
 
     bootstrap: async () => {
@@ -700,7 +723,8 @@ export const useGameStore = create<GameStoreState>()(
           save,
           pendingReward: null,
           battleResult: null,
-          weaponsPhaseLocked: false
+          weaponsPhaseLocked: false,
+          currentDuel: null
         });
       } catch (error) {
         set({
@@ -757,7 +781,8 @@ export const useGameStore = create<GameStoreState>()(
           slots,
           activeSlotId: slotId,
           save,
-          error: null
+          error: null,
+          currentDuel: null
         });
         debugLog("createSlot completed", { slotId, slotName });
       } catch (error) {
@@ -818,7 +843,8 @@ export const useGameStore = create<GameStoreState>()(
       set({
         slots: nextSlots,
         activeSlotId: newSlotId,
-        save: duplicatedSave
+        save: duplicatedSave,
+        currentDuel: null
       });
       debugLog("duplicateSlot completed", { sourceSlot: slotId, newSlotId, slotName: candidateName });
     },
@@ -840,7 +866,8 @@ export const useGameStore = create<GameStoreState>()(
         save: synced,
         pendingReward: null,
         weaponsPhaseLocked: false,
-        battleResult: null
+        battleResult: null,
+        currentDuel: null
       });
       debugLog("loadSlot completed", { slotId });
     },
@@ -873,7 +900,8 @@ export const useGameStore = create<GameStoreState>()(
       set({
         slots,
         activeSlotId,
-        save: nextSave
+        save: nextSave,
+        currentDuel: null
       });
       debugLog("deleteSlot completed", { slotId, nextActive: activeSlotId });
     },
@@ -1315,6 +1343,10 @@ export const useGameStore = create<GameStoreState>()(
 
       const enemy = save.battleState.door.enemies[save.battleState.door.index];
       const stats = computeBattleStats(animalConfig, instance);
+      const playerLifeStart = stats.life;
+      const enemyLifeStart = enemy.life;
+      const enemyIndex = save.battleState.door.index;
+
       const duel = simulateAnimalDuel(
         {
           life: stats.life,
@@ -1343,6 +1375,21 @@ export const useGameStore = create<GameStoreState>()(
       const fallenAnimals = playerFell
         ? [...save.battleState.fallenAnimals, { configId: instance.configId }]
         : save.battleState.fallenAnimals;
+
+      const duelSummary: CurrentDuelSummary = {
+        playerAnimalIndex: animalIndex,
+        playerConfigId: instance.configId,
+        enemyIndex,
+        enemyConfigId: enemy.configId,
+        playerSize: instance.size,
+        enemySize: enemy.size,
+        playerLifeStart,
+        enemyLifeStart,
+        playerLifeEnd: Math.max(0, duel.playerLifeLeft),
+        enemyLifeEnd: Math.max(0, duel.enemyLifeLeft),
+        winner: duel.winner,
+        log: duel.log
+      };
 
       let nextSave = save;
       let battleResult: GameStoreState["battleResult"] = null;
@@ -1528,7 +1575,8 @@ export const useGameStore = create<GameStoreState>()(
       set({
         save: nextSave,
         battleResult,
-        pendingReward: pendingReward ?? get().pendingReward
+        pendingReward: pendingReward ?? get().pendingReward,
+        currentDuel: duelSummary
       });
     },
 
@@ -1718,7 +1766,8 @@ export const useGameStore = create<GameStoreState>()(
       if (!pendingReward) return;
       set({
         pendingReward: null,
-        battleResult: null
+        battleResult: null,
+        currentDuel: null
       });
     }
   }))

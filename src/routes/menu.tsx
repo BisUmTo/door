@@ -47,9 +47,11 @@ const MenuRoute = () => {
           <p className="text-sm uppercase tracking-[0.4em] text-white/60">
             {status === "loading" ? "Caricamento dati..." : "Benvenuto"}
           </p>
-          <h1 className="mt-2 text-6xl font-display uppercase tracking-[0.6em] text-white drop-shadow">
-            {t("menu.title")}
-          </h1>
+<img
+  src="/assets/logo/logo.png"
+  alt="Titolo del gioco"
+  className="mt-2 w-60 h-auto drop-shadow-lg"
+/>
         </div>
 
         {/* MENU */}

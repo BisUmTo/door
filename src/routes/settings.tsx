@@ -95,6 +95,7 @@ const SettingsRoute = () => {
               type="checkbox"
               checked={ui.reducedMotion}
               onChange={toggleReducedMotion}
+              disabled={true}
               className="h-5 w-5 accent-[#a67c52]"
             />
           </label>

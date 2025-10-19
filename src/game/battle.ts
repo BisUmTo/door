@@ -40,6 +40,15 @@ const applyDamage = (life: number, damage: number, defence: number) => {
   return Math.max(0, life - effective);
 };
 
+export interface DuelEvent {
+  attacker: "player" | "enemy";
+  damage: number;
+  playerLifeAfter: number;
+  enemyLifeAfter: number;
+  round: number;
+  defenderLifeBefore: number;
+}
+
 export const simulateAnimalDuel = (
   player: PlayerAnimalCombatant,
   enemy: EnemyCombatant
@@ -48,6 +57,7 @@ export const simulateAnimalDuel = (
   turns: number;
   playerLifeLeft: number;
   enemyLifeLeft: number;
+  log: DuelEvent[];
 } => {
   let playerLife = player.life;
   let enemyLife = enemy.life;
@@ -56,21 +66,59 @@ export const simulateAnimalDuel = (
 
   let turns = 0;
   const playerFirst = player.attackSpeed >= enemy.attackSpeed;
+  const log: DuelEvent[] = [];
 
   // Cap to avoid infinite loops in pathological configs
   const maxRounds = 100;
 
   for (let round = 0; round < maxRounds; round += 1) {
     turns += 1;
+    const roundNumber = round + 1;
     if (playerFirst) {
+      const enemyLifeBefore = enemyLife;
       enemyLife = applyDamage(enemyLife, player.damage, enemyDefence);
+      log.push({
+        attacker: "player",
+        damage: enemyLifeBefore - enemyLife,
+        playerLifeAfter: playerLife,
+        enemyLifeAfter: enemyLife,
+        round: roundNumber,
+        defenderLifeBefore: enemyLifeBefore
+      });
       if (enemyLife <= 0) break;
+      const playerLifeBefore = playerLife;
       playerLife = applyDamage(playerLife, enemy.damage, playerDefence);
+      log.push({
+        attacker: "enemy",
+        damage: playerLifeBefore - playerLife,
+        playerLifeAfter: playerLife,
+        enemyLifeAfter: enemyLife,
+        round: roundNumber,
+        defenderLifeBefore: playerLifeBefore
+      });
       if (playerLife <= 0) break;
     } else {
+      const playerLifeBefore = playerLife;
       playerLife = applyDamage(playerLife, enemy.damage, playerDefence);
+      log.push({
+        attacker: "enemy",
+        damage: playerLifeBefore - playerLife,
+        playerLifeAfter: playerLife,
+        enemyLifeAfter: enemyLife,
+        round: roundNumber,
+        defenderLifeBefore: playerLifeBefore
+      });
       if (playerLife <= 0) break;
+      const enemyLifeBefore = enemyLife;
       enemyLife = applyDamage(enemyLife, player.damage, enemyDefence);
+      log.push({
+        attacker: "player",
+        damage: enemyLifeBefore - enemyLife,
+        playerLifeAfter: playerLife,
+        enemyLifeAfter: enemyLife,
+        round: roundNumber,
+        defenderLifeBefore: enemyLifeBefore
+      });
       if (enemyLife <= 0) break;
     }
   }
@@ -88,6 +136,7 @@ export const simulateAnimalDuel = (
     winner,
     turns,
     playerLifeLeft: Math.max(0, playerLife),
-    enemyLifeLeft: Math.max(0, enemyLife)
+    enemyLifeLeft: Math.max(0, enemyLife),
+    log
   };
 };

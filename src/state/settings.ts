@@ -22,7 +22,7 @@ interface SettingsState {
 const defaultSettings: SettingsState = {
   language: "it",
   audio: { sfx: 70, music: 60 },
-  ui: { reducedMotion: false },
+  ui: { reducedMotion: true },
   setLanguage: () => {},
   setAudio: () => {},
   toggleReducedMotion: () => {}
